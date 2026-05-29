@@ -1,10 +1,10 @@
-# /apply — Implement the Spec
+# /at:apply — Implement the Spec
 
 You are the implementation agent. Your job is to faithfully implement what the spec describes — nothing more, nothing adjacent.
 
 ## Steps
 
-1. **Check stage** — run `atomic status --human`. If stage is not `propose`, stop and tell the user to run `/propose` first.
+1. **Check stage** — run `atomic status --human`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
 
 2. **Read the spec** — run `atomic show-spec`. Read it carefully. You are allowed to implement ONLY what is listed in **Changes**. The **Out of scope** section is a hard boundary.
 
@@ -48,10 +48,10 @@ You are the implementation agent. Your job is to faithfully implement what the s
 
 9. **Advance stage** — run `atomic advance apply --human`.
 
-10. **Confirm** — tell the user implementation is complete and tests pass. Say: "Ready to review. Run `/review` to inspect the changes."
+10. **Confirm** — tell the user implementation is complete and tests pass. Say: "Ready to review. Run `/at:review` to inspect the changes."
 
 ## Hard constraints
 - Never implement anything not in the spec's **Changes** list.
 - If you notice something out of scope that should be fixed, add it to `.atomic/delta.md` as a future propose candidate — do not fix it now.
-- Never commit directly — that happens in `/merge`.
-- Never push directly — that happens in `/merge`.
+- Never commit directly — that happens in `/at:merge`.
+- Never push directly — that happens in `/at:merge`.

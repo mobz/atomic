@@ -44,10 +44,10 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 | Command | Stage | Description |
 |---------|-------|-------------|
-| `/propose` | → propose | Define the next atomic commit interactively |
-| `/apply` | → apply | Implement the current spec automatically |
-| `/review` | → review | Review diff + specs, approve or redirect |
-| `/merge` | → merge | Commit, push, and clean up |
+| `/at:propose` | → propose | Define the next atomic commit interactively |
+| `/at:apply` | → apply | Implement the current spec automatically |
+| `/at:review` | → review | Review diff + specs, approve or redirect |
+| `/at:merge` | → merge | Commit, push, and clean up |
 
 ## Key Paths
 

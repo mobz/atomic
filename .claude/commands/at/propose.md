@@ -1,4 +1,4 @@
-# /propose — Define an Atomic Commit
+# /at:propose — Define an Atomic Commit
 
 Your job is to help the user define exactly one atomic commit: a single, complete, revertable change.
 
@@ -45,7 +45,7 @@ Your job is to help the user define exactly one atomic commit: a single, complet
    atomic advance propose --human
    ```
 
-7. **Confirm** — tell the user the spec is locked. Say: "Ready to apply. Run `/apply` when you want the agent to implement this."
+7. **Confirm** — tell the user the spec is locked. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
 
 ## Constraints
 - Keep the spec tight. If the intent sentence needs a semicolon, it's two commits.

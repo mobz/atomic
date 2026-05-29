@@ -1,4 +1,4 @@
-# /merge — Commit, Push, and Clean Up
+# /at:merge — Commit, Push, and Clean Up
 
 Your job is to finalise the atomic commit: create the commit, push it, and leave the workspace clean.
 
@@ -17,9 +17,9 @@ Your job is to finalise the atomic commit: create the commit, push it, and leave
 6. **Confirm** — tell the user:
    - The commit SHA and message
    - The branch that was pushed
-   - "Pipeline complete. Run `/propose` to start the next commit."
+   - "Pipeline complete. Run `/at:propose` to start the next commit."
 
 ## Notes
 - If commit fails because there's nothing to commit, surface that clearly — the user may have forgotten to make changes, or changes may already be committed.
 - Never amend commits — always create new ones.
-- After `/merge` completes, the pipeline is in a clean state ready for the next `/propose`.
+- After `/at:merge` completes, the pipeline is in a clean state ready for the next `/at:propose`.
