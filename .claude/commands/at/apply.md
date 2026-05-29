@@ -42,8 +42,7 @@ You are the implementation agent. Your job is to faithfully implement what the s
    - Files that are particularly sensitive or complex
    Then store it:
    ```bash
-   git hash-object -w .atomic/context.md
-   git update-ref refs/atomic/current/context <sha>
+   atomic lock-context
    ```
 
 9. **Advance stage** — run `atomic advance apply --human`.

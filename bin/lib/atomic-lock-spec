@@ -1,0 +1,15 @@
+cmd_lock_spec() {
+  require_git
+  if [[ ! -f "$ATOMIC_DIR/spec.md" ]]; then
+    echo '{"error":"no spec.md found in .atomic/"}' >&2
+    exit 1
+  fi
+  local sha
+  sha=$(git hash-object -w "$ATOMIC_DIR/spec.md")
+  git update-ref "$REFS_PREFIX/spec" "$sha"
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"sha":"%s"}\n' "$sha"
+  else
+    echo "Spec locked: $sha"
+  fi
+}

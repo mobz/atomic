@@ -74,3 +74,23 @@
 - **Given:** any state
 - **When:** `atomic clean` is run
 - **Then:** `.atomic/` directory is cleared, exits 0
+
+### lock-spec
+- **Given:** `.atomic/spec.md` exists
+- **When:** `atomic lock-spec` is run
+- **Then:** spec.md is stored as a git blob and `refs/atomic/current/spec` is updated, exits 0
+
+### lock-spec — no spec
+- **Given:** `.atomic/spec.md` does not exist
+- **When:** `atomic lock-spec` is run
+- **Then:** prints error to stderr and exits non-zero
+
+### lock-context
+- **Given:** `.atomic/context.md` exists
+- **When:** `atomic lock-context` is run
+- **Then:** context.md is stored as a git blob and `refs/atomic/current/context` is updated, exits 0
+
+### lock-context — no context
+- **Given:** `.atomic/context.md` does not exist
+- **When:** `atomic lock-context` is run
+- **Then:** prints error to stderr and exits non-zero

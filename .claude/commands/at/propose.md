@@ -41,9 +41,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 6. **Store in git** — after writing the file:
    ```bash
-   git hash-object -w .atomic/spec.md
-   # copy the SHA output, then:
-   git update-ref refs/atomic/current/spec <sha>
+   atomic lock-spec --human
    atomic advance propose --human
    ```
 

@@ -1,0 +1,15 @@
+cmd_lock_context() {
+  require_git
+  if [[ ! -f "$ATOMIC_DIR/context.md" ]]; then
+    echo '{"error":"no context.md found in .atomic/"}' >&2
+    exit 1
+  fi
+  local sha
+  sha=$(git hash-object -w "$ATOMIC_DIR/context.md")
+  git update-ref "$REFS_PREFIX/context" "$sha"
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"sha":"%s"}\n' "$sha"
+  else
+    echo "Context locked: $sha"
+  fi
+}
