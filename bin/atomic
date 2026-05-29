@@ -1,0 +1,274 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ATOMIC_DIR=".atomic"
+SPECS_DIR="specs"
+REFS_PREFIX="refs/atomic/current"
+
+# ── helpers ──────────────────────────────────────────────────────────────────
+
+in_git_repo() {
+  git rev-parse --git-dir &>/dev/null
+}
+
+require_git() {
+  if ! in_git_repo; then
+    echo '{"error":"not in a git repository"}' >&2
+    exit 1
+  fi
+}
+
+require_atomic_dir() {
+  if [[ ! -d "$ATOMIC_DIR" ]]; then
+    mkdir -p "$ATOMIC_DIR"
+  fi
+}
+
+read_ref() {
+  local ref="$1"
+  local sha
+  sha=$(git for-each-ref --format='%(objectname)' "$ref" 2>/dev/null || true)
+  if [[ -z "$sha" ]]; then
+    echo ""
+    return
+  fi
+  git cat-file blob "$sha" 2>/dev/null || echo ""
+}
+
+write_blob_ref() {
+  local ref="$1"
+  local file="$2"
+  if [[ ! -f "$file" ]]; then
+    return
+  fi
+  local sha
+  sha=$(git hash-object -w "$file")
+  git update-ref "$ref" "$sha"
+}
+
+current_stage() {
+  read_ref "$REFS_PREFIX/stage"
+}
+
+output_json() {
+  local stage
+  stage=$(current_stage)
+  local spec_summary=""
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    spec_summary=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || echo "")
+  fi
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"stage":"%s","spec_intent":"%s","atomic_dir":"%s","specs_dir":"%s"}\n' \
+      "${stage:-none}" \
+      "${spec_summary//\"/\\\"}" \
+      "$ATOMIC_DIR" \
+      "$SPECS_DIR"
+  else
+    echo "Stage:   ${stage:-none}"
+    if [[ -n "$spec_summary" ]]; then
+      echo "Intent:  $spec_summary"
+    fi
+  fi
+}
+
+# ── commands ─────────────────────────────────────────────────────────────────
+
+cmd_status() {
+  require_git
+  output_json
+}
+
+cmd_advance() {
+  require_git
+  local stage="${1:-}"
+  if [[ -z "$stage" ]]; then
+    echo '{"error":"usage: atomic advance <stage>"}' >&2
+    exit 1
+  fi
+
+  local meta
+  meta=$(printf '{"stage":"%s","timestamp":"%s"}' "$stage" "$(date -u +%Y-%m-%dT%H:%M:%SZ)")
+  local meta_sha
+  meta_sha=$(echo "$meta" | git hash-object -w --stdin)
+
+  git update-ref "$REFS_PREFIX/stage" "$(echo -n "$stage" | git hash-object -w --stdin)"
+  git update-ref "$REFS_PREFIX/meta" "$meta_sha"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"stage":"%s"}\n' "$stage"
+  else
+    echo "Advanced to stage: $stage"
+  fi
+}
+
+cmd_reset() {
+  require_git
+  rm -rf "$ATOMIC_DIR"
+  mkdir -p "$ATOMIC_DIR"
+  git update-ref -d "$REFS_PREFIX/stage" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/spec" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/context" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/meta" 2>/dev/null || true
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    echo '{"ok":true,"reset":true}'
+  else
+    echo "Pipeline reset. .atomic/ cleared and refs removed."
+  fi
+}
+
+cmd_show_spec() {
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    cat "$ATOMIC_DIR/spec.md"
+  else
+    local content
+    content=$(read_ref "$REFS_PREFIX/spec")
+    if [[ -n "$content" ]]; then
+      echo "$content"
+    else
+      echo '{"error":"no spec found — run /propose first"}' >&2
+      exit 1
+    fi
+  fi
+}
+
+cmd_show_context() {
+  if [[ -f "$ATOMIC_DIR/context.md" ]]; then
+    cat "$ATOMIC_DIR/context.md"
+  else
+    local content
+    content=$(read_ref "$REFS_PREFIX/context")
+    if [[ -n "$content" ]]; then
+      echo "$content"
+    else
+      echo ""
+    fi
+  fi
+}
+
+cmd_merge_specs() {
+  require_git
+  require_atomic_dir
+
+  if [[ ! -d "$SPECS_DIR" ]]; then
+    mkdir -p "$SPECS_DIR"
+  fi
+
+  local merged=0
+  # Copy named domain spec files from .atomic/ into specs/ — skip pipeline working files
+  for f in "$ATOMIC_DIR"/*.md; do
+    [[ -f "$f" ]] || continue
+    local basename
+    basename=$(basename "$f")
+    case "$basename" in
+      spec.md|context.md|delta.md|assumptions.md) continue ;;
+    esac
+    cp "$f" "$SPECS_DIR/$basename"
+    merged=$((merged + 1))
+  done
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"merged":%d}\n' "$merged"
+  else
+    echo "Merged $merged spec file(s) into $SPECS_DIR/"
+  fi
+}
+
+cmd_commit() {
+  require_git
+
+  local intent="atomic commit"
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    local raw
+    raw=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || echo "")
+    if [[ -n "$raw" ]]; then
+      intent="$raw"
+    fi
+  fi
+
+  git add -A
+  git commit -m "$intent"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    local sha
+    sha=$(git rev-parse HEAD)
+    printf '{"ok":true,"sha":"%s","message":"%s"}\n' "$sha" "${intent//\"/\\\"}"
+  else
+    echo "Committed: $intent"
+    git log -1 --oneline
+  fi
+}
+
+cmd_push() {
+  require_git
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+  git push origin "$branch"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"branch":"%s"}\n' "$branch"
+  else
+    echo "Pushed branch: $branch"
+  fi
+}
+
+cmd_clean() {
+  require_git
+  rm -rf "$ATOMIC_DIR"
+  mkdir -p "$ATOMIC_DIR"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    echo '{"ok":true,"cleaned":true}'
+  else
+    echo ".atomic/ working state cleared."
+  fi
+}
+
+cmd_help() {
+  cat <<'EOF'
+atomic — atomic commit pipeline CLI
+
+Commands:
+  status           Current pipeline stage and spec summary
+  advance <stage>  Move to named stage (propose|apply|review|merge)
+  reset            Clear .atomic/ and remove all pipeline refs
+  show-spec        Print current .atomic/spec.md
+  show-context     Print current .atomic/context.md
+  merge-specs      Merge .atomic/ domain specs into specs/ store
+  commit           Create git commit from current staged changes
+  push             Push current branch to origin
+  clean            Clear .atomic/ working state (keeps git refs)
+
+Flags:
+  --human          Human-readable output instead of JSON
+EOF
+}
+
+# ── dispatch ─────────────────────────────────────────────────────────────────
+
+JSON_OUTPUT="true"
+CMD=""
+ARGS=()
+
+for arg in "$@"; do
+  case "$arg" in
+    --human) JSON_OUTPUT="false" ;;
+    -*) ;;
+    *) if [[ -z "$CMD" ]]; then CMD="$arg"; else ARGS+=("$arg"); fi ;;
+  esac
+done
+
+case "${CMD:-help}" in
+  status)       cmd_status ;;
+  advance)      cmd_advance "${ARGS[0]:-}" ;;
+  reset)        cmd_reset ;;
+  show-spec)    cmd_show_spec ;;
+  show-context) cmd_show_context ;;
+  merge-specs)  cmd_merge_specs ;;
+  commit)       cmd_commit ;;
+  push)         cmd_push ;;
+  clean)        cmd_clean ;;
+  help|--help)  cmd_help ;;
+  *)            echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
+esac
