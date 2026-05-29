@@ -1,0 +1,26 @@
+cmd_merge_specs() {
+  require_git
+  require_atomic_dir
+
+  if [[ ! -d "$SPECS_DIR" ]]; then
+    mkdir -p "$SPECS_DIR"
+  fi
+
+  local merged=0
+  for f in "$ATOMIC_DIR"/*.md; do
+    [[ -f "$f" ]] || continue
+    local basename
+    basename=$(basename "$f")
+    case "$basename" in
+      spec.md|context.md|delta.md|assumptions.md) continue ;;
+    esac
+    cp "$f" "$SPECS_DIR/$basename"
+    merged=$((merged + 1))
+  done
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"merged":%d}\n' "$merged"
+  else
+    echo "Merged $merged spec file(s) into $SPECS_DIR/"
+  fi
+}

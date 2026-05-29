@@ -1,0 +1,11 @@
+cmd_clean() {
+  require_git
+  rm -rf "$ATOMIC_DIR"
+  mkdir -p "$ATOMIC_DIR"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    echo '{"ok":true,"cleaned":true}'
+  else
+    echo ".atomic/ working state cleared."
+  fi
+}

@@ -1,0 +1,4 @@
+cmd_status() {
+  require_git
+  output_json
+}

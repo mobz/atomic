@@ -1,0 +1,19 @@
+cmd_help() {
+  cat <<'EOF'
+atomic — atomic commit pipeline CLI
+
+Commands:
+  status           Current pipeline stage and spec summary
+  advance <stage>  Move to named stage (propose|apply|review|merge)
+  reset            Clear .atomic/ and remove all pipeline refs
+  show-spec        Print current .atomic/spec.md
+  show-context     Print current .atomic/context.md
+  merge-specs      Merge .atomic/ domain specs into specs/ store
+  commit           Create git commit from current staged changes
+  push             Push current branch to origin
+  clean            Clear .atomic/ working state (keeps git refs)
+
+Flags:
+  --human          Human-readable output instead of JSON
+EOF
+}

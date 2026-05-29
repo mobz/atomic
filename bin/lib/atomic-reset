@@ -1,0 +1,15 @@
+cmd_reset() {
+  require_git
+  rm -rf "$ATOMIC_DIR"
+  mkdir -p "$ATOMIC_DIR"
+  git update-ref -d "$REFS_PREFIX/stage" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/spec" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/context" 2>/dev/null || true
+  git update-ref -d "$REFS_PREFIX/meta" 2>/dev/null || true
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    echo '{"ok":true,"reset":true}'
+  else
+    echo "Pipeline reset. .atomic/ cleared and refs removed."
+  fi
+}

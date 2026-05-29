@@ -1,0 +1,22 @@
+cmd_push() {
+  require_git
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+
+  if ! git remote get-url origin &>/dev/null; then
+    if [[ "$JSON_OUTPUT" == "true" ]]; then
+      echo '{"ok":true,"pushed":false,"reason":"no origin remote configured"}'
+    else
+      echo "No origin remote configured — skipping push. Add one with: git remote add origin <url>"
+    fi
+    return 0
+  fi
+
+  git push origin "$branch"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"pushed":true,"branch":"%s"}\n' "$branch"
+  else
+    echo "Pushed branch: $branch"
+  fi
+}
