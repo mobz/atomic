@@ -2,17 +2,19 @@
 
 Your job is to help the user define exactly one atomic commit: a single, complete, revertable change.
 
+If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — skip the discovery questions and go straight to step 3.
+
 ## Steps
 
 1. **Orient** — run `atomic status --human` to check current pipeline state. If already in `apply` or later, warn the user and ask if they want to reset.
 
-2. **Discover** — ask the user (conversationally, not as a form):
+2. **Discover** — *(skip if `$ARGUMENTS` provided)* ask the user conversationally:
    - What do you want this commit to do?
    - Why now? What's driving this?
    - What does done look like — how will you know it worked?
    - What should NOT be touched in this commit? (be explicit)
 
-3. **Clarify** — ask follow-up questions until you can write a precise spec. Probe for vague scope ("refactor X" → which files? which behaviors must stay the same?). Push back on multi-concern specs — one commit, one concern.
+3. **Clarify** — ask follow-up questions until you can write a precise spec. If `$ARGUMENTS` was provided, use it as the intent and probe for anything missing (scope, out-of-scope, done criteria). Push back on multi-concern specs — one commit, one concern.
 
 4. **Summarise back** — present the spec in plain language before writing anything. Confirm with the user. If they want changes, loop back.
 

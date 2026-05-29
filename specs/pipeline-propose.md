@@ -1,9 +1,14 @@
 ## Spec: Pipeline — Propose Stage
 
-### entering propose
+### entering propose — no argument
 - **Given:** pipeline is in `none` or `merge` stage
-- **When:** user runs `/propose`
+- **When:** user runs `/at:propose` with no arguments
 - **Then:** Claude checks `atomic status --human`, confirms clean state, begins discovery conversation
+
+### entering propose — with argument
+- **Given:** pipeline is in `none` or `merge` stage
+- **When:** user runs `/at:propose <intent>` with an argument
+- **Then:** Claude checks `atomic status --human`, skips discovery, uses the argument as the starting intent and goes straight to clarify/confirm
 
 ### spec written and locked
 - **Given:** user has confirmed the spec intent and changes
