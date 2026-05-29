@@ -1,3 +1,5 @@
 cmd_show_context() {
-  read_atomic_file "$ATOMIC_DIR/context.md" "$REFS_PREFIX/context"
+  if [[ -f "$ATOMIC_DIR/context.md" ]]; then
+    cat "$ATOMIC_DIR/context.md"
+  fi
 }

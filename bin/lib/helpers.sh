@@ -19,33 +19,12 @@ require_atomic_dir() {
   fi
 }
 
-read_ref() {
-  local ref="$1"
-  local sha
-  sha=$(git for-each-ref --format='%(objectname)' "$ref" 2>/dev/null || true)
-  if [[ -z "$sha" ]]; then
-    echo ""
-    return
-  fi
-  git cat-file blob "$sha" 2>/dev/null || echo ""
-}
-
-# Read a working file, falling back to its git ref if the file is absent.
-# Prints contents (possibly empty) to stdout.
-read_atomic_file() {
-  local file="$1"
-  local ref="$2"
-  if [[ -f "$file" ]]; then
-    cat "$file"
-    return 0
-  fi
-  local content
-  content=$(read_ref "$ref")
-  echo "$content"
-}
-
 current_stage() {
-  read_ref "$REFS_PREFIX/stage"
+  if [[ -f "$ATOMIC_DIR/stage" ]]; then
+    cat "$ATOMIC_DIR/stage"
+  else
+    echo ""
+  fi
 }
 
 output_json() {

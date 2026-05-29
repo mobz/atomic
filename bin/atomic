@@ -3,7 +3,6 @@ set -euo pipefail
 
 ATOMIC_DIR=".atomic"
 SPECS_DIR="specs"
-REFS_PREFIX="refs/atomic/current"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -17,8 +16,6 @@ source "$SCRIPT_DIR/lib/atomic-merge-specs"
 source "$SCRIPT_DIR/lib/atomic-commit"
 source "$SCRIPT_DIR/lib/atomic-push"
 source "$SCRIPT_DIR/lib/atomic-clean"
-source "$SCRIPT_DIR/lib/atomic-lock-spec"
-source "$SCRIPT_DIR/lib/atomic-lock-context"
 source "$SCRIPT_DIR/lib/atomic-help"
 
 # ── dispatch ──────────────────────────────────────────────────────────────────
@@ -45,8 +42,6 @@ case "${CMD:-help}" in
   commit)       cmd_commit ;;
   push)         cmd_push ;;
   clean)        cmd_clean ;;
-  lock-spec)    cmd_lock_spec ;;
-  lock-context) cmd_lock_context ;;
   help|--help)  cmd_help ;;
   *)            echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
 esac

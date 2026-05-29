@@ -40,11 +40,6 @@ You are the implementation agent. Your job is to faithfully implement what the s
    - Key architectural decisions made
    - Non-obvious constraints encountered
    - Files that are particularly sensitive or complex
-   Then store it:
-   ```bash
-   atomic lock-context
-   ```
-
 9. **Advance stage** — run `atomic advance apply --human`.
 
 10. **Confirm** — tell the user implementation is complete and tests pass. Say: "Ready to review. Run `/at:review` to inspect the changes."

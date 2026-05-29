@@ -18,12 +18,12 @@
 ### advance
 - **Given:** a git repository
 - **When:** `atomic advance <stage>` is run
-- **Then:** `refs/atomic/current/stage` is updated to `<stage>`, `refs/atomic/current/meta` is updated with timestamp, exits 0
+- **Then:** `.atomic/stage` is written with the stage name, exits 0
 
 ### reset
 - **Given:** any pipeline state
 - **When:** `atomic reset` is run
-- **Then:** `.atomic/` is cleared, all `refs/atomic/current/*` refs are deleted, exits 0
+- **Then:** `.atomic/` is cleared and recreated empty, exits 0
 
 ### show-spec — file exists
 - **Given:** `.atomic/spec.md` exists
@@ -75,22 +75,3 @@
 - **When:** `atomic clean` is run
 - **Then:** `.atomic/` directory is cleared, exits 0
 
-### lock-spec
-- **Given:** `.atomic/spec.md` exists
-- **When:** `atomic lock-spec` is run
-- **Then:** spec.md is stored as a git blob and `refs/atomic/current/spec` is updated, exits 0
-
-### lock-spec — no spec
-- **Given:** `.atomic/spec.md` does not exist
-- **When:** `atomic lock-spec` is run
-- **Then:** prints error to stderr and exits non-zero
-
-### lock-context
-- **Given:** `.atomic/context.md` exists
-- **When:** `atomic lock-context` is run
-- **Then:** context.md is stored as a git blob and `refs/atomic/current/context` is updated, exits 0
-
-### lock-context — no context
-- **Given:** `.atomic/context.md` does not exist
-- **When:** `atomic lock-context` is run
-- **Then:** prints error to stderr and exits non-zero

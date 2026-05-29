@@ -39,9 +39,8 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 - what this commit assumes about current codebase state
 ```
 
-6. **Store in git** — after writing the file:
+6. **Advance stage** — after writing the file:
    ```bash
-   atomic lock-spec --human
    atomic advance propose --human
    ```
 

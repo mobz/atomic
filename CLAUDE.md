@@ -53,6 +53,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 - `.atomic/spec.md` — current working spec (gitignored, cleared after merge)
 - `.atomic/context.md` — evolving codebase understanding for this commit
+- `.atomic/stage` — current pipeline stage name (gitignored)
 - `.atomic/delta.md` — out-of-scope items noticed during apply (future propose candidates)
 - `specs/` — committed spec store, always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)
@@ -74,12 +75,3 @@ Scenarios should be concrete and testable. During `apply`, Claude creates or upd
 
 `.atomic/spec.md` is the commit plan (ephemeral) — it is separate from behavioral specs and is never copied into `specs/`.
 
-## Git Refs
-
-Pipeline state lives in git refs under `refs/atomic/current/`:
-- `refs/atomic/current/stage` — current stage name
-- `refs/atomic/current/spec` — blob SHA of the locked spec
-- `refs/atomic/current/context` — blob SHA of context snapshot
-- `refs/atomic/current/meta` — JSON metadata (timestamp, etc)
-
-Read with `git cat-file blob <sha>`, write with `git update-ref`.

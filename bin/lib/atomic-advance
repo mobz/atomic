@@ -1,18 +1,13 @@
 cmd_advance() {
   require_git
+  require_atomic_dir
   local stage="${1:-}"
   if [[ -z "$stage" ]]; then
     echo '{"error":"usage: atomic advance <stage>"}' >&2
     exit 1
   fi
 
-  local meta
-  meta=$(printf '{"stage":"%s","timestamp":"%s"}' "$stage" "$(date -u +%Y-%m-%dT%H:%M:%SZ)")
-  local meta_sha
-  meta_sha=$(echo "$meta" | git hash-object -w --stdin)
-
-  git update-ref "$REFS_PREFIX/stage" "$(echo -n "$stage" | git hash-object -w --stdin)"
-  git update-ref "$REFS_PREFIX/meta" "$meta_sha"
+  echo -n "$stage" > "$ATOMIC_DIR/stage"
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     printf '{"ok":true,"stage":"%s"}\n' "$stage"

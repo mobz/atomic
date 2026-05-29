@@ -1,8 +1,6 @@
 cmd_show_spec() {
-  local content
-  content=$(read_atomic_file "$ATOMIC_DIR/spec.md" "$REFS_PREFIX/spec")
-  if [[ -n "$content" ]]; then
-    echo "$content"
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    cat "$ATOMIC_DIR/spec.md"
   else
     echo '{"error":"no spec found — run /at:propose first"}' >&2
     exit 1
