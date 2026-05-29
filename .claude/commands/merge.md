@@ -8,8 +8,7 @@ Your job is to finalise the atomic commit: create the commit, push it, and leave
 
 2. **Commit** — run `atomic commit --human`. This stages all changes and creates a commit whose message is the **Intent** line from `.atomic/spec.md`.
 
-3. **Push** — run `atomic push --human`. This pushes the current branch to origin.
-   - If the push fails (no remote, no upstream): tell the user clearly — don't silently fail. Suggest: `git remote add origin <url>` and then run `/merge` again.
+3. **Push** — run `atomic push --human`. This pushes to origin if configured; prints a warning and continues if no remote is set.
 
 4. **Clean** — run `atomic clean --human`. This clears `.atomic/` working state.
 

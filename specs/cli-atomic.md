@@ -60,10 +60,15 @@
 - **When:** `atomic commit` is run
 - **Then:** all changes are staged and a git commit is created with the Intent line as the message
 
-### push
+### push — origin configured
 - **Given:** a remote named `origin` exists
 - **When:** `atomic push` is run
 - **Then:** the current branch is pushed to origin, exits 0
+
+### push — no origin configured
+- **Given:** no remote named `origin` exists
+- **When:** `atomic push` is run
+- **Then:** prints a warning with instructions to add a remote, exits 0 (does not fail)
 
 ### clean
 - **Given:** any state
