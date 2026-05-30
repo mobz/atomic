@@ -1,12 +1,14 @@
 cmd_commit() {
   require_git
 
-  if [[ -f "$ATOMIC_DIR/spec.md" ]] || [[ -f "$ATOMIC_DIR/stage" ]]; then
-    echo "error: pipeline is not clean — run 'atomic clean' before committing" >&2
-    exit 1
+  local intent="atomic commit"
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    local raw
+    raw=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || echo "")
+    [[ -n "$raw" ]] && intent="$raw"
   fi
 
-  local intent="${1:-atomic commit}"
+  rm -f "$ATOMIC_DIR/spec.md" "$ATOMIC_DIR/stage"
 
   git add -A
   git commit -m "$intent"

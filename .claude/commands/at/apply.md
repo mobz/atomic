@@ -67,12 +67,10 @@ Then ask explicitly:
 
 The user says approve (or equivalent).
 
-Extract intent, clean, commit, push:
+Commit and push:
 
 ```bash
-intent=$(grep -m1 '\*\*Intent:\*\*' atomic/spec.md | sed 's/\*\*Intent:\*\* //')
-atomic clean
-atomic commit "$intent"
+atomic commit
 atomic push
 ```
 

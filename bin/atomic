@@ -39,7 +39,7 @@ case "${CMD:-help}" in
   show-spec)    cmd_show_spec ;;
   show-context) cmd_show_context ;;
   merge-specs)  cmd_merge_specs ;;
-  commit)       cmd_commit "${ARGS[@]:-}" ;;
+  commit)       cmd_commit ;;
   push)         cmd_push ;;
   clean)        cmd_clean ;;
   help|--help)  cmd_help ;;

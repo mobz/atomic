@@ -55,15 +55,15 @@
 - **When:** `atomic merge-specs` is run
 - **Then:** reports `0` files merged, exits 0
 
-### commit — clean state
-- **Given:** `atomic/spec.md` and `atomic/stage` do not exist; changes are present
-- **When:** `atomic commit "<message>"` is run
-- **Then:** all changes are staged and a git commit is created with the given message, exits 0
-
-### commit — dirty state
-- **Given:** `atomic/spec.md` or `atomic/stage` exists
+### commit — with spec
+- **Given:** `atomic/spec.md` exists with an Intent line; changes are present
 - **When:** `atomic commit` is run
-- **Then:** prints error "pipeline is not clean", exits non-zero
+- **Then:** intent is read from spec.md; spec.md and stage are removed; all changes are staged and committed with the intent as message, exits 0
+
+### commit — without spec
+- **Given:** `atomic/spec.md` does not exist; changes are present
+- **When:** `atomic commit` is run
+- **Then:** all changes are staged and committed with "atomic commit" as the fallback message, exits 0
 
 ### push — origin configured
 - **Given:** a remote named `origin` exists
