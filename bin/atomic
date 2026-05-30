@@ -12,6 +12,7 @@ source "$SCRIPT_DIR/lib/atomic-progress"
 source "$SCRIPT_DIR/lib/atomic-reset"
 source "$SCRIPT_DIR/lib/atomic-show-spec"
 source "$SCRIPT_DIR/lib/atomic-show-context"
+source "$SCRIPT_DIR/lib/atomic-show-stack"
 source "$SCRIPT_DIR/lib/atomic-commit"
 source "$SCRIPT_DIR/lib/atomic-push"
 source "$SCRIPT_DIR/lib/atomic-clean"
@@ -37,6 +38,7 @@ case "$CMD" in
   reset)           cmd_reset ;;
   show-spec)       cmd_show_spec ;;
   show-context)    cmd_show_context ;;
+  show-stack)      cmd_show_stack ;;
   commit)          cmd_commit ;;
   push)            cmd_push ;;
   clean)           cmd_clean ;;

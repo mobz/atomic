@@ -11,6 +11,7 @@
 - Pipeline state derived from spec.md checkboxes: none/proposed/applying/ready.
 - `atomic progress` prints M/N changes complete.
 - `atomic commit` refuses if any [ ] items remain.
-- Each command in bin/lib/atomic-{status,progress,reset,show-spec,show-context,commit,push,clean,help}.
-- atomic/ tracked: .gitkeep, context.md, delta.md committed; spec.md ephemeral.
+- Each command in bin/lib/atomic-{status,progress,reset,show-spec,show-context,show-stack,commit,push,clean,help}.
+- atomic/ tracked: .gitkeep, context.md, delta.md, stack.md committed; spec.md ephemeral.
+- stack.md format: `Stack: <name>` header block, then `===========\nProposal: <intent>` blocks in order; top proposal = next commit.
 - No real test suite — npm test is a placeholder.

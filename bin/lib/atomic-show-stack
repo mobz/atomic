@@ -1,0 +1,7 @@
+cmd_show_stack() {
+  if [[ -f "$ATOMIC_DIR/stack.md" ]]; then
+    cat "$ATOMIC_DIR/stack.md"
+  else
+    echo "No active stack"
+  fi
+}
