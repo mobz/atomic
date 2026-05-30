@@ -2,10 +2,10 @@
 
 ## What This Project Is
 
-`atomic` is a CLI tool that implements a lightweight atomic commit pipeline. Every unit of work moves through an explicit four-stage pipeline:
+`atomic` is a CLI tool that implements a lightweight atomic commit pipeline. Every unit of work moves through an explicit pipeline:
 
 ```
-propose → apply → review → merge
+propose → apply (loop: implement → specs → test → review) → merge
 ```
 
 This repo dogfoods itself — `atomic` is built using `atomic`.
@@ -24,9 +24,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 | Stage | Who | What happens |
 |-------|-----|--------------|
 | **propose** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
-| **apply** | Claude (auto) | Implement the spec, run tests, merge specs into `specs/`. |
-| **review** | User + Claude | Review diff + updated specs together. Approve, revise, or abandon. |
-| **merge** | Claude (auto) | Clean ephemeral files, commit, push. Ready for next propose. |
+| **apply** | Claude + User | Implement → specs → test loop. User reviews inline: approve, rollback, or discuss. Discuss re-enters the loop. Approve auto-merges. |
 
 ## Hard Rules
 
@@ -45,9 +43,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 | Command | Stage | Description |
 |---------|-------|-------------|
 | `/at:propose` | → propose | Define the next atomic commit interactively |
-| `/at:apply` | → apply | Implement the current spec automatically |
-| `/at:review` | → review | Review diff + specs, approve or redirect |
-| `/at:merge` | → merge | Commit, push, and clean up |
+| `/at:apply` | → apply | Implement, review inline, and merge — full loop |
 
 ## Key Paths
 

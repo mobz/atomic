@@ -1,51 +1,116 @@
-# /at:apply — Implement the Spec
+# /at:apply — Implement, Review, and Merge
 
-You are the implementation agent. Your job is to faithfully implement what the spec describes — nothing more, nothing adjacent.
+You own the full loop from implementation through to a committed, pushed result. You do not stop until the user approves or rolls back.
 
-## Steps
+## Entry
 
-1. **Check stage** — run `atomic status`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
+Run `atomic status`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
 
-2. **Read the spec** — run `atomic show-spec`. Read it carefully. You are allowed to implement ONLY what is listed in **Changes**. The **Out of scope** section is a hard boundary.
+Read the spec: `atomic show-spec`.  
+Read context: `atomic show-context`.
 
-3. **Read context** — run `atomic show-context`. If it exists, use it to understand the current codebase state before starting.
+---
 
-4. **Implement** — make the changes described in the spec. Work through the checklist items one by one. Stay in scope.
+## The Loop
 
-5. **Run tests** — after implementation, run the project test suite. Check `package.json` for a test script, or look for a `Makefile`, `pytest`, etc.
-   - If tests pass: proceed.
-   - If tests fail: diagnose, fix, re-run. Loop until passing.
-   - If stuck after 3 attempts: stop, surface the failure to the user with a clear description of what's failing and why you're stuck. Wait for direction.
+Advance to apply stage: `atomic advance apply`
 
-6. **Write behavioral domain specs** — for each feature or system touched by this commit, create or update the corresponding spec file in `atomic/` using the behavioral format:
+### 1. Implement
 
-   ```markdown
-   ## Spec: <feature name>
+Make the changes described in the spec's **Changes** list. If this is a re-entry after a discuss round, read the user's feedback and adjust the existing work — do not start from scratch unless the user said "start over" or "reimplement from scratch" (see Rollback below).
 
-   ### <scenario name>
-   - **Given:** system state / preconditions
-   - **When:** action or event
-   - **Then:** observable outcome(s)
+If anything is clearly out of scope, note it in `atomic/delta.md` and do not implement it.
 
-   ### <another scenario>
-   ...
-   ```
+### 2. Update behavioral domain specs
 
-   Name files by feature domain, not by commit (e.g. `cli-atomic-status.md`, `pipeline-propose.md`).
-   If a domain spec already exists in `specs/`, copy it to `atomic/` first and update it — don't create a duplicate.
+For each feature touched, create or update the corresponding spec file in `atomic/` using the behavioral format:
 
-7. **Merge specs** — run `atomic merge-specs`. This copies the named domain spec files from `atomic/` into `specs/`.
+```markdown
+## Spec: <feature name>
 
-8. **Update context** — update `atomic/context.md` with anything learned during implementation that future commits should know:
-   - Key architectural decisions made
-   - Non-obvious constraints encountered
-   - Files that are particularly sensitive or complex
-9. **Advance stage** — run `atomic advance apply`.
+### <scenario name>
+- **Given:** system state / preconditions
+- **When:** action or event
+- **Then:** observable outcome(s)
+```
 
-10. **Confirm** — tell the user implementation is complete and tests pass. Say: "Ready to review. Run `/at:review` to inspect the changes."
+Name files by domain (e.g. `pipeline-apply.md`). If a spec exists in `specs/`, copy it to `atomic/` first — don't duplicate.
+
+### 3. Run tests
+
+Run the project test suite. Fix failures and re-run. If stuck after 3 attempts, surface the failure clearly and wait for direction.
+
+### 4. Merge specs and update context
+
+```bash
+atomic merge-specs
+```
+
+Update `atomic/context.md` with anything learned during this iteration.
+
+### 5. Show summary and ask
+
+Show the user:
+- `git diff HEAD` — all changes since propose
+- Updated spec files from `specs/`
+- A plain-language summary: what changed, what was left alone, anything surprising
+
+Then ask explicitly:
+
+> **Approve**, **rollback**, or tell me what to change?
+
+---
+
+## Decisions
+
+### Approve
+
+The user says approve (or equivalent).
+
+Extract intent, clean, commit, push:
+
+```bash
+intent=$(grep -m1 '\*\*Intent:\*\*' atomic/spec.md | sed 's/\*\*Intent:\*\* //')
+atomic clean
+atomic commit "$intent"
+atomic push
+```
+
+Confirm: commit SHA, message, branch. Say "Pipeline complete. Run `/at:propose` to start the next commit."
+
+### Rollback
+
+The user says rollback or abandon:
+
+```bash
+git reset --hard HEAD
+atomic reset
+```
+
+Confirm: "Changes reverted. Pipeline cleared. Run `/at:propose` to start fresh."
+
+### Start over / reimplement from scratch
+
+The user says "start over" or "reimplement from scratch" — revert code but keep the spec, then loop:
+
+```bash
+git reset --hard HEAD
+atomic advance apply
+```
+
+Go back to **Step 1** and implement from scratch.
+
+### Discuss
+
+Anything else is a discuss round — a correction, missing test, scope adjustment.
+
+1. Make the code change directly if it's clear.
+2. If the feedback changes scope, update `atomic/spec.md` to reflect it.
+3. `atomic advance apply`
+4. Go back to **Step 1** — adjust existing work, do not reset.
+
+---
 
 ## Hard constraints
-- Never implement anything not in the spec's **Changes** list.
-- If you notice something out of scope that should be fixed, add it to `atomic/delta.md` as a future propose candidate — do not fix it now.
-- Never commit directly — that happens in `/at:merge`.
-- Never push directly — that happens in `/at:merge`.
+- Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/delta.md`.
+- Never commit or push directly — only through the Approve path above.
