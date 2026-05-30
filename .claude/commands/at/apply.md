@@ -1,6 +1,6 @@
-# /at:apply — Implement, Review, and Merge
+# /at:apply — Implement and Review
 
-You own the full loop from implementation through to a committed, pushed result. You do not stop until the user approves or rolls back.
+Your job is to implement the spec, run tests, and get user sign-off. Committing and pushing is handled by `/at:merge`.
 
 ## Entry
 
@@ -74,7 +74,7 @@ Flag non-obvious decisions, assumptions made, or edge cases the user should eyeb
 
 Then present the decision:
 
-> **Approve** — commit and push  
+> **Approve** — merge now (commit + push)  
 > **Rollback** — revert all changes and clear pipeline  
 > Or tell me what to change
 
@@ -86,12 +86,7 @@ Then present the decision:
 
 The user says approve (or equivalent).
 
-```bash
-atomic commit
-atomic push
-```
-
-Confirm: commit SHA, message, branch. Say "Pipeline complete. Run `/at:propose` to start the next commit."
+Invoke the `/at:merge` skill to commit and push.
 
 ### Rollback
 
@@ -110,7 +105,12 @@ The user says "start over" or "reimplement from scratch" — revert code but kee
 
 ```bash
 git reset --hard HEAD
-sed -i '' 's/^- \[X\]/- [ ]/g' atomic/spec.md
+python3 -c "
+import re, sys
+content = open('atomic/spec.md').read()
+content = re.sub(r'^- \[X\]', '- [ ]', content, flags=re.MULTILINE)
+open('atomic/spec.md', 'w').write(content)
+"
 ```
 
 Go back to **Step 1** and implement from scratch.
@@ -128,5 +128,5 @@ Anything else is a discuss round — a correction, missing test, scope adjustmen
 
 ## Hard constraints
 - Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/delta.md`.
-- Never commit or push directly — only through the Approve path above.
+- Never commit or push — that is `/at:merge`'s job.
 - Never mark `[X]` until the change is fully implemented and tested.

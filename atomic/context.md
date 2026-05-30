@@ -1,18 +1,14 @@
 ## Codebase Context
 
-**State after "spec.md state machine" commit:**
+**State after "apply stops at review" commit:**
 
-- Pipeline state is derived entirely from spec.md checkbox state: no file=none, all [ ]=proposed, mixed=applying, all [X]=ready.
-- `atomic advance` command removed entirely — no stage file.
-- `spec_state()` and `spec_counts()` in helpers.sh derive state from spec.md.
-- `atomic status` shows State + Intent + Progress (M/N changes complete).
-- `atomic progress` prints M/N changes complete (or "No active spec").
-- `atomic commit` refuses if any [ ] items remain in spec.md.
-- `atomic clean` removes only spec.md (no stage file).
-- `atomic reset` deletes all files except .gitkeep via find.
-- `/at:apply` marks items [X] as implemented; triggers summary when all [X]; rollback resets [X]→[ ] and does git reset --hard HEAD.
-- `/at:propose` handles all four states (none/proposed/applying/ready) gracefully.
-- `/at:merge` checks state before proceeding; simplified to commit + push.
+- `/at:apply` scope: implement → test → inline review. Stops at user approval.
+- `/at:merge` scope: commit + push. Called by user after approving in apply.
+- Approve path in apply.md says "Implementation complete. Run `/at:merge` to commit and push."
+- "start over" path uses python3 to reset [X]→[ ] checkboxes (sed -i '' is broken on macOS for bracket patterns).
+- Pipeline state derived from spec.md checkboxes: none/proposed/applying/ready.
+- `atomic progress` prints M/N changes complete.
+- `atomic commit` refuses if any [ ] items remain.
 - Each command in bin/lib/atomic-{status,progress,reset,show-spec,show-context,merge-specs,commit,push,clean,help}.
-- atomic push degrades gracefully — no origin = warning + exit 0.
-- No real test suite yet — npm test is a placeholder.
+- atomic/ tracked: .gitkeep, context.md, delta.md committed; spec.md ephemeral.
+- No real test suite — npm test is a placeholder.
