@@ -34,7 +34,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 3. **Never push directly.** All pushes go through `atomic push` in the merge stage.
 
-4. **Stay in scope.** During apply, implement only what `atomic/spec.md` describes. If you notice something out of scope that should be fixed, add it to `atomic/delta.md` as a future propose candidate.
+4. **Stay in scope.** During apply, implement only what `atomic/spec.md` describes. If you notice something out of scope, add it to `atomic/stack.md` as a new Proposal block.
 
 5. **The spec is the contract.** If you're unsure whether something is in scope, re-read the spec. If it's not explicitly listed in **Changes**, it's out of scope.
 
@@ -49,7 +49,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
 - `atomic/context.md` — evolving codebase understanding, committed with each atomic commit
-- `atomic/delta.md` — out-of-scope items noticed during apply, committed as a backlog
+- `atomic/stack.md` — ordered proposal queue; out-of-scope items from apply land here; top proposal feeds the next `/at:propose`
 - `specs/` — committed spec store, always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)
 

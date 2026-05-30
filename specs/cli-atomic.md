@@ -88,4 +88,4 @@
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run
-- **Then:** `atomic/spec.md` is deleted; `atomic/context.md` and `atomic/delta.md` are preserved, exits 0
+- **Then:** `atomic/spec.md` is deleted; `atomic/context.md` and `atomic/stack.md` are preserved, exits 0

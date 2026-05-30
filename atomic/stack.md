@@ -2,16 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Remove delta.md and all pipeline references to it
-
-Pure cleanup — no behaviour changes. Everything that used delta.md already points to stack.md.
-
-- Delete `atomic/delta.md` from the repo
-- Remove delta.md from `CLAUDE.md` key paths section
-- Remove any remaining delta.md mentions in `apply.md`
-- Update context.md
-
-===========
 Proposal: Make `/at:propose` stack-aware (read-only)
 
 Wire propose to surface the top stack proposal as the default intent. Propose reads the stack — it does not modify it.
@@ -72,3 +62,30 @@ spec.md is ambiguous — the word "spec" is overloaded (it also describes the be
 Candidate names: plan.md, commit.md, work.md, intent.md, current.md — not decided yet.
 
 Touches: all references in bin/atomic, bin/lib/*, .claude/commands/at/*, CLAUDE.md, specs/, context.md.
+
+===========
+Proposal: Fix stale `atomic merge-specs` reference in CLAUDE.md
+
+Deferred from apply: CLAUDE.md line 69 still says "During `apply`, Claude creates or updates these files in `atomic/` for every feature touched, then `atomic merge-specs` copies them into `specs/`." — merge-specs was removed; specs are now written directly to `specs/` during apply.
+
+- Update the Behavioral Spec Format section in CLAUDE.md to remove the merge-specs sentence
+
+===========
+Proposal: Add `/at:fix` command for surgical bug fixes in git history
+
+When a bug is discovered, the atomic commit philosophy says: fix it in the commit that introduced it so every commit is always complete. This requires a different workflow from a standard proposal — you're not writing new code, you're correcting history.
+
+The command needs to handle two distinct cases:
+1. **Bug is in HEAD** — amend the most recent commit. Simpler path: fix the code, `git add`, `git commit --amend`.
+2. **Bug is in an older commit** — create a fixup commit targeting that SHA, then rebase it in with `git rebase -i --autosquash`. This rewrites history from that commit forward.
+
+Key design challenges:
+- Finding the culprit commit: guide Claude through `git log`, `git blame`, and `git show` to identify where the bug was introduced — do not assume the user knows the SHA
+- Scoping the fix: a history rewrite must be surgical. The fix should touch only what the bug requires — no scope creep into the target commit
+- Safety: before any rebase, check for pushed commits and warn the user. Rewriting published history requires a force push and coordination with collaborators
+- Conflict handling: a fixup rebase can produce conflicts if subsequent commits touched the same code — the command must guide through resolution or surface clearly when manual intervention is needed
+- Spec handling: a simple one-line bug fix may not need a full spec; a complex fix might. The command should judge this and either proceed directly or invoke a lightweight spec flow
+
+Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propose` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
+
+This is a large command — consider decomposing into its own stack when the time comes.
