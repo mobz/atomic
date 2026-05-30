@@ -17,7 +17,7 @@ You are the implementation agent. Your job is to faithfully implement what the s
    - If tests fail: diagnose, fix, re-run. Loop until passing.
    - If stuck after 3 attempts: stop, surface the failure to the user with a clear description of what's failing and why you're stuck. Wait for direction.
 
-6. **Write behavioral domain specs** — for each feature or system touched by this commit, create or update the corresponding spec file in `.atomic/` using the behavioral format:
+6. **Write behavioral domain specs** — for each feature or system touched by this commit, create or update the corresponding spec file in `atomic/` using the behavioral format:
 
    ```markdown
    ## Spec: <feature name>
@@ -32,11 +32,11 @@ You are the implementation agent. Your job is to faithfully implement what the s
    ```
 
    Name files by feature domain, not by commit (e.g. `cli-atomic-status.md`, `pipeline-propose.md`).
-   If a domain spec already exists in `specs/`, copy it to `.atomic/` first and update it — don't create a duplicate.
+   If a domain spec already exists in `specs/`, copy it to `atomic/` first and update it — don't create a duplicate.
 
-7. **Merge specs** — run `atomic merge-specs`. This copies the named domain spec files from `.atomic/` into `specs/`.
+7. **Merge specs** — run `atomic merge-specs`. This copies the named domain spec files from `atomic/` into `specs/`.
 
-8. **Update context** — update `.atomic/context.md` with anything learned during implementation that future commits should know:
+8. **Update context** — update `atomic/context.md` with anything learned during implementation that future commits should know:
    - Key architectural decisions made
    - Non-obvious constraints encountered
    - Files that are particularly sensitive or complex
@@ -46,6 +46,6 @@ You are the implementation agent. Your job is to faithfully implement what the s
 
 ## Hard constraints
 - Never implement anything not in the spec's **Changes** list.
-- If you notice something out of scope that should be fixed, add it to `.atomic/delta.md` as a future propose candidate — do not fix it now.
+- If you notice something out of scope that should be fixed, add it to `atomic/delta.md` as a future propose candidate — do not fix it now.
 - Never commit directly — that happens in `/at:merge`.
 - Never push directly — that happens in `/at:merge`.

@@ -18,7 +18,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 4. **Summarise back** — present the spec in plain language before writing anything. Confirm with the user. If they want changes, loop back.
 
-5. **Write the spec** — once confirmed, write `.atomic/spec.md` in this exact format:
+5. **Write the spec** — once confirmed, write `atomic/spec.md` in this exact format:
 
 ```markdown
 ## Atomic Commit Spec

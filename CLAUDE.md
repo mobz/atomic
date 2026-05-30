@@ -23,10 +23,10 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 | Stage | Who | What happens |
 |-------|-----|--------------|
-| **propose** | User + Claude | Define what the commit will do. Produces `.atomic/spec.md`. |
+| **propose** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
 | **apply** | Claude (auto) | Implement the spec, run tests, merge specs into `specs/`. |
 | **review** | User + Claude | Review diff + updated specs together. Approve, revise, or abandon. |
-| **merge** | Claude (auto) | Commit, push, clean `.atomic/`. Ready for next propose. |
+| **merge** | Claude (auto) | Clean ephemeral files, commit, push. Ready for next propose. |
 
 ## Hard Rules
 
@@ -36,7 +36,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 3. **Never push directly.** All pushes go through `atomic push` in the merge stage.
 
-4. **Stay in scope.** During apply, implement only what `.atomic/spec.md` describes. If you notice something out of scope that should be fixed, add it to `.atomic/delta.md` as a future propose candidate.
+4. **Stay in scope.** During apply, implement only what `atomic/spec.md` describes. If you notice something out of scope that should be fixed, add it to `atomic/delta.md` as a future propose candidate.
 
 5. **The spec is the contract.** If you're unsure whether something is in scope, re-read the spec. If it's not explicitly listed in **Changes**, it's out of scope.
 
@@ -51,10 +51,10 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 ## Key Paths
 
-- `.atomic/spec.md` — current working spec (gitignored, cleared after merge)
-- `.atomic/context.md` — evolving codebase understanding for this commit
-- `.atomic/stage` — current pipeline stage name (gitignored)
-- `.atomic/delta.md` — out-of-scope items noticed during apply (future propose candidates)
+- `atomic/spec.md` — current working spec (ephemeral, never committed, cleared by `atomic clean`)
+- `atomic/stage` — current pipeline stage name (ephemeral, never committed, cleared by `atomic clean`)
+- `atomic/context.md` — evolving codebase understanding, committed with each atomic commit
+- `atomic/delta.md` — out-of-scope items noticed during apply, committed as a backlog
 - `specs/` — committed spec store, always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)
 
@@ -71,7 +71,7 @@ Files in `specs/` are feature-scoped behavioral specs — not commit history. Ea
 - **Then:** observable outcome(s)
 ```
 
-Scenarios should be concrete and testable. During `apply`, Claude creates or updates these files in `.atomic/` for every feature touched, then `atomic merge-specs` copies them into `specs/`.
+Scenarios should be concrete and testable. During `apply`, Claude creates or updates these files in `atomic/` for every feature touched, then `atomic merge-specs` copies them into `specs/`.
 
-`.atomic/spec.md` is the commit plan (ephemeral) — it is separate from behavioral specs and is never copied into `specs/`.
+`atomic/spec.md` is the commit plan (ephemeral) — it is separate from behavioral specs and is never copied into `specs/`.
 

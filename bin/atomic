@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ATOMIC_DIR=".atomic"
+ATOMIC_DIR="atomic"
 SPECS_DIR="specs"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -39,7 +39,7 @@ case "${CMD:-help}" in
   show-spec)    cmd_show_spec ;;
   show-context) cmd_show_context ;;
   merge-specs)  cmd_merge_specs ;;
-  commit)       cmd_commit ;;
+  commit)       cmd_commit "${ARGS[@]:-}" ;;
   push)         cmd_push ;;
   clean)        cmd_clean ;;
   help|--help)  cmd_help ;;

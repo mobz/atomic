@@ -13,7 +13,7 @@ Your job is to help the user review what was implemented and decide: approve, re
 4. **Summarise** — in plain language (not bullet soup), explain:
    - What changed and why
    - What was explicitly left alone (per the out-of-scope list)
-   - Anything notable that came up during implementation (from `.atomic/context.md`)
+   - Anything notable that came up during implementation (from `atomic/context.md`)
 
 5. **Ask explicitly** — present three options:
    - **Approve** — implementation looks good, proceed to merge
@@ -22,8 +22,8 @@ Your job is to help the user review what was implemented and decide: approve, re
 
 6. **Handle the decision:**
    - **Approve**: run `atomic advance review`. Say "Ready to merge. Run `/at:merge` to commit and push."
-   - **Request changes**: append the user's notes to `.atomic/spec.md` under a `**Revision notes:**` section. Run `atomic advance propose`. Say "Spec updated. Run `/at:apply` again when ready."
-   - **Abandon**: run `atomic reset`. Confirm that `.atomic/` is cleared and pipeline refs are gone. Say "Clean slate — run `/at:propose` to start fresh."
+   - **Request changes**: append the user's notes to `atomic/spec.md` under a `**Revision notes:**` section. Run `atomic advance propose`. Say "Spec updated. Run `/at:apply` again when ready."
+   - **Abandon**: run `atomic reset`. Confirm that `atomic/` ephemeral files are cleared. Say "Clean slate — run `/at:propose` to start fresh."
 
 ## Tone
 Be direct. The user is reviewing their own work — don't over-explain the diff, but do flag anything surprising or worth double-checking.

@@ -6,9 +6,9 @@
 - **Then:** Claude confirms stage before proceeding
 
 ### commit created
-- **Given:** there are changes to commit and `.atomic/spec.md` has an Intent line
-- **When:** `atomic commit` is run
-- **Then:** a git commit exists with the Intent line as the message, containing all code and specs/ changes
+- **Given:** `atomic/spec.md` and `atomic/stage` do not exist; changes are present
+- **When:** `atomic commit "<intent>"` is run
+- **Then:** a git commit exists with the intent as the message, containing all code and specs/ changes
 
 ### push succeeds
 - **Given:** a remote named `origin` is configured
@@ -22,8 +22,8 @@
 
 ### clean state after merge
 - **Given:** commit and push succeeded
-- **When:** `atomic clean` and `atomic advance merge` are run
-- **Then:** `.atomic/` is empty, pipeline stage is `merge`, user is told pipeline is complete and to run `/propose` for the next commit
+- **When:** merge completes
+- **Then:** `atomic/stage` does not exist, `atomic status` shows `Stage: none`, user is told pipeline is complete and to run `/at:propose` for the next commit
 
 ### nothing to commit
 - **Given:** no changes exist in the working tree

@@ -1,11 +1,10 @@
 cmd_reset() {
   require_git
-  rm -rf "$ATOMIC_DIR"
-  mkdir -p "$ATOMIC_DIR"
+  find "$ATOMIC_DIR" -mindepth 1 -not -name '.gitkeep' -delete
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     echo '{"ok":true,"reset":true}'
   else
-    echo "Pipeline reset. .atomic/ cleared."
+    echo "Pipeline reset. atomic/ cleared."
   fi
 }
