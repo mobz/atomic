@@ -1,14 +1,18 @@
 ## Codebase Context
 
-**State after "PR-quality review summary" commit:**
+**State after "spec.md state machine" commit:**
 
-- `/at:apply` step 5 produces a structured checklist summary, not a raw diff.
-- Summary format: What changed (tests inline), Manual verification (only if needed), Deferred items (delta.md callout), Worth double-checking. No git diff output.
-- Decision prompt: Approve / Rollback / tell me what to change.
-- `atomic commit` is self-contained: reads intent from spec.md, removes spec.md + stage, git add -A, git commit.
-- `/at:apply` owns the full loop: implement → specs → test → inline review → merge or loop.
-- `/at:review` does not exist.
-- `atomic/` is tracked in git. Ephemeral: spec.md, stage. Persistent: context.md, delta.md.
-- Each command in `bin/lib/atomic-{status,advance,reset,show-spec,show-context,merge-specs,commit,push,clean,help}`.
-- `atomic push` degrades gracefully — no origin = warning + exit 0.
-- No real test suite yet — `npm test` is a placeholder.
+- Pipeline state is derived entirely from spec.md checkbox state: no file=none, all [ ]=proposed, mixed=applying, all [X]=ready.
+- `atomic advance` command removed entirely — no stage file.
+- `spec_state()` and `spec_counts()` in helpers.sh derive state from spec.md.
+- `atomic status` shows State + Intent + Progress (M/N changes complete).
+- `atomic progress` prints M/N changes complete (or "No active spec").
+- `atomic commit` refuses if any [ ] items remain in spec.md.
+- `atomic clean` removes only spec.md (no stage file).
+- `atomic reset` deletes all files except .gitkeep via find.
+- `/at:apply` marks items [X] as implemented; triggers summary when all [X]; rollback resets [X]→[ ] and does git reset --hard HEAD.
+- `/at:propose` handles all four states (none/proposed/applying/ready) gracefully.
+- `/at:merge` checks state before proceeding; simplified to commit + push.
+- Each command in bin/lib/atomic-{status,progress,reset,show-spec,show-context,merge-specs,commit,push,clean,help}.
+- atomic push degrades gracefully — no origin = warning + exit 0.
+- No real test suite yet — npm test is a placeholder.

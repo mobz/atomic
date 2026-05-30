@@ -6,7 +6,12 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 ## Steps
 
-1. **Orient** — run `atomic status` to check current pipeline state. If already in `apply` or later, warn the user and ask if they want to reset.
+1. **Orient** — run `atomic status` to check the current state:
+   - **State: none** (no spec.md) — proceed normally.
+   - **State: proposed** (spec exists, all `[ ]`) — tell the user there's an existing proposal and show the intent. Ask: review it, change it, or start fresh?
+   - **State: applying** (spec exists, some `[X]`) — warn that an apply is in progress. Show `atomic progress`. Ask: continue the apply, change the spec, or start fresh?
+   - **State: ready** (all `[X]`) — tell the user all changes are complete. Suggest running `/at:apply` to merge, or confirm if they want to start a new proposal.
+   - If user wants to start fresh: run `atomic reset` first, then proceed.
 
 2. **Discover** — *(skip if `$ARGUMENTS` provided)* ask the user conversationally:
    - What do you want this commit to do?
@@ -39,12 +44,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 - what this commit assumes about current codebase state
 ```
 
-6. **Advance stage** — after writing the file:
-   ```bash
-   atomic advance propose
-   ```
-
-7. **Confirm** — tell the user the spec is locked. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
+6. **Confirm** — tell the user the spec is written. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
 
 ## Constraints
 - Keep the spec tight. If the intent sentence needs a semicolon, it's two commits.

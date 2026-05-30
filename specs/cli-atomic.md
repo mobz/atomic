@@ -1,24 +1,39 @@
 ## Spec: atomic CLI
 
 ### status — no active pipeline
-- **Given:** no `atomic/stage` file exists
+- **Given:** `atomic/spec.md` does not exist
 - **When:** `atomic status` is run
-- **Then:** prints `Stage: none` and exits 0
+- **Then:** prints `State: none` and exits 0
 
-### status — active pipeline with spec
-- **Given:** `atomic/stage` exists and `atomic/spec.md` exists with an Intent line
+### status — proposed
+- **Given:** `atomic/spec.md` exists with all `[ ]` items
 - **When:** `atomic status` is run
-- **Then:** prints current stage and the Intent line
+- **Then:** prints `State: proposed`, the Intent line, and `Progress: 0/N changes complete`
+
+### status — applying
+- **Given:** `atomic/spec.md` exists with a mix of `[X]` and `[ ]` items
+- **When:** `atomic status` is run
+- **Then:** prints `State: applying`, the Intent line, and the current progress count
+
+### status — ready
+- **Given:** `atomic/spec.md` exists with all `[X]` items
+- **When:** `atomic status` is run
+- **Then:** prints `State: ready`, the Intent line, and `Progress: N/N changes complete`
 
 ### status — JSON output
 - **Given:** any pipeline state
 - **When:** `atomic status --json` is run
-- **Then:** prints a JSON object with `stage`, `spec_intent`, `atomic_dir`, `specs_dir` keys
+- **Then:** prints a JSON object with `state`, `spec_intent`, `progress`, `atomic_dir`, `specs_dir` keys
 
-### advance
-- **Given:** a git repository
-- **When:** `atomic advance <stage>` is run
-- **Then:** `atomic/stage` is written with the stage name, exits 0
+### progress — active spec
+- **Given:** `atomic/spec.md` exists with checkbox items
+- **When:** `atomic progress` is run
+- **Then:** prints `M/N changes complete`
+
+### progress — no spec
+- **Given:** `atomic/spec.md` does not exist
+- **When:** `atomic progress` is run
+- **Then:** prints `No active spec`
 
 ### reset
 - **Given:** any pipeline state
@@ -55,12 +70,17 @@
 - **When:** `atomic merge-specs` is run
 - **Then:** reports `0` files merged, exits 0
 
-### commit — with spec
-- **Given:** `atomic/spec.md` exists with an Intent line; changes are present
+### commit — all complete
+- **Given:** `atomic/spec.md` exists with all `[X]` items; changes are present
 - **When:** `atomic commit` is run
-- **Then:** intent is read from spec.md; spec.md and stage are removed; all changes are staged and committed with the intent as message, exits 0
+- **Then:** intent is read from spec.md; spec.md is removed; all changes are staged and committed with the intent as message, exits 0
 
-### commit — without spec
+### commit — incomplete spec
+- **Given:** `atomic/spec.md` exists with one or more `[ ]` items
+- **When:** `atomic commit` is run
+- **Then:** prints error indicating how many items remain, exits non-zero
+
+### commit — no spec
 - **Given:** `atomic/spec.md` does not exist; changes are present
 - **When:** `atomic commit` is run
 - **Then:** all changes are staged and committed with "atomic commit" as the fallback message, exits 0
@@ -78,4 +98,4 @@
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run
-- **Then:** `atomic/spec.md` and `atomic/stage` are deleted; `atomic/context.md` and `atomic/delta.md` are preserved, exits 0
+- **Then:** `atomic/spec.md` is deleted; `atomic/context.md` and `atomic/delta.md` are preserved, exits 0

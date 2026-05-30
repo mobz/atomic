@@ -1,6 +1,16 @@
 cmd_commit() {
   require_git
 
+  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
+    local unchecked
+    unchecked=$(grep -c '^- \[ \]' "$ATOMIC_DIR/spec.md" 2>/dev/null || true)
+    unchecked=${unchecked:-0}
+    if [[ $unchecked -gt 0 ]]; then
+      echo "error: $unchecked change(s) not yet complete — mark all items [X] in spec.md first" >&2
+      exit 1
+    fi
+  fi
+
   local intent="atomic commit"
   if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
     local raw
@@ -8,7 +18,7 @@ cmd_commit() {
     [[ -n "$raw" ]] && intent="$raw"
   fi
 
-  rm -f "$ATOMIC_DIR/spec.md" "$ATOMIC_DIR/stage"
+  rm -f "$ATOMIC_DIR/spec.md"
 
   git add -A
   git commit -m "$intent"

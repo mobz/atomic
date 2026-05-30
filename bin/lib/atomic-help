@@ -3,15 +3,15 @@ cmd_help() {
 atomic — atomic commit pipeline CLI
 
 Commands:
-  status           Current pipeline stage and spec summary
-  advance <stage>  Move to named stage (propose|apply|review|merge)
-  reset            Clear .atomic/ pipeline state
-  show-spec        Print current .atomic/spec.md
-  show-context     Print current .atomic/context.md
-  merge-specs      Merge .atomic/ domain specs into specs/ store
-  commit           Create git commit from current staged changes
+  status           Pipeline state derived from spec.md (none/proposed/applying/ready)
+  progress         M/N changes complete
+  reset            Delete spec.md and clear atomic/ pipeline state
+  show-spec        Print current atomic/spec.md
+  show-context     Print current atomic/context.md
+  merge-specs      Merge atomic/ domain specs into specs/ store
+  commit           Create git commit (refuses if any [ ] items remain in spec.md)
   push             Push current branch to origin
-  clean            Clear .atomic/ working state
+  clean            Remove spec.md (clear active pipeline)
 
 Flags:
   --json           Machine-readable JSON output instead of human-readable

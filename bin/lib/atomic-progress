@@ -1,0 +1,20 @@
+cmd_progress() {
+  if [[ ! -f "$ATOMIC_DIR/spec.md" ]]; then
+    if [[ "$JSON_OUTPUT" == "true" ]]; then
+      echo '{"done":0,"total":0}'
+    else
+      echo "No active spec"
+    fi
+    return
+  fi
+  local counts checked unchecked
+  counts=$(spec_counts)
+  checked=${counts% *}
+  unchecked=${counts#* }
+  local total=$((checked + unchecked))
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"done":%d,"total":%d}\n' "$checked" "$total"
+  else
+    echo "$checked/$total changes complete"
+  fi
+}

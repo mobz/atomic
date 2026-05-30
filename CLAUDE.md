@@ -47,8 +47,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 ## Key Paths
 
-- `atomic/spec.md` — current working spec (ephemeral, never committed, cleared by `atomic clean`)
-- `atomic/stage` — current pipeline stage name (ephemeral, never committed, cleared by `atomic clean`)
+- `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
 - `atomic/context.md` — evolving codebase understanding, committed with each atomic commit
 - `atomic/delta.md` — out-of-scope items noticed during apply, committed as a backlog
 - `specs/` — committed spec store, always in sync with code

@@ -4,7 +4,11 @@ You own the full loop from implementation through to a committed, pushed result.
 
 ## Entry
 
-Run `atomic status`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
+Run `atomic status`. Check the state:
+- **none** — no spec to apply. Tell the user to run `/at:propose` first.
+- **proposed** — spec ready, all items unchecked. Begin the loop.
+- **applying** — re-entry: some items already done. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
+- **ready** — all items done. Skip straight to **Step 5** (show summary).
 
 Read the spec: `atomic show-spec`.  
 Read context: `atomic show-context`.
@@ -13,11 +17,9 @@ Read context: `atomic show-context`.
 
 ## The Loop
 
-Advance to apply stage: `atomic advance apply`
-
 ### 1. Implement
 
-Make the changes described in the spec's **Changes** list. If this is a re-entry after a discuss round, read the user's feedback and adjust the existing work — do not start from scratch unless the user said "start over" or "reimplement from scratch" (see Rollback below).
+Work through the unchecked `- [ ]` items in the spec. As each change is made, update the checkbox in `atomic/spec.md` from `- [ ]` to `- [X]`. Be precise — mark an item `[X]` only when it is fully implemented.
 
 If anything is clearly out of scope, note it in `atomic/delta.md` and do not implement it.
 
@@ -40,7 +42,13 @@ Name files by domain (e.g. `pipeline-apply.md`). If a spec exists in `specs/`, c
 
 Run the project test suite. Fix failures and re-run. If stuck after 3 attempts, surface the failure clearly and wait for direction.
 
-### 4. Merge specs and update context
+### 4. Check progress
+
+Run `atomic progress`. If any `[ ]` items remain, go back to **Step 1**.
+
+When `atomic progress` shows all items complete (e.g. `5/5 changes complete`), proceed to Step 5.
+
+### 5. Merge specs and update context
 
 ```bash
 atomic merge-specs
@@ -48,7 +56,7 @@ atomic merge-specs
 
 Update `atomic/context.md` with anything learned during this iteration.
 
-### 5. Show summary and ask
+### 6. Show summary and ask
 
 Write a PR-quality summary with no diff output. Structure it as:
 
@@ -78,8 +86,6 @@ Then present the decision:
 
 The user says approve (or equivalent).
 
-Commit and push:
-
 ```bash
 atomic commit
 atomic push
@@ -89,7 +95,7 @@ Confirm: commit SHA, message, branch. Say "Pipeline complete. Run `/at:propose` 
 
 ### Rollback
 
-The user says rollback or abandon:
+The user says rollback or abandon — revert code and delete the spec:
 
 ```bash
 git reset --hard HEAD
@@ -100,11 +106,11 @@ Confirm: "Changes reverted. Pipeline cleared. Run `/at:propose` to start fresh."
 
 ### Start over / reimplement from scratch
 
-The user says "start over" or "reimplement from scratch" — revert code but keep the spec, then loop:
+The user says "start over" or "reimplement from scratch" — revert code but keep the spec, reset checkboxes:
 
 ```bash
 git reset --hard HEAD
-atomic advance apply
+sed -i '' 's/^- \[X\]/- [ ]/g' atomic/spec.md
 ```
 
 Go back to **Step 1** and implement from scratch.
@@ -114,12 +120,13 @@ Go back to **Step 1** and implement from scratch.
 Anything else is a discuss round — a correction, missing test, scope adjustment.
 
 1. Make the code change directly if it's clear.
-2. If the feedback changes scope, update `atomic/spec.md` to reflect it.
-3. `atomic advance apply`
-4. Go back to **Step 1** — adjust existing work, do not reset.
+2. If the feedback changes scope, update `atomic/spec.md` to reflect it (add/remove `[ ]` items as needed).
+3. Update checkboxes — mark newly completed items `[X]`, uncheck items that need rework.
+4. Go back to **Step 1**.
 
 ---
 
 ## Hard constraints
 - Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/delta.md`.
 - Never commit or push directly — only through the Approve path above.
+- Never mark `[X]` until the change is fully implemented and tested.

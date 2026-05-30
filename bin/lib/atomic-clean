@@ -1,6 +1,6 @@
 cmd_clean() {
   require_git
-  rm -f "$ATOMIC_DIR/spec.md" "$ATOMIC_DIR/stage"
+  rm -f "$ATOMIC_DIR/spec.md"
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     echo '{"ok":true,"cleaned":true}'
