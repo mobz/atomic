@@ -50,14 +50,25 @@ Update `atomic/context.md` with anything learned during this iteration.
 
 ### 5. Show summary and ask
 
-Show the user:
-- `git diff HEAD` — all changes since propose
-- Updated spec files from `specs/`
-- A plain-language summary: what changed, what was left alone, anything surprising
+Write a PR-quality summary with no diff output. Structure it as:
 
-Then ask explicitly:
+**What changed**
+A checklist of every meaningful change. Mention tests inline where they were written (e.g. "added `foo` parameter to `xyz` + unit test"). Be specific — file and function names, not vague descriptions.
 
-> **Approve**, **rollback**, or tell me what to change?
+**Manual verification needed** *(only if applicable)*
+Call this section out only when something cannot be automatically tested — e.g. no test suite exists, a UI interaction, an external integration. Skip this section entirely if full test coverage exists.
+
+**Deferred items** *(only if applicable)*
+List anything added to `atomic/delta.md` during this apply, so the user knows what was intentionally left out.
+
+**Worth double-checking** *(only if applicable)*
+Flag non-obvious decisions, assumptions made, or edge cases the user should eyeball.
+
+Then present the decision:
+
+> **Approve** — commit and push  
+> **Rollback** — revert all changes and clear pipeline  
+> Or tell me what to change
 
 ---
 

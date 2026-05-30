@@ -33,7 +33,7 @@
 ### inline review — summary shown
 - **Given:** implement, specs, and tests are complete
 - **When:** Claude shows the summary
-- **Then:** git diff, updated spec files, and plain-language summary are presented; user is asked to approve, rollback, or discuss
+- **Then:** a structured checklist is presented — what changed (with inline test mentions), manual verification note if needed, deferred delta items if any, anything worth double-checking; no diff output; user is asked to approve, rollback, or discuss
 
 ### inline review — approve
 - **Given:** user approves the implementation
