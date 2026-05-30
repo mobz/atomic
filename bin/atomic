@@ -20,13 +20,13 @@ source "$SCRIPT_DIR/lib/atomic-help"
 
 # ── dispatch ──────────────────────────────────────────────────────────────────
 
-JSON_OUTPUT="true"
+JSON_OUTPUT="false"
 CMD=""
 ARGS=()
 
 for arg in "$@"; do
   case "$arg" in
-    --human) JSON_OUTPUT="false" ;;
+    --json) JSON_OUTPUT="true" ;;
     -*) ;;
     *) if [[ -z "$CMD" ]]; then CMD="$arg"; else ARGS+=("$arg"); fi ;;
   esac

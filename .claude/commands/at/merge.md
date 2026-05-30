@@ -4,15 +4,15 @@ Your job is to finalise the atomic commit: create the commit, push it, and leave
 
 ## Steps
 
-1. **Check stage** — run `atomic status --human`. If stage is not `review`, stop and tell the user. Do not proceed unless the review stage is complete.
+1. **Check stage** — run `atomic status`. If stage is not `review`, stop and tell the user. Do not proceed unless the review stage is complete.
 
-2. **Commit** — run `atomic commit --human`. This stages all changes and creates a commit whose message is the **Intent** line from `.atomic/spec.md`.
+2. **Commit** — run `atomic commit`. This stages all changes and creates a commit whose message is the **Intent** line from `.atomic/spec.md`.
 
-3. **Push** — run `atomic push --human`. This pushes to origin if configured; prints a warning and continues if no remote is set.
+3. **Push** — run `atomic push`. This pushes to origin if configured; prints a warning and continues if no remote is set.
 
-4. **Clean** — run `atomic clean --human`. This clears `.atomic/` working state.
+4. **Clean** — run `atomic clean`. This clears `.atomic/` working state.
 
-5. **Advance** — run `atomic advance merge --human`.
+5. **Advance** — run `atomic advance merge`.
 
 6. **Confirm** — tell the user:
    - The commit SHA and message

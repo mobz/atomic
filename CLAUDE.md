@@ -14,7 +14,7 @@ This repo dogfoods itself — `atomic` is built using `atomic`.
 
 **Always run this first:**
 ```bash
-bin/atomic status --human
+bin/atomic status
 ```
 
 This tells you the current pipeline stage and the active spec intent. Orient yourself before doing anything else.

@@ -4,7 +4,7 @@ Your job is to help the user review what was implemented and decide: approve, re
 
 ## Steps
 
-1. **Check stage** — run `atomic status --human`. If stage is not `apply`, tell the user and stop.
+1. **Check stage** — run `atomic status`. If stage is not `apply`, tell the user and stop.
 
 2. **Show the diff** — run `git diff HEAD` (or `git diff --staged` if changes are staged). Display it clearly.
 
@@ -21,9 +21,9 @@ Your job is to help the user review what was implemented and decide: approve, re
    - **Abandon** — scrap this and start over
 
 6. **Handle the decision:**
-   - **Approve**: run `atomic advance review --human`. Say "Ready to merge. Run `/at:merge` to commit and push."
-   - **Request changes**: append the user's notes to `.atomic/spec.md` under a `**Revision notes:**` section. Run `atomic advance propose --human`. Say "Spec updated. Run `/at:apply` again when ready."
-   - **Abandon**: run `atomic reset --human`. Confirm that `.atomic/` is cleared and pipeline refs are gone. Say "Clean slate — run `/at:propose` to start fresh."
+   - **Approve**: run `atomic advance review`. Say "Ready to merge. Run `/at:merge` to commit and push."
+   - **Request changes**: append the user's notes to `.atomic/spec.md` under a `**Revision notes:**` section. Run `atomic advance propose`. Say "Spec updated. Run `/at:apply` again when ready."
+   - **Abandon**: run `atomic reset`. Confirm that `.atomic/` is cleared and pipeline refs are gone. Say "Clean slate — run `/at:propose` to start fresh."
 
 ## Tone
 Be direct. The user is reviewing their own work — don't over-explain the diff, but do flag anything surprising or worth double-checking.

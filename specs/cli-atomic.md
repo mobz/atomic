@@ -1,18 +1,18 @@
 ## Spec: atomic CLI
 
 ### status — no active pipeline
-- **Given:** no pipeline refs exist
-- **When:** `atomic status --human` is run
+- **Given:** no `.atomic/stage` file exists
+- **When:** `atomic status` is run
 - **Then:** prints `Stage: none` and exits 0
 
 ### status — active pipeline with spec
-- **Given:** stage ref is set and `.atomic/spec.md` exists with an Intent line
-- **When:** `atomic status --human` is run
+- **Given:** `.atomic/stage` exists and `.atomic/spec.md` exists with an Intent line
+- **When:** `atomic status` is run
 - **Then:** prints current stage and the Intent line
 
 ### status — JSON output
 - **Given:** any pipeline state
-- **When:** `atomic status` is run (no `--human`)
+- **When:** `atomic status --json` is run
 - **Then:** prints a JSON object with `stage`, `spec_intent`, `atomic_dir`, `specs_dir` keys
 
 ### advance

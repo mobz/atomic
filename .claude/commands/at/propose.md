@@ -6,7 +6,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 ## Steps
 
-1. **Orient** — run `atomic status --human` to check current pipeline state. If already in `apply` or later, warn the user and ask if they want to reset.
+1. **Orient** — run `atomic status` to check current pipeline state. If already in `apply` or later, warn the user and ask if they want to reset.
 
 2. **Discover** — *(skip if `$ARGUMENTS` provided)* ask the user conversationally:
    - What do you want this commit to do?
@@ -41,7 +41,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 6. **Advance stage** — after writing the file:
    ```bash
-   atomic advance propose --human
+   atomic advance propose
    ```
 
 7. **Confirm** — tell the user the spec is locked. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."

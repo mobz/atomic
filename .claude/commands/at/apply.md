@@ -4,7 +4,7 @@ You are the implementation agent. Your job is to faithfully implement what the s
 
 ## Steps
 
-1. **Check stage** — run `atomic status --human`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
+1. **Check stage** — run `atomic status`. If stage is not `propose`, stop and tell the user to run `/at:propose` first.
 
 2. **Read the spec** — run `atomic show-spec`. Read it carefully. You are allowed to implement ONLY what is listed in **Changes**. The **Out of scope** section is a hard boundary.
 
@@ -34,13 +34,13 @@ You are the implementation agent. Your job is to faithfully implement what the s
    Name files by feature domain, not by commit (e.g. `cli-atomic-status.md`, `pipeline-propose.md`).
    If a domain spec already exists in `specs/`, copy it to `.atomic/` first and update it — don't create a duplicate.
 
-7. **Merge specs** — run `atomic merge-specs --human`. This copies the named domain spec files from `.atomic/` into `specs/`.
+7. **Merge specs** — run `atomic merge-specs`. This copies the named domain spec files from `.atomic/` into `specs/`.
 
 8. **Update context** — update `.atomic/context.md` with anything learned during implementation that future commits should know:
    - Key architectural decisions made
    - Non-obvious constraints encountered
    - Files that are particularly sensitive or complex
-9. **Advance stage** — run `atomic advance apply --human`.
+9. **Advance stage** — run `atomic advance apply`.
 
 10. **Confirm** — tell the user implementation is complete and tests pass. Say: "Ready to review. Run `/at:review` to inspect the changes."
 
