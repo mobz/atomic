@@ -2,16 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Make `/at:propose` stack-aware (read-only)
-
-Wire propose to surface the top stack proposal as the default intent. Propose reads the stack — it does not modify it.
-
-- Update `propose.md`: on entry, if stack.md exists and has at least one Proposal block, surface the top proposal's intent as the default (user can confirm, modify, or ignore it)
-- The proposal stays in stack.md while work is in progress — it is removed only when the commit lands (see next proposal)
-- Write behavioral spec for propose + stack interaction
-- Update context.md
-
-===========
 Proposal: Update `/at:merge` to pop the top stack proposal after a successful commit
 
 Merge is where work is confirmed done — the right place to remove the completed proposal from the stack.
@@ -89,3 +79,10 @@ Key design challenges:
 Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propose` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
 
 This is a large command — consider decomposing into its own stack when the time comes.
+
+===========
+Proposal: Clean up stale content in specs/pipeline-propose.md
+
+Deferred from apply: scenarios in this file reference the old pipeline (git refs, `atomic advance propose`, `refs/atomic/current/stage`) that were removed several commits ago. The new stack-aware scenarios were added correctly but the stale ones remain.
+
+- Remove or rewrite: "entering propose — no argument", "entering propose — with argument", "spec written and locked", "propose on dirty pipeline" to reflect the current pipeline

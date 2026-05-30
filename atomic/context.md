@@ -14,4 +14,5 @@
 - Each command in bin/lib/atomic-{status,progress,reset,show-spec,show-context,show-stack,commit,push,clean,help}.
 - atomic/ tracked: .gitkeep, context.md, stack.md committed; spec.md ephemeral.
 - stack.md format: `Stack: <name>` header block, then `===========\nProposal: <intent>` blocks in order; top proposal = next commit.
+- `/at:propose` is stack-aware: on entry with no args, surfaces top stack proposal as default intent; stack is never modified by propose (merge pops it).
 - No real test suite — npm test is a placeholder.
