@@ -21,7 +21,20 @@ Read context: `atomic show-context`.
 
 Work through the unchecked `- [ ]` items in the spec. As each change is made, update the checkbox in `atomic/spec.md` from `- [ ]` to `- [X]`. Be precise — mark an item `[X]` only when it is fully implemented.
 
-If anything is clearly out of scope, note it in `atomic/delta.md` and do not implement it.
+If anything is clearly out of scope, do not implement it. Add it to `atomic/stack.md` as a new Proposal block. Where it goes depends on urgency:
+
+- **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `===========` block.
+- **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the Stack: header block, before the first `===========`.
+
+Format:
+
+```
+===========
+Proposal: <brief description of the deferred item>
+Deferred from apply: <what was noticed and why it's out of scope>
+```
+
+If `atomic/stack.md` does not exist, create it with just the Proposal block.
 
 ### 2. Update behavioral domain specs
 
@@ -63,7 +76,7 @@ A checklist of every meaningful change. Mention tests inline where they were wri
 Call this section out only when something cannot be automatically tested — e.g. no test suite exists, a UI interaction, an external integration. Skip this section entirely if full test coverage exists.
 
 **Deferred items** *(only if applicable)*
-List anything added to `atomic/delta.md` during this apply, so the user knows what was intentionally left out.
+List anything added to `atomic/stack.md` during this apply, so the user knows what was intentionally left out.
 
 **Worth double-checking** *(only if applicable)*
 Flag non-obvious decisions, assumptions made, or edge cases the user should eyeball.
@@ -123,6 +136,6 @@ Anything else is a discuss round — a correction, missing test, scope adjustmen
 ---
 
 ## Hard constraints
-- Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/delta.md`.
+- Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/stack.md` as a new Proposal block.
 - Never commit or push — that is `/at:merge`'s job.
 - Never mark `[X]` until the change is fully implemented and tested.

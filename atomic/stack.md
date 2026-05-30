@@ -2,17 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Switch apply's out-of-scope path from delta.md to stack.md
-
-Parallel change — apply now writes to stack.md. delta.md still exists in the repo but nothing writes to it anymore.
-
-- Update `apply.md`: out-of-scope items get a new `Proposal:` block inserted at the top of stack.md (after the Stack: header block if present) instead of appended to delta.md
-- Write behavioral spec for apply's out-of-scope → stack.md behaviour
-- Update context.md
-
-Stack.md and delta.md coexist in this commit. System is fully functional. delta.md becomes a dead file — safe because the cleanup is a separate commit.
-
-===========
 Proposal: Remove delta.md and all pipeline references to it
 
 Pure cleanup — no behaviour changes. Everything that used delta.md already points to stack.md.

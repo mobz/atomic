@@ -8,17 +8,27 @@
 ### implement loop — first entry
 - **Given:** pipeline is in `apply` stage
 - **When:** Claude starts the implement step
-- **Then:** Claude implements all changes in the spec's Changes list; out-of-scope items are noted in `atomic/delta.md` only
+- **Then:** Claude implements all changes in the spec's Changes list; out-of-scope items are added to `atomic/stack.md` as a new Proposal block only
 
 ### implement loop — re-entry after discuss
 - **Given:** pipeline is in `apply` stage after a discuss round
 - **When:** Claude re-enters the implement step
 - **Then:** Claude adjusts existing work based on user feedback; does not reset or start from scratch
 
-### scope enforcement
-- **Given:** Claude notices something out of scope during implementation
+### scope enforcement — future work
+- **Given:** Claude notices a clearly out-of-scope item (future work, unrelated improvement) during implementation
 - **When:** during any implement step
-- **Then:** Claude adds it to `atomic/delta.md` and does not implement it
+- **Then:** Claude appends a new Proposal block at the end of `atomic/stack.md` and does not implement it
+
+### scope enforcement — urgent or prerequisite
+- **Given:** Claude notices an urgent bug or required prerequisite during implementation
+- **When:** during any implement step
+- **Then:** Claude inserts a new Proposal block at the top of the proposal list in `atomic/stack.md` (after the Stack: header if present) and does not implement it
+
+### scope enforcement — stack.md does not exist
+- **Given:** Claude notices an out-of-scope item and `atomic/stack.md` does not exist
+- **When:** during any implement step
+- **Then:** Claude creates `atomic/stack.md` with the new Proposal block
 
 ### test loop — passing
 - **Given:** implementation is complete
