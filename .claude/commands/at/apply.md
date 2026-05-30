@@ -25,7 +25,7 @@ If anything is clearly out of scope, note it in `atomic/delta.md` and do not imp
 
 ### 2. Update behavioral domain specs
 
-For each feature touched, create or update the corresponding spec file in `atomic/` using the behavioral format:
+For each feature touched, create or update the corresponding spec file directly in `specs/` using the behavioral format:
 
 ```markdown
 ## Spec: <feature name>
@@ -36,7 +36,7 @@ For each feature touched, create or update the corresponding spec file in `atomi
 - **Then:** observable outcome(s)
 ```
 
-Name files by domain (e.g. `pipeline-apply.md`). If a spec exists in `specs/`, copy it to `atomic/` first — don't duplicate.
+Name files by domain (e.g. `pipeline-apply.md`). Read the existing file first if one exists — don't duplicate.
 
 ### 3. Run tests
 
@@ -48,11 +48,7 @@ Run `atomic progress`. If any `[ ]` items remain, go back to **Step 1**.
 
 When `atomic progress` shows all items complete (e.g. `5/5 changes complete`), proceed to Step 5.
 
-### 5. Merge specs and update context
-
-```bash
-atomic merge-specs
-```
+### 5. Update context
 
 Update `atomic/context.md` with anything learned during this iteration.
 

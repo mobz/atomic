@@ -60,16 +60,6 @@
 - **When:** `atomic show-context` is run
 - **Then:** prints nothing and exits 0
 
-### merge-specs — domain files present
-- **Given:** `atomic/` contains one or more `.md` files that are not `spec.md`, `context.md`, `delta.md`, or `assumptions.md`
-- **When:** `atomic merge-specs` is run
-- **Then:** those files are copied into `specs/`, count is reported, exits 0
-
-### merge-specs — no domain files
-- **Given:** `atomic/` contains only reserved files (spec.md, context.md, etc.)
-- **When:** `atomic merge-specs` is run
-- **Then:** reports `0` files merged, exits 0
-
 ### commit — all complete
 - **Given:** `atomic/spec.md` exists with all `[X]` items; changes are present
 - **When:** `atomic commit` is run

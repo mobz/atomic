@@ -8,7 +8,6 @@ Commands:
   reset            Delete spec.md and clear atomic/ pipeline state
   show-spec        Print current atomic/spec.md
   show-context     Print current atomic/context.md
-  merge-specs      Merge atomic/ domain specs into specs/ store
   commit           Create git commit (refuses if any [ ] items remain in spec.md)
   push             Push current branch to origin
   clean            Remove spec.md (clear active pipeline)

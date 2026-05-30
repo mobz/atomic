@@ -12,7 +12,6 @@ source "$SCRIPT_DIR/lib/atomic-progress"
 source "$SCRIPT_DIR/lib/atomic-reset"
 source "$SCRIPT_DIR/lib/atomic-show-spec"
 source "$SCRIPT_DIR/lib/atomic-show-context"
-source "$SCRIPT_DIR/lib/atomic-merge-specs"
 source "$SCRIPT_DIR/lib/atomic-commit"
 source "$SCRIPT_DIR/lib/atomic-push"
 source "$SCRIPT_DIR/lib/atomic-clean"
@@ -32,16 +31,15 @@ for arg in "$@"; do
   esac
 done
 
-case "${CMD:-help}" in
-  status)       cmd_status ;;
-  progress)     cmd_progress ;;
-  reset)        cmd_reset ;;
-  show-spec)    cmd_show_spec ;;
-  show-context) cmd_show_context ;;
-  merge-specs)  cmd_merge_specs ;;
-  commit)       cmd_commit ;;
-  push)         cmd_push ;;
-  clean)        cmd_clean ;;
-  help|--help)  cmd_help ;;
-  *)            echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
+case "$CMD" in
+  status)          cmd_status ;;
+  progress)        cmd_progress ;;
+  reset)           cmd_reset ;;
+  show-spec)       cmd_show_spec ;;
+  show-context)    cmd_show_context ;;
+  commit)          cmd_commit ;;
+  push)            cmd_push ;;
+  clean)           cmd_clean ;;
+  ""|help|--help)  cmd_help ;;
+  *)               echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
 esac

@@ -23,7 +23,7 @@
 ### test loop — passing
 - **Given:** implementation is complete
 - **When:** test suite is run
-- **Then:** if tests pass, Claude proceeds to write domain specs and show summary
+- **Then:** if tests pass, Claude proceeds to write/update domain specs directly in `specs/` and show summary
 
 ### test loop — failing
 - **Given:** tests fail after implementation
