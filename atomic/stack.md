@@ -2,16 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Update `/at:merge` to pop the top stack proposal after a successful commit
-
-Merge is where work is confirmed done — the right place to remove the completed proposal from the stack.
-
-- Update `merge.md`: after `atomic commit` succeeds, if stack.md exists and has at least one Proposal block, remove the top Proposal block (from the `===========` separator down to, but not including, the next `===========`)
-- If stack.md has no proposals remaining after the pop (only the Stack: header or empty), leave the file intact — the Stack: header is still useful context
-- Write behavioral spec for merge + stack pop behaviour
-- Update context.md
-
-===========
 Proposal: Add `/at:stack` command to guide creation of a well-designed incremental proposal stack
 
 Create a slash command that leads the user through decomposing a feature into atomic, safely-shippable proposals. The command should produce stacks of the same quality as a senior engineer applying the expand/contract (parallel change) pattern — not just a flat list of "things to do."
@@ -86,3 +76,23 @@ Proposal: Clean up stale content in specs/pipeline-propose.md
 Deferred from apply: scenarios in this file reference the old pipeline (git refs, `atomic advance propose`, `refs/atomic/current/stage`) that were removed several commits ago. The new stack-aware scenarios were added correctly but the stale ones remain.
 
 - Remove or rewrite: "entering propose — no argument", "entering propose — with argument", "spec written and locked", "propose on dirty pipeline" to reflect the current pipeline
+
+===========
+Proposal: Add portable orientation context for stack awareness and file formats
+
+Each `/at:*` command currently re-derives pipeline concepts from scratch — Claude has no pre-loaded understanding of stack.md format, the Proposal block separator syntax, what atomic/ contains, or pipeline state semantics. This works but is fragile: commands are verbose because they must re-explain context inline, and a new command written without that context will behave inconsistently.
+
+Goal: a single portable context source that all at: commands can reference, covering:
+- stack.md format (Stack: header, =========== separator, Proposal: blocks, ordering)
+- atomic/ reserved files and their roles (spec.md ephemeral, context.md, stack.md persistent)
+- Pipeline state semantics (none / proposed / applying / ready)
+- The expand/contract principle for proposals
+- Atomic commit philosophy (one concern, stable at every commit)
+
+Options to explore:
+- A `.claude/commands/at/context.md` file that is loaded implicitly by Claude Code for all commands in the `at/` namespace (if Claude Code supports this)
+- A shared preamble block that is `include`d or referenced at the top of each command file
+- A `AGENTS.md` or similar convention supported by Claude Code for subdirectory agent context
+- An `atomic orientation` CLI command that prints machine-readable context for Claude to ingest at session start
+
+Whichever approach: the format and pipeline knowledge should live in one place, not be duplicated across propose.md, apply.md, merge.md, and stack.md.

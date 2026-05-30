@@ -60,7 +60,9 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 - what this commit assumes about current codebase state
 ```
 
-6. **Confirm** — tell the user the spec is written. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
+6. **Pop the stack** — if this spec was sourced from the top stack proposal, remove that Proposal block from `atomic/stack.md` (from its `===========` line down to, but not including, the next `===========`). The Stack: header block is always preserved. If the spec came from `$ARGUMENTS` or a fresh discovery, skip this step.
+
+7. **Confirm** — tell the user the spec is written. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
 
 ## Constraints
 - Keep the spec tight. If the intent sentence needs a semicolon, it's two commits.

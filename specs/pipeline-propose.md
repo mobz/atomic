@@ -33,17 +33,27 @@
 ### propose — stack proposal accepted
 - **Given:** user confirms they want to proceed with the top stack proposal
 - **When:** user says proceed or equivalent
-- **Then:** Claude uses the proposal's intent as the starting point, skips discovery questions, and goes straight to clarify; stack.md is not modified
+- **Then:** Claude uses the proposal's intent as the starting point, skips discovery questions, and goes straight to clarify; stack.md is not modified yet
 
 ### propose — stack proposal modified
 - **Given:** user wants to adjust the top stack proposal before proceeding
 - **When:** user says modify or equivalent
-- **Then:** Claude uses the proposal's intent as a starting point, asks clarifying questions to refine it, then proceeds to summarise and write spec; stack.md is not modified
+- **Then:** Claude uses the proposal's intent as a starting point, asks clarifying questions to refine it, then proceeds to summarise and write spec; stack.md is not modified yet
 
 ### propose — stack proposal ignored
 - **Given:** user does not want to use the top stack proposal
 - **When:** user says start fresh or equivalent
 - **Then:** Claude ignores the stack entry, proceeds with normal discovery conversation; stack.md is not modified
+
+### propose — spec written from stack proposal, proposal popped
+- **Given:** user confirmed a spec sourced from the top stack proposal (accepted or modified)
+- **When:** Claude writes `atomic/spec.md`
+- **Then:** the top Proposal block is removed from `atomic/stack.md` in the same step (from its `===========` line to, but not including, the next `===========`); the Stack: header block is preserved; spec.md and stack.md are written together
+
+### propose — spec written from arguments or fresh discovery
+- **Given:** spec was sourced from `$ARGUMENTS` or a fresh discovery conversation
+- **When:** Claude writes `atomic/spec.md`
+- **Then:** `atomic/stack.md` is not modified
 
 ### propose — no stack, no arguments
 - **Given:** pipeline state is `none`, no `$ARGUMENTS` provided, and `atomic/stack.md` does not exist or has no Proposal blocks
