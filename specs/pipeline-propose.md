@@ -64,3 +64,8 @@
 - **Given:** pipeline state is `none` and `$ARGUMENTS` are provided
 - **When:** user runs `/at:propose <intent>`
 - **Then:** Claude skips stack check entirely and uses the argument as the starting intent
+
+### propose — spec preserves proposal detail verbatim
+- **Given:** the proposal (from stack or `$ARGUMENTS`) contains detailed design notes — steps, rules, examples, format definitions, or implementation approach
+- **When:** Claude writes `atomic/spec.md`
+- **Then:** that detail is carried forward verbatim into the spec (in Changes items or as a context block); it is not compressed into one-line summaries; the spec is fully self-contained without reference to the original proposal

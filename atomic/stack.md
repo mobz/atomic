@@ -2,15 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Update `propose.md` to never lose detail when carrying a proposal into a spec
-
-When a proposal is popped from the stack and a spec is written, any detailed implementation notes in the proposal (steps, rules, examples, format definitions) must be carried forward verbatim into the spec — not compressed into one-liners. Once the proposal is removed from stack.md, the spec is the only record of what to build; if it's thin, apply has to reinvent what was already designed.
-
-- Add a note to `propose.md` step 5 (Write the spec): "If the proposal contained detailed design notes — steps, rules, examples, format definitions — carry them forward into the spec verbatim. Do not compress them into summary references. The spec must be self-contained once the proposal is popped."
-- Write behavioral spec scenario for this rule
-- Update context.md
-
-===========
 Proposal: Rename spec.md to something better
 
 spec.md is ambiguous — the word "spec" is overloaded (it also describes the behavioral specs in specs/). The file is really the active commit plan / work order for the current pipeline run.
@@ -72,3 +63,19 @@ Options to explore:
 - An `atomic orientation` CLI command that prints machine-readable context for Claude to ingest at session start
 
 Whichever approach: the format and pipeline knowledge should live in one place, not be duplicated across propose.md, apply.md, merge.md, and stack.md.
+
+===========
+Proposal: Support multiple named stacks
+
+Currently `atomic/stack.md` is the single active stack. As work grows across multiple concurrent features or workstreams, a single file becomes a bottleneck — unrelated proposals accumulate in one queue and the stack loses its focus.
+
+Design considerations:
+- Named stacks stored alongside the active one (e.g. `atomic/stacks/auth-rewrite.md`, `atomic/stacks/payments.md`) with `atomic/stack.md` remaining the active/checked-out stack
+- OR a `stacks/` directory with `atomic/stack.md` as a symlink or pointer to the active one
+- `atomic show-stack` continues to work against the active stack without changes
+- New commands needed: `atomic stack list`, `atomic stack switch <name>`, `atomic stack new <name>`
+- `/at:stack` needs to know whether to create a new named stack or replace the active one
+- The active stack concept must remain stable — all existing pipeline behaviour (propose popping from top, apply writing to stack, show-stack) works against whichever stack is currently active
+- Consider whether stack.md in the repo root atomic/ dir should always be the active one (symlink pattern) or whether a separate pointer file tracks which is active
+
+This is a significant change — decompose into its own stack when the time comes.

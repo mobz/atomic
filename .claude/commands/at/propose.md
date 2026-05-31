@@ -40,7 +40,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 4. **Summarise back** — present the spec in plain language before writing anything. Confirm with the user. If they want changes, loop back.
 
-5. **Write the spec** — once confirmed, write `atomic/spec.md` in this exact format:
+5. **Write the spec** — once confirmed, write `atomic/spec.md` in this exact format. If the proposal (from the stack or from `$ARGUMENTS`) contained detailed design notes — steps, rules, examples, format definitions, implementation approach — carry them forward verbatim into the relevant Changes items or as an additional context block. Do not compress them into one-line summaries. The spec must be fully self-contained; once the proposal is popped from the stack, it is gone.
 
 ```markdown
 ## Atomic Commit Spec
