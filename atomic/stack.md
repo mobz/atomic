@@ -2,36 +2,12 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Add `/at:stack` command to guide creation of a well-designed incremental proposal stack
+Proposal: Update `propose.md` to never lose detail when carrying a proposal into a spec
 
-Create a slash command that leads the user through decomposing a feature into atomic, safely-shippable proposals. The command should produce stacks of the same quality as a senior engineer applying the expand/contract (parallel change) pattern — not just a flat list of "things to do."
+When a proposal is popped from the stack and a spec is written, any detailed implementation notes in the proposal (steps, rules, examples, format definitions) must be carried forward verbatim into the spec — not compressed into one-liners. Once the proposal is removed from stack.md, the spec is the only record of what to build; if it's thin, apply has to reinvent what was already designed.
 
-The command must embed the following design constraints so it reasons about them actively, not just prompts the user:
-
-**Atomicity rule**: each proposal must have a single concern. If the intent sentence needs a semicolon, it is two proposals. Push back on bundled proposals.
-
-**Stability rule**: every proposal must leave the system in a working, non-broken state without the ones that follow it. A proposal that only makes sense once the next one lands is incomplete — it must be merged with its dependency or restructured.
-
-**Expand/contract pattern**: when introducing a replacement for something that already exists, decompose it into three phases:
-1. **Add** — introduce the new thing alongside the old. Purely additive, no removals. Safe to ship immediately.
-2. **Switch** — migrate behaviour to use the new thing. Old thing still exists but is now dormant. System fully functional.
-3. **Remove** — delete the old thing and all references to it. Pure cleanup, zero behaviour change.
-
-Apply this pattern when a proposal involves replacing a file, a command, or a behaviour.
-
-**Testability rule**: each proposal should add capability that can be verified independently — by running the CLI, reading a file, or observing a behaviour change. If a proposal produces no observable output until a later proposal lands, reconsider the split.
-
-Steps for the command:
-1. Check for an existing stack. If one exists, show it and ask: extend it, replace it, or start fresh?
-2. Elicit the feature as a user story: "As a \<persona\> I want \<feature\> so that \<goal\>." This becomes the Stack: header. Push back on vague stories.
-3. Brainstorm all the things that need to change to deliver the feature — files, commands, slash commands, specs, docs.
-4. Group changes into candidate proposals. Apply the expand/contract pattern to any proposal that involves replacing something. Challenge any proposal with more than one concern.
-5. Order proposals so each one builds cleanly on the last. No proposal should assume a future one.
-6. Walk through each proposal with the user, stating explicitly: what the system can do after this commit that it couldn't before, and what is deliberately left for later.
-7. Write `atomic/stack.md` in the standard format once the user confirms the sequence.
-
-- Write `.claude/commands/at/stack.md` implementing the above
-- Write behavioral spec for the `/at:stack` command
+- Add a note to `propose.md` step 5 (Write the spec): "If the proposal contained detailed design notes — steps, rules, examples, format definitions — carry them forward into the spec verbatim. Do not compress them into summary references. The spec must be self-contained once the proposal is popped."
+- Write behavioral spec scenario for this rule
 - Update context.md
 
 ===========

@@ -44,6 +44,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 |---------|-------|-------------|
 | `/at:propose` | → propose | Define the next atomic commit interactively |
 | `/at:apply` | → apply | Implement, review inline, and merge — full loop |
+| `/at:stack` | → stack | Design a feature as an incremental proposal stack |
 
 ## Key Paths
 

@@ -14,6 +14,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
    - **State: none** and `$ARGUMENTS` provided — proceed directly to **Step 3**.
    - **State: none** and no `$ARGUMENTS` — run `atomic show-stack`. If a Proposal block exists, surface the top proposal:
      - Show its intent and context to the user.
+     - If the proposal contains technical detail (implementation notes, architectural decisions, edge cases), note that this was captured during exploration and may be stale — the codebase may have changed since. Flag it as a starting point to verify during apply, not ground truth.
      - Ask: proceed with this, modify it, or start fresh with something else?
      - **Proceed** — use the proposal's intent as the starting point; go to **Step 3** (skip Discover).
      - **Modify** — use the proposal's intent as a starting point but ask follow-up questions; go to **Step 3**.
