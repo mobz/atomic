@@ -65,12 +65,12 @@ output_json() {
   local total=$((checked + unchecked))
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
-    printf '{"state":"%s","spec_intent":"%s","progress":"%d/%d","atomic_dir":"%s","specs_dir":"%s"}\n' \
+    printf '{"state":"%s","spec_intent":"%s","progress":"%d/%d","atomic_dir":"%s","behaviours_dir":"%s"}\n' \
       "$state" \
       "${spec_summary//\"/\\\"}" \
       "$checked" "$total" \
       "$ATOMIC_DIR" \
-      "$SPECS_DIR"
+      "$BEHAVIOURS_DIR"
   else
     echo "State:   $state"
     if [[ -n "$spec_summary" ]]; then

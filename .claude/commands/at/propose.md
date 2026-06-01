@@ -68,4 +68,4 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 ## Constraints
 - Keep the spec tight. If the intent sentence needs a semicolon, it's two commits.
 - Never start implementing during propose — that's apply's job.
-- Never write to `specs/` directly — that happens during apply.
+- Never write to `behaviours/` directly — that happens during apply.

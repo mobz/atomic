@@ -1,4 +1,4 @@
-## Spec: Pipeline — Apply Stage
+## Behaviour: Pipeline — Apply Stage
 
 ### entering apply
 - **Given:** pipeline is in `propose` stage and `atomic/spec.md` exists

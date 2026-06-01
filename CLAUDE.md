@@ -5,7 +5,7 @@
 `atomic` is a CLI tool that implements a lightweight atomic commit pipeline. Every unit of work moves through an explicit pipeline:
 
 ```
-propose → apply (loop: implement → specs → test → review) → merge
+propose → apply (loop: implement → behaviours → test → review) → merge
 ```
 
 This repo dogfoods itself — `atomic` is built using `atomic`.
@@ -51,15 +51,15 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
 - `atomic/context.md` — evolving codebase understanding, committed with each atomic commit
 - `atomic/stack.md` — ordered proposal queue; out-of-scope items from apply land here; top proposal feeds the next `/at:propose`
-- `specs/` — committed spec store, always in sync with code
+- `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)
 
-## Behavioral Spec Format
+## Behaviour File Format
 
-Files in `specs/` are feature-scoped behavioral specs — not commit history. Each file covers one domain (e.g. `cli-atomic-status.md`, `pipeline-propose.md`) and uses this format:
+Files in `behaviours/` are feature-scoped BDD scenarios — not commit history. Each file covers one domain (e.g. `cli-atomic.md`, `pipeline-propose.md`) and uses this format:
 
 ```markdown
-## Spec: <feature name>
+## Behaviour: <feature name>
 
 ### <scenario name>
 - **Given:** system state / preconditions
@@ -67,7 +67,7 @@ Files in `specs/` are feature-scoped behavioral specs — not commit history. Ea
 - **Then:** observable outcome(s)
 ```
 
-Scenarios should be concrete and testable. During `apply`, Claude creates or updates these files in `atomic/` for every feature touched, then `atomic merge-specs` copies them into `specs/`.
+Scenarios should be concrete and testable. During `apply`, Claude creates or updates these files directly in `behaviours/` for every feature touched.
 
-`atomic/spec.md` is the commit plan (ephemeral) — it is separate from behavioral specs and is never copied into `specs/`.
+`atomic/spec.md` is the commit plan (ephemeral) — it is separate from behaviour files and is never committed.
 

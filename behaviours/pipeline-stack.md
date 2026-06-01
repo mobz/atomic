@@ -1,4 +1,4 @@
-## Spec: Pipeline — Stack Command
+## Behaviour: Pipeline — Stack Command
 
 ### stack — no existing stack
 - **Given:** `atomic/stack.md` does not exist

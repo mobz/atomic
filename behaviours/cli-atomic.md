@@ -1,4 +1,4 @@
-## Spec: atomic CLI
+## Behaviour: atomic CLI
 
 ### status — no active pipeline
 - **Given:** `atomic/spec.md` does not exist
@@ -23,7 +23,7 @@
 ### status — JSON output
 - **Given:** any pipeline state
 - **When:** `atomic status --json` is run
-- **Then:** prints a JSON object with `state`, `spec_intent`, `progress`, `atomic_dir`, `specs_dir` keys
+- **Then:** prints a JSON object with `state`, `spec_intent`, `progress`, `atomic_dir`, `behaviours_dir` keys
 
 ### progress — active spec
 - **Given:** `atomic/spec.md` exists with checkbox items

@@ -1,4 +1,4 @@
-## Spec: Pipeline — Propose Stage
+## Behaviour: Pipeline — Propose Stage
 
 ### entering propose — no argument
 - **Given:** pipeline is in `none` or `merge` stage

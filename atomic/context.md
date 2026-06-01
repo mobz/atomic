@@ -4,7 +4,7 @@
 
 - `/at:apply` scope: implement → test → inline review. Stops at user approval.
 - `/at:merge` scope: commit + push. Invoked by apply on approve.
-- Domain specs written directly to `specs/` during apply — no `atomic/` staging, no `merge-specs` step.
+- Behaviour files (BDD scenarios) written directly to `behaviours/` during apply. Headers use `## Behaviour:` format.
 - `atomic merge-specs` command removed entirely (`bin/lib/atomic-merge-specs` deleted, dispatch entry gone).
 - `atomic/` reserved for: `spec.md` (ephemeral), `context.md`, `stack.md`, `.gitkeep` only.
 - "start over" path uses python3 to reset [X]→[ ] checkboxes (sed -i '' is broken on macOS for bracket patterns).

@@ -1,4 +1,4 @@
-## Spec: atomic show-stack
+## Behaviour: atomic show-stack
 
 ### show-stack — stack exists
 - **Given:** `atomic/stack.md` exists

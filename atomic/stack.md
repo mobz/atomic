@@ -4,18 +4,11 @@ As a developer I want the atomic pipeline to maintain an ordered proposal queue 
 ===========
 Proposal: Rename spec.md to something better
 
-spec.md is ambiguous — the word "spec" is overloaded (it also describes the behavioral specs in specs/). The file is really the active commit plan / work order for the current pipeline run.
+spec.md is ambiguous — the word "spec" is overloaded (it also describes the behavioral specs in behaviours/). The file is really the active commit plan / work order for the current pipeline run.
 
 Candidate names: plan.md, commit.md, work.md, intent.md, current.md — not decided yet.
 
-Touches: all references in bin/atomic, bin/lib/*, .claude/commands/at/*, CLAUDE.md, specs/, context.md.
-
-===========
-Proposal: Fix stale `atomic merge-specs` reference in CLAUDE.md
-
-Deferred from apply: CLAUDE.md line 69 still says "During `apply`, Claude creates or updates these files in `atomic/` for every feature touched, then `atomic merge-specs` copies them into `specs/`." — merge-specs was removed; specs are now written directly to `specs/` during apply.
-
-- Update the Behavioral Spec Format section in CLAUDE.md to remove the merge-specs sentence
+Touches: all references in bin/atomic, bin/lib/*, .claude/commands/at/*, CLAUDE.md, behaviours/, context.md.
 
 ===========
 Proposal: Add `/at:fix` command for surgical bug fixes in git history
@@ -38,7 +31,7 @@ Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propo
 This is a large command — consider decomposing into its own stack when the time comes.
 
 ===========
-Proposal: Clean up stale content in specs/pipeline-propose.md
+Proposal: Clean up stale content in behaviours/pipeline-propose.md
 
 Deferred from apply: scenarios in this file reference the old pipeline (git refs, `atomic advance propose`, `refs/atomic/current/stage`) that were removed several commits ago. The new stack-aware scenarios were added correctly but the stale ones remain.
 

@@ -38,10 +38,10 @@ If `atomic/stack.md` does not exist, create it with just the Proposal block.
 
 ### 2. Update behavioral domain specs
 
-For each feature touched, create or update the corresponding spec file directly in `specs/` using the behavioral format:
+For each feature touched, create or update the corresponding behaviour file directly in `behaviours/` using the behavioural format:
 
 ```markdown
-## Spec: <feature name>
+## Behaviour: <feature name>
 
 ### <scenario name>
 - **Given:** system state / preconditions

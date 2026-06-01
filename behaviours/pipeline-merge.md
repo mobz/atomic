@@ -1,4 +1,4 @@
-## Spec: Pipeline — Merge Stage
+## Behaviour: Pipeline — Merge Stage
 
 ### entering merge
 - **Given:** pipeline is in `review` stage
