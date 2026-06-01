@@ -4,12 +4,14 @@ Your job is to help the user define exactly one atomic commit: a single, complet
 
 If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — skip the discovery questions and go straight to step 3.
 
+@.claude/docs/spec-context.md
+
 ## Steps
 
 1. **Orient** — run `atomic status` to check the current state:
-   - **State: proposed** (spec exists, all `[ ]`) — tell the user there's an existing proposal and show the intent. Ask: review it, change it, or start fresh?
-   - **State: applying** (spec exists, some `[X]`) — warn that an apply is in progress. Show `atomic progress`. Ask: continue the apply, change the spec, or start fresh?
-   - **State: ready** (all `[X]`) — tell the user all changes are complete. Suggest running `/at:apply` to merge, or confirm if they want to start a new proposal.
+   - **State: proposed** — tell the user there's an existing proposal and show the intent. Ask: review it, change it, or start fresh?
+   - **State: applying** — warn that an apply is in progress. Show `atomic progress`. Ask: continue the apply, change the spec, or start fresh?
+   - **State: ready** — tell the user all changes are complete. Suggest running `/at:apply` to merge, or confirm if they want to start a new proposal.
    - If user wants to start fresh: run `atomic reset` first, then proceed.
    - **State: none** and `$ARGUMENTS` provided — proceed directly to **Step 3**.
    - **State: none** and no `$ARGUMENTS` — run `atomic show-stack`. If a Proposal block exists, surface the top proposal:
@@ -40,26 +42,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 4. **Summarise back** — present the spec in plain language before writing anything. Confirm with the user. If they want changes, loop back.
 
-5. **Write the spec** — once confirmed, write `atomic/spec.md` in this exact format. If the proposal (from the stack or from `$ARGUMENTS`) contained detailed design notes — steps, rules, examples, format definitions, implementation approach — carry them forward verbatim into the relevant Changes items or as an additional context block. Do not compress them into one-line summaries. The spec must be fully self-contained; once the proposal is popped from the stack, it is gone.
-
-```markdown
-## Atomic Commit Spec
-
-**Intent:** one sentence describing what this commit does
-
-**Changes:**
-- [ ] specific thing to change
-- [ ] specific thing to change
-
-**Out of scope:**
-- things explicitly not being touched
-
-**Done when:**
-- acceptance criteria (testable)
-
-**Assumptions:**
-- what this commit assumes about current codebase state
-```
+5. **Write the spec** — once confirmed, write `atomic/spec.md` using the spec.md format. If the proposal (from the stack or from `$ARGUMENTS`) contained detailed design notes — steps, rules, examples, format definitions, implementation approach — carry them forward verbatim into the relevant Changes items or as an additional context block. Do not compress them into one-line summaries. The spec must be fully self-contained; once the proposal is popped from the stack, it is gone.
 
 6. **Pop the stack** — if this spec was sourced from the top stack proposal, remove that Proposal block from `atomic/stack.md` (from its `===========` line down to, but not including, the next `===========`). The Stack: header block is always preserved. If the spec came from `$ARGUMENTS` or a fresh discovery, skip this step.
 

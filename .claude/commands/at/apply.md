@@ -2,12 +2,14 @@
 
 Your job is to implement the spec, run tests, and get user sign-off. Committing and pushing is handled by `/at:merge`.
 
+@.claude/docs/spec-context.md
+
 ## Entry
 
 Run `atomic status`. Check the state:
 - **none** — no spec to apply. Tell the user to run `/at:propose` first.
-- **proposed** — spec ready, all items unchecked. Begin the loop.
-- **applying** — re-entry: some items already done. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
+- **proposed** — Begin the loop.
+- **applying** — re-entry. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
 - **ready** — all items done. Skip straight to **Step 5** (show summary).
 
 Read the spec: `atomic show-spec`.  

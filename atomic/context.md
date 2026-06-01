@@ -20,3 +20,7 @@
 - `/at:stack` guides feature decomposition into a proposal stack: enforces atomicity, stability, expand/contract pattern, and testability rules; writes `atomic/stack.md` with Stack: header + user story + ordered Proposal blocks.
 - `atomic/stack.md` is the single active stack; future multi-stack support is a separate concern.
 - No real test suite — npm test is a placeholder.
+- `.claude/docs/` directory introduced for shared context files injected into commands via `@` references.
+- `.claude/docs/spec-context.md` covers spec.md format and pipeline state semantics; injected near top of propose.md, apply.md, merge.md.
+- Inline spec format template removed from propose.md step 5; inline state parentheticals removed from all three commands — these now live in spec-context.md.
+- `atomic/stacks/` directory introduced for archiving named stacks; `atomic/stacks/stack-awareness.md` holds the in-progress stack-awareness feature proposals.

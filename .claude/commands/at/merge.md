@@ -2,12 +2,14 @@
 
 Your job is to finalise the atomic commit: create the commit, push it, and leave the workspace clean.
 
+@.claude/docs/spec-context.md
+
 ## Steps
 
 1. **Check state** — run `atomic status`.
-   - **ready** — all changes complete. Proceed.
+   - **ready** — Proceed.
    - **applying** — show `atomic progress`. Tell the user how many items remain and suggest running `/at:apply` to complete them.
-   - **proposed** — no changes applied yet. Tell the user to run `/at:apply` first.
+   - **proposed** — Tell the user to run `/at:apply` first.
    - **none** — nothing to merge.
 
 2. **Commit** — run `atomic commit`. Reads intent from spec.md, removes spec.md, stages all changes, and commits. Will refuse if any `[ ]` items remain.
