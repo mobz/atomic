@@ -2,42 +2,6 @@ Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
 ===========
-Proposal: Rename spec.md to something better
-
-spec.md is ambiguous — the word "spec" is overloaded (it also describes the behavioral specs in behaviours/). The file is really the active commit plan / work order for the current pipeline run.
-
-Candidate names: plan.md, commit.md, work.md, intent.md, current.md — not decided yet.
-
-Touches: all references in bin/atomic, bin/lib/*, .claude/commands/at/*, CLAUDE.md, behaviours/, context.md.
-
-===========
-Proposal: Add `/at:fix` command for surgical bug fixes in git history
-
-When a bug is discovered, the atomic commit philosophy says: fix it in the commit that introduced it so every commit is always complete. This requires a different workflow from a standard proposal — you're not writing new code, you're correcting history.
-
-The command needs to handle two distinct cases:
-1. **Bug is in HEAD** — amend the most recent commit. Simpler path: fix the code, `git add`, `git commit --amend`.
-2. **Bug is in an older commit** — create a fixup commit targeting that SHA, then rebase it in with `git rebase -i --autosquash`. This rewrites history from that commit forward.
-
-Key design challenges:
-- Finding the culprit commit: guide Claude through `git log`, `git blame`, and `git show` to identify where the bug was introduced — do not assume the user knows the SHA
-- Scoping the fix: a history rewrite must be surgical. The fix should touch only what the bug requires — no scope creep into the target commit
-- Safety: before any rebase, check for pushed commits and warn the user. Rewriting published history requires a force push and coordination with collaborators
-- Conflict handling: a fixup rebase can produce conflicts if subsequent commits touched the same code — the command must guide through resolution or surface clearly when manual intervention is needed
-- Spec handling: a simple one-line bug fix may not need a full spec; a complex fix might. The command should judge this and either proceed directly or invoke a lightweight spec flow
-
-Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propose` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
-
-This is a large command — consider decomposing into its own stack when the time comes.
-
-===========
-Proposal: Clean up stale content in behaviours/pipeline-propose.md
-
-Deferred from apply: scenarios in this file reference the old pipeline (git refs, `atomic advance propose`, `refs/atomic/current/stage`) that were removed several commits ago. The new stack-aware scenarios were added correctly but the stale ones remain.
-
-- Remove or rewrite: "entering propose — no argument", "entering propose — with argument", "spec written and locked", "propose on dirty pipeline" to reflect the current pipeline
-
-===========
 Proposal: Add portable orientation context for stack awareness and file formats
 
 Each `/at:*` command currently re-derives pipeline concepts from scratch — Claude has no pre-loaded understanding of stack.md format, the Proposal block separator syntax, what atomic/ contains, or pipeline state semantics. This works but is fragile: commands are verbose because they must re-explain context inline, and a new command written without that context will behave inconsistently.
@@ -72,3 +36,40 @@ Design considerations:
 - Consider whether stack.md in the repo root atomic/ dir should always be the active one (symlink pattern) or whether a separate pointer file tracks which is active
 
 This is a significant change — decompose into its own stack when the time comes.
+
+===========
+Proposal: Associate each stack with a dedicated feature branch
+
+Currently all commits land on whatever branch is checked out — there's no connection between a stack and a branch. In a stacked diffs workflow, each stack represents a feature being built incrementally and should own a dedicated branch separate from the integration branch (main).
+
+Design considerations:
+- The Stack: header should declare a target branch, e.g. `Branch: feature/auth-rewrite`
+- `/at:stack` should create or checkout the declared branch when writing stack.md
+- `atomic push` should push to the stack's declared branch, not blindly to current branch
+- `atomic status` should surface the active branch alongside pipeline state
+- When all proposals in a stack are done, the workflow should guide opening a PR from the feature branch to the integration branch
+- The integration branch (main/master) should be configurable — not hardcoded
+- Consider: what happens when proposals from two different stacks are interleaved? The branch association makes this explicit and prevents accidental cross-contamination
+- `atomic show-stack` could show the branch status (ahead/behind integration branch)
+
+This ties into multi-stack support — each stack lives on its own branch, switching stacks means switching branches. Coordinate with the multiple named stacks proposal.
+
+===========
+Proposal: Add `/at:fix` command for surgical bug fixes in git history
+
+When a bug is discovered, the atomic commit philosophy says: fix it in the commit that introduced it so every commit is always complete. This requires a different workflow from a standard proposal — you're not writing new code, you're correcting history.
+
+The command needs to handle two distinct cases:
+1. **Bug is in HEAD** — amend the most recent commit. Simpler path: fix the code, `git add`, `git commit --amend`.
+2. **Bug is in an older commit** — create a fixup commit targeting that SHA, then rebase it in with `git rebase -i --autosquash`. This rewrites history from that commit forward.
+
+Key design challenges:
+- Finding the culprit commit: guide Claude through `git log`, `git blame`, and `git show` to identify where the bug was introduced — do not assume the user knows the SHA
+- Scoping the fix: a history rewrite must be surgical. The fix should touch only what the bug requires — no scope creep into the target commit
+- Safety: before any rebase, check for pushed commits and warn the user. Rewriting published history requires a force push and coordination with collaborators
+- Conflict handling: a fixup rebase can produce conflicts if subsequent commits touched the same code — the command must guide through resolution or surface clearly when manual intervention is needed
+- Spec handling: a simple one-line bug fix may not need a full spec; a complex fix might. The command should judge this and either proceed directly or invoke a lightweight spec flow
+
+Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propose` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
+
+This is a large command — consider decomposing into its own stack when the time comes.

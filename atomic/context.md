@@ -15,6 +15,7 @@
 - atomic/ tracked: .gitkeep, context.md, stack.md committed; spec.md ephemeral.
 - stack.md format: `Stack: <name>` header block, then `===========\nProposal: <intent>` blocks in order; top proposal = next commit.
 - `/at:propose` is stack-aware: on entry with no args, surfaces top stack proposal as default intent; when spec.md is written from a stack proposal, that proposal is popped from stack.md in the same step (state moves from queued → active); `$ARGUMENTS` or fresh discovery never touches stack.md.
+- `behaviours/pipeline-propose.md` is now clean — stale old-pipeline scenarios removed.
 - When writing spec.md, detailed design notes from the proposal (steps, rules, examples, implementation approach) must be carried forward verbatim — not compressed. The spec is the only record once the proposal is popped.
 - `/at:stack` guides feature decomposition into a proposal stack: enforces atomicity, stability, expand/contract pattern, and testability rules; writes `atomic/stack.md` with Stack: header + user story + ordered Proposal blocks.
 - `atomic/stack.md` is the single active stack; future multi-stack support is a separate concern.
