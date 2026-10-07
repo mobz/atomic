@@ -2,23 +2,6 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Create behaviour-context.md and wire it into apply
-
-Create `.claude/docs/behaviour-context.md` covering the behaviours/ BDD format. Wire it into apply.md, the only command that creates or updates behaviour files. Trim the inline format block.
-
-**What the file covers:**
-- `behaviours/` directory: feature-scoped scenario files, one file per domain (e.g. `pipeline-apply.md`)
-- `## Behaviour: <feature name>` header format
-- Scenario structure: `### <scenario name>` with `**Given:**`, `**When:**`, `**Then:**` lines
-- Read existing file before writing — don't duplicate scenarios
-
-**Wiring — add `@.claude/docs/behaviour-context.md` after the opening direction line in `apply.md`, before `## Entry`**
-
-**Trim from apply.md:** remove the behaviour format block in step 2 (the fenced markdown template showing `## Behaviour:` / Given/When/Then) — keep the procedural instruction to create or update files for each feature touched
-
-**Done when:** `/at:apply` on a commit that touches features still produces correctly-formatted behaviour files; the format block no longer appears inline in apply.md
-
-===========
 Proposal: Create stack-context.md and wire it into propose, apply, and stack
 
 Create `.claude/docs/stack-context.md` covering the stack.md format. Wire it into the three commands that read from or write to the stack. Trim the inline format explanations.
