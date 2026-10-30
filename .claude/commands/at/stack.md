@@ -2,6 +2,8 @@
 
 Your job is to guide the user exploring a feature and composing it into atomic, safely-shippable proposals. Each proposal becomes an independently deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
 
+@.claude/docs/stack-context.md
+
 ## Steps
 
 ### 1. Check for an existing stack
@@ -141,22 +143,7 @@ If the proposal contains multiple different ideas consider if they can be split 
 
 Present the ordered proposals in summary to the user explaining any splits you made and why but also write the complete stack and proposals so the user can view them in detail in a code editor.
 
-write `atomic/stack.md` in this exact format:
-
-```
-Stack: <short feature name>
-<user story — "As a <persona> I want <feature> so that <goal>">
-<optional: additional context about scope, constraints, or motivation>
-
-===========
-Proposal: <intent sentence for first commit>
-<detail: what changes, design and implementation notes, why this order>
-
-===========
-Proposal: <intent sentence for second commit>
-<detail: what changes, design and implementation notes, why this order>
-```
-
+Write `atomic/stack.md` using the stack format.
 
 Rules:
 - The `Stack:` header and user story context always come first

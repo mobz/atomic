@@ -4,6 +4,7 @@ Your job is to implement the spec, run tests, and get user sign-off. Committing 
 
 @.claude/docs/spec-context.md
 @.claude/docs/behaviour-context.md
+@.claude/docs/stack-context.md
 
 ## Entry
 
@@ -24,20 +25,10 @@ Read context: `atomic show-context`.
 
 Work through the unchecked `- [ ]` items in the spec. As each change is made, update the checkbox in `atomic/spec.md` from `- [ ]` to `- [X]`. Be precise — mark an item `[X]` only when it is fully implemented.
 
-If anything is clearly out of scope, do not implement it. Add it to `atomic/stack.md` as a new Proposal block. Where it goes depends on urgency:
+If anything is clearly out of scope, do not implement it. Add it to `atomic/stack.md` as a deferred Proposal block (see the stack format). Where it goes depends on urgency:
 
 - **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `===========` block.
 - **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the Stack: header block, before the first `===========`.
-
-Format:
-
-```
-===========
-Proposal: <brief description of the deferred item>
-Deferred from apply: <what was noticed and why it's out of scope>
-```
-
-If `atomic/stack.md` does not exist, create it with just the Proposal block.
 
 ### 2. Update behavioral domain specs
 

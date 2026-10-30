@@ -2,30 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Create stack-context.md and wire it into propose, apply, and stack
-
-Create `.claude/docs/stack-context.md` covering the stack.md format. Wire it into the three commands that read from or write to the stack. Trim the inline format explanations.
-
-**What the file covers:**
-- stack.md format: `Stack:` header line, user story, `===========` separator, `Proposal:` blocks
-- Ordering: top proposal = next commit; top-to-bottom = chronological work order
-- The `Stack:` header block is always preserved — never removed
-- How to add a deferred item from apply: `===========` then `Proposal:` then `Deferred from apply:` line
-- How to pop the top proposal: remove from the proposal's `===========` line down to (not including) the next `===========`
-
-**Wiring — add `@.claude/docs/stack-context.md` after the opening direction line, before the first section header:**
-- `propose.md` (alongside spec-context, before `## Steps`)
-- `apply.md` (alongside spec-context and behaviour-context, before `## Entry`)
-- `stack.md` (before `## Steps`)
-
-**Trim from each file:**
-- `propose.md`: remove the inline stack format explanation in the pop step (step 6) — keep the procedural "remove that Proposal block" instruction
-- `apply.md`: remove the fenced stack Proposal block format example in step 1 — keep the procedural instruction about where deferred items go (end vs top of stack)
-- `stack.md`: remove the stack.md write format block in step 6 — keep the Rules list
-
-**Done when:** `/at:propose` correctly surfaces and pops top proposals; `/at:apply` correctly appends deferred items; `/at:stack` writes correctly-formatted stack.md; format blocks no longer appear inline in those files
-
-===========
 Proposal: Explore preamble design for proactive atomicity challenge
 
 **Not ready for implementation. This proposal captures a design direction that needs experimentation before it can be specified.**

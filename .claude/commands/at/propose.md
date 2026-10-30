@@ -5,6 +5,7 @@ Your job is to help the user define exactly one atomic commit: a single, complet
 If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — skip the discovery questions and go straight to step 3.
 
 @.claude/docs/spec-context.md
+@.claude/docs/stack-context.md
 
 ## Steps
 
@@ -44,7 +45,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 5. **Write the spec** — once confirmed, write `atomic/spec.md` using the spec.md format. If the proposal (from the stack or from `$ARGUMENTS`) contained detailed design notes — steps, rules, examples, format definitions, implementation approach — carry them forward verbatim into the relevant Changes items or as an additional context block. Do not compress them into one-line summaries. The spec must be fully self-contained; once the proposal is popped from the stack, it is gone.
 
-6. **Pop the stack** — if this spec was sourced from the top stack proposal, remove that Proposal block from `atomic/stack.md` (from its `===========` line down to, but not including, the next `===========`). The Stack: header block is always preserved. If the spec came from `$ARGUMENTS` or a fresh discovery, skip this step.
+6. **Pop the stack** — if this spec was sourced from the top stack proposal, pop that Proposal block from `atomic/stack.md` (see the stack format). If the spec came from `$ARGUMENTS` or a fresh discovery, skip this step.
 
 7. **Confirm** — tell the user the spec is written. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
 
