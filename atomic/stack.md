@@ -2,34 +2,40 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Explore preamble design for proactive atomicity challenge
+Proposal: Reword the scope rule so a commit completes its concern — tests, docs, and behaviours it makes stale are in scope even when the spec does not list them
+Findings from the preamble spike (harness saved at `../atomic-experiments/preamble`: `fixture/` toy Node todo CLI with atomic installed, `scenarios/apply-{json,newest}/` spec + scorer, `variants/`, `run.sh <scenario> <variant> <n>` runs headless `claude -p "/at:apply"`, results in `runs/`).
 
-**Not ready for implementation. This proposal captures a design direction that needs experimentation before it can be specified.**
+An atomic commit is one concern, complete: code plus everything the change makes stale or untested, so the codebase is releasable after every commit (vertical slice). The spike measured both directions during apply — precision (incidental items left alone and deferred: a help-text typo, an off-by-one in `truncate`, a duplicated `formatDate`) and completeness (tests, README text and example, behaviours, code comment updated).
 
-**Root cause identified:** The existing commands embed atomicity rules as procedural checklist items in the steps section. Claude reads them as instructions to follow, not as a first-order instinct. The result: atomicity is applied when triggered (e.g. "the intent sentence needs a semicolon") but not proactively volunteered as a posture throughout the interaction.
+Results, 5 runs each:
+- Baseline, spec lists every file (`apply-json`): precision 5/5, completeness 5/5.
+- Baseline, spec lists only `src/format.js` for a behaviour change (`apply-newest`): precision 5/5; tests, behaviours, comment 5/5; **README 0/5** — deferred to the stack every run, with Claude noting the README is now wrong. It updated tests (justified by "Done when") and behaviours (required by apply.md), but applied CLAUDE.md rule 5 ("not explicitly listed in Changes → out of scope") literally to the README.
+- Reworded rules (`variants/rules-releasable`), `apply-newest`: precision 5/5 (incidentals still deferred), **README 5/5**, all other completeness 5/5; ~25 turns vs ~22.
 
-**Hypothesis:** A short preamble paragraph, placed before the direction and steps, would set Claude's stance before it forms its working posture. Early tokens shape how later instructions are interpreted — a preamble stating the engineering identity ("you are an engineer who refuses vague proposals") makes the subsequent rules feel like expressions of that identity rather than an external checklist.
+Conclusion: apply-stage scope creep was not the problem — the model already restrains itself under the current rules. The failure was under-completion caused by our own rule wording. No preamble needed for apply.
 
-**Proposed command structure:**
-```
-# /at:command — Title
+Change (the three sentences from the winning variant):
+- `CLAUDE.md` rule 5 → "**The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small."
+- `.claude/commands/at/apply.md` step 1, before the out-of-scope paragraph: "Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit." and "If anything is clearly out of scope (unrelated to the concern), do not implement it."
+- `apply.md` hard constraint → "Never implement anything unrelated to the spec's concern — add out-of-scope items to `atomic/stack.md` as a new Proposal block. Updates the change makes necessary (tests, docs, behaviours) are part of the concern, not out of scope."
+- `behaviours/pipeline-apply.md`: add a "completes the concern" scenario (unlisted stale docs/tests are updated, unrelated items still deferred).
+- Check CLAUDE.md rule 4 and the README's "Out-of-scope work…" line read consistently with the new rule.
 
-<preamble: 1 short paragraph — who you are, your non-negotiables, your stance>
-<direction: "Your job is to...">
-@.claude/docs/spec-context.md
-@.claude/docs/stack-context.md   ← only what this command needs
-<steps>
-```
+===========
+Proposal: Explore whether `/at:propose` writes complete, vertically sliced specs and splits bundled requests unprompted
+**Not ready for implementation — a spike, continuing the preamble exploration.** The apply spike (see the scope-rule proposal) found no apply-stage atomicity problem; the open question moves upstream. The `apply-newest` README miss was really an incomplete spec, and specs are written by `/at:propose`.
 
-The injected context docs (from proposals 1–3) slot in between direction and steps — after Claude knows its role, but before the procedural detail. This keeps the preamble clean and lets format knowledge load in a position where it informs step execution.
+Original hypothesis (still untested): commands embed atomicity as procedural checklist items, so Claude applies it when triggered ("the intent sentence needs a semicolon") rather than as a posture. A short preamble before the direction line — an engineering stance — might make splitting proactive. Candidate command structure: `# title` → preamble (one paragraph: who you are, non-negotiables) → direction ("Your job is to…") → `@.claude/docs/*` includes → steps.
 
-**Open design questions:**
-- What does the preamble actually say? One shared paragraph across all commands, or per-command variants? `/at:merge` probably doesn't need an atomicity stance; `/at:stack` and `/at:propose` need it most
-- How opinionated can it be before it starts fighting the steps? There is a tension between a strong identity statement and a command that also needs to follow a specific procedure
-- Does the attention management benefit hold across different context window sizes? Needs empirical testing — run the commands with and without the preamble, compare behaviour on ambiguous inputs
-- Is "proactively challenge atomicity" best expressed in the preamble, or in the exploration phase of stack.md where it's structurally enforced by the Design Constraints section?
+What to measure, both directions:
+- Too wide: accepts a bundled request ("add --verbose and fix the help typo"; implicit bundles like "support YAML config") instead of proposing a split.
+- Too thin: spec omits the tests/docs/behaviours the change makes stale.
+- Sliced wrong: horizontal split (code / tests / docs as separate commits) instead of vertical, releasable slices.
+- Controls: a genuinely single-concern request must not be split (over-correction).
 
-**Spike before implementing:** write two versions of the stack.md preamble and test against real feature explorations. Measure whether Claude volunteers splits unprompted vs waiting to be asked.
+Approach: reuse `../atomic-experiments/preamble` — add `propose-*` scenarios run as `claude -p "/at:propose <request>"` (arguments skip discovery), score the first response and any written spec (deterministic checks on spec items, plus an LLM judge with a fixed rubric for split proposals). Variants: baseline; both-sides preamble ("each commit is one concern, finished: code, tests, and every doc and behaviour it makes stale…"); restraint-only preamble (over-steer check); same wording placed in the steps instead of as a preamble (placement vs content). ~5 runs per cell; headless runs use the claude.ai plan's usage limits — run small batches and review between them.
+
+Open questions carried over: shared vs per-command preamble (`/at:merge` likely needs none); how opinionated before it fights the steps; whether the effect holds across model sizes (`run.sh … sonnet`); whether proactive challenge belongs in a preamble or in `/at:stack`'s Design Constraints.
 
 ===========
 Proposal: Remove `atomic/context.md` from the repository
