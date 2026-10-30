@@ -55,12 +55,22 @@
 - **When:** user says rollback or abandon
 - **Then:** Claude runs `git reset --hard HEAD` and `atomic clean`; confirms pipeline is cleared
 
-### inline review — start over
-- **Given:** user wants to reimplement from scratch with the current spec
-- **When:** user says "start over" or "reimplement from scratch"
-- **Then:** Claude runs `git reset --hard HEAD`, keeps `atomic/spec.md` but resets every `[X]` to `[ ]` (state returns to `proposed`), and re-enters the implement loop from scratch
-
 ### inline review — discuss
-- **Given:** user provides feedback that is not approve, rollback, or start over
-- **When:** user responds with a correction, question, or change request
-- **Then:** Claude makes the adjustment directly; updates `atomic/spec.md` if scope changes (adding or removing `[ ]` items); marks newly completed items `[X]` and unchecks items that need rework; re-enters the implement loop
+- **Given:** the summary has been shown
+- **When:** the user responds with anything other than approve or rollback (a correction, question, change request, or "start over")
+- **Then:** Claude records any change of scope or approach in `atomic/spec.md` (adding, changing, or removing `[ ]` items, or an Assumptions note), acts on it, and re-enters the implement loop
+
+### inline review — discuss, unclear feedback
+- **Given:** the user's discuss feedback does not say what should change (e.g. a bare "start over")
+- **When:** Claude reads the feedback
+- **Then:** Claude asks what was wrong and waits before changing anything
+
+### inline review — discuss, adjust in place
+- **Given:** the new information can be applied to the current implementation
+- **When:** Claude acts on discuss feedback (the default)
+- **Then:** Claude changes the code directly; marks newly completed items `[X]` and unchecks items that need rework
+
+### inline review — discuss, agent chooses to start over
+- **Given:** Claude judges the new information makes the current implementation the wrong base to build on (wrong approach, tangled changes, easier to redo than fix)
+- **When:** Claude acts on discuss feedback
+- **Then:** Claude tells the user it is starting over and why; reverts all tracked changes except `atomic/stack.md`; keeps `atomic/spec.md` (now including the new information) but resets every `[X]` to `[ ]` (state `proposed`); leaves `atomic/stack.md` exactly as it was (popped proposal stays popped, deferrals kept); re-enters the implement loop from scratch

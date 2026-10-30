@@ -100,29 +100,20 @@ atomic clean
 
 Confirm: "Changes reverted. Pipeline cleared. Run `/at:propose` to start fresh."
 
-### Start over / reimplement from scratch
-
-The user says "start over" or "reimplement from scratch" — revert code but keep the spec, reset checkboxes:
-
-```bash
-git reset --hard HEAD
-python3 -c "
-import re, sys
-content = open('atomic/spec.md').read()
-content = re.sub(r'^- \[X\]', '- [ ]', content, flags=re.MULTILINE)
-open('atomic/spec.md', 'w').write(content)
-"
-```
-
-Go back to **Step 1** and implement from scratch.
-
 ### Discuss
 
-Anything else is a discuss round — a correction, missing test, scope adjustment.
+Anything else is a discuss round — a correction, missing test, scope adjustment, or "start over".
 
-1. Make the code change directly if it's clear.
-2. If the feedback changes scope, update `atomic/spec.md` to reflect it (add/remove `[ ]` items as needed).
-3. Update checkboxes — mark newly completed items `[X]`, uncheck items that need rework.
+1. If the feedback doesn't tell you what should change (e.g. a bare "start over"), ask what was wrong and wait.
+2. If the feedback changes scope or approach, update `atomic/spec.md` to reflect it — add, change, or remove `[ ]` items, or add a note under **Assumptions** — so the new information is recorded.
+3. Decide how to act on it:
+   - **Adjust in place** (default) — make the change directly. Mark newly completed items `[X]`, uncheck items that need rework.
+   - **Start over** — if the new information means the current implementation is the wrong base to build on (wrong approach, tangled changes, easier to redo than to fix), tell the user you are starting over and why, then revert code while keeping the spec and the stack, and reset every checkbox:
+
+     ```bash
+     git restore --source=HEAD --staged --worktree -- . ':!atomic/stack.md'
+     python3 -c "import re; p='atomic/spec.md'; s=open(p).read(); open(p,'w').write(re.sub(r'^- \[X\]', '- [ ]', s, flags=re.M))"
+     ```
 4. Go back to **Step 1**.
 
 ---

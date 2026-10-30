@@ -2,20 +2,28 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Make rollback and start over in `/at:apply` reset code without clobbering the stack
-Deferred from discussion of stack-commit semantics. Both decisions run `git reset --hard HEAD`, which also reverts `atomic/stack.md` to HEAD:
+Proposal: Make `/at:apply` rollback restore the popped proposal and keep deferrals
+Deferred from propose: split from "Make rollback and start over in `/at:apply` reset code without clobbering the stack" — the start-over half is the current spec.
 
-- **Start over (bug):** spec.md is kept (untracked, survives the reset), but the reset restores the proposal that `/at:propose` step 6 popped. The same work is then both the active spec and the top stack proposal; after merge, the next `/at:propose` surfaces it again. Any deferrals added to the stack during the first attempt are also lost.
-- **Rollback (data loss):** restoring the popped proposal is correct (the spec is discarded), but any deferrals added during the apply are silently lost.
+Rollback runs `git reset --hard HEAD` then `atomic clean`. The reset also reverts `atomic/stack.md` to HEAD. **Rollback (data loss):** restoring the popped proposal is correct (the spec is discarded), but any deferrals added during the apply are silently lost.
 
 Intended semantics:
-- **Start over** — revert code only. `atomic/stack.md` stays exactly as it is in the working tree (popped proposal stays popped; deferrals kept).
 - **Rollback** — revert code; the popped proposal returns to the top of the stack; deferrals added during the apply are kept.
 
 Design considerations:
-- Start over: e.g. save `atomic/stack.md` aside, `git reset --hard HEAD`, restore it; or revert everything except it (`git checkout HEAD -- . ':!atomic/stack.md'`). Consider moving this into a CLI command (e.g. `atomic restart`) instead of inline bash in apply.md — the existing python checkbox-reset snippet is already inline.
 - Rollback: needs to know which block was popped. Options: diff HEAD's stack.md against the working tree (removed block = popped, added blocks = deferrals); or have propose record the popped block (spec.md already carries its content verbatim). Pick the simplest that is deterministic.
-- Related gap noticed: `git reset --hard` does not remove untracked files, so new files created during apply (e.g. a new `behaviours/*.md` or `.claude/docs/*.md`) survive both rollback and start over. Decide whether to fix here (e.g. `git clean` scoped to exclude `atomic/spec.md`) or split into its own proposal.
+- This logic is too much for inline bash in apply.md — likely a new `atomic rollback` CLI command (revert code except stack.md, rebuild stack.md, `atomic clean`).
+- Open decision: if apply also inserted an urgent deferral at the top of the stack, where does the restored popped proposal go? Leaning: after the urgent deferral ("urgent" means it must land before what follows).
+- Update the "inline review — rollback" scenario in `behaviours/pipeline-apply.md`.
+
+===========
+Proposal: Make `/at:apply` rollback and start over remove untracked files created during the apply
+Deferred from propose: split from "Make rollback and start over in `/at:apply` reset code without clobbering the stack".
+
+Related gap noticed: `git reset --hard` (rollback) and `git restore` (start over) do not remove untracked files, so new files created during apply (e.g. a new `behaviours/*.md` or `.claude/docs/*.md`) survive both rollback and start over.
+
+Design considerations:
+- e.g. `git clean` scoped to exclude `atomic/spec.md` — but it must never delete untracked files the user created outside this apply. Options: record untracked files present when apply starts and only remove new ones; or have apply list files it creates.
 - Update the "inline review — rollback" and "inline review — start over" scenarios in `behaviours/pipeline-apply.md`.
 
 ===========
