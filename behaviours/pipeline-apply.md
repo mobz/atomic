@@ -15,8 +15,13 @@
 - **When:** Claude re-enters the implement step
 - **Then:** Claude adjusts existing work based on user feedback; does not reset or start from scratch
 
+### implement loop — completes the concern
+- **Given:** the spec's change makes tests, docs (README, help text), or behaviours stale or untested, and the spec's Changes do not list them
+- **When:** Claude implements the change
+- **Then:** Claude updates them in this commit so the codebase is releasable; unrelated issues it notices along the way are still deferred to `atomic/stack.md`, not fixed
+
 ### scope enforcement — future work
-- **Given:** Claude notices a clearly out-of-scope item (future work, unrelated improvement) during implementation
+- **Given:** Claude notices a clearly out-of-scope item unrelated to the concern (future work, unrelated improvement) during implementation
 - **When:** during any implement step
 - **Then:** Claude appends a new Proposal block at the end of `atomic/stack.md` and does not implement it
 

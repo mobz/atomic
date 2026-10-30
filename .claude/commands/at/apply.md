@@ -25,7 +25,9 @@ Read context: `atomic show-context`.
 
 Work through the unchecked `- [ ]` items in the spec. As each change is made, update the checkbox in `atomic/spec.md` from `- [ ]` to `- [X]`. Be precise — mark an item `[X]` only when it is fully implemented.
 
-If anything is clearly out of scope, do not implement it. Add it to `atomic/stack.md` as a deferred Proposal block (see the stack format). Where it goes depends on urgency:
+Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit.
+
+If anything is clearly out of scope (unrelated to the concern), do not implement it. Add it to `atomic/stack.md` as a deferred Proposal block (see the stack format). Where it goes depends on urgency:
 
 - **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `===========` block.
 - **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the Stack: header block, before the first `===========`.
@@ -114,6 +116,6 @@ Anything else is a discuss round — a correction, missing test, scope adjustmen
 ---
 
 ## Hard constraints
-- Never implement anything not in the spec's **Changes** list — add out-of-scope items to `atomic/stack.md` as a new Proposal block.
+- Never implement anything unrelated to the spec's concern — add out-of-scope items to `atomic/stack.md` as a new Proposal block. Updates the change makes necessary (tests, docs, behaviours) are part of the concern, not out of scope.
 - Never commit or push — that is `/at:merge`'s job.
 - Never mark `[X]` until the change is fully implemented and tested.

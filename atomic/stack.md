@@ -2,26 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Reword the scope rule so a commit completes its concern — tests, docs, and behaviours it makes stale are in scope even when the spec does not list them
-Findings from the preamble spike (harness saved at `../atomic-experiments/preamble`: `fixture/` toy Node todo CLI with atomic installed, `scenarios/apply-{json,newest}/` spec + scorer, `variants/`, `run.sh <scenario> <variant> <n>` runs headless `claude -p "/at:apply"`, results in `runs/`).
-
-An atomic commit is one concern, complete: code plus everything the change makes stale or untested, so the codebase is releasable after every commit (vertical slice). The spike measured both directions during apply — precision (incidental items left alone and deferred: a help-text typo, an off-by-one in `truncate`, a duplicated `formatDate`) and completeness (tests, README text and example, behaviours, code comment updated).
-
-Results, 5 runs each:
-- Baseline, spec lists every file (`apply-json`): precision 5/5, completeness 5/5.
-- Baseline, spec lists only `src/format.js` for a behaviour change (`apply-newest`): precision 5/5; tests, behaviours, comment 5/5; **README 0/5** — deferred to the stack every run, with Claude noting the README is now wrong. It updated tests (justified by "Done when") and behaviours (required by apply.md), but applied CLAUDE.md rule 5 ("not explicitly listed in Changes → out of scope") literally to the README.
-- Reworded rules (`variants/rules-releasable`), `apply-newest`: precision 5/5 (incidentals still deferred), **README 5/5**, all other completeness 5/5; ~25 turns vs ~22.
-
-Conclusion: apply-stage scope creep was not the problem — the model already restrains itself under the current rules. The failure was under-completion caused by our own rule wording. No preamble needed for apply.
-
-Change (the three sentences from the winning variant):
-- `CLAUDE.md` rule 5 → "**The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small."
-- `.claude/commands/at/apply.md` step 1, before the out-of-scope paragraph: "Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit." and "If anything is clearly out of scope (unrelated to the concern), do not implement it."
-- `apply.md` hard constraint → "Never implement anything unrelated to the spec's concern — add out-of-scope items to `atomic/stack.md` as a new Proposal block. Updates the change makes necessary (tests, docs, behaviours) are part of the concern, not out of scope."
-- `behaviours/pipeline-apply.md`: add a "completes the concern" scenario (unlisted stale docs/tests are updated, unrelated items still deferred).
-- Check CLAUDE.md rule 4 and the README's "Out-of-scope work…" line read consistently with the new rule.
-
-===========
 Proposal: Explore whether `/at:propose` writes complete, vertically sliced specs and splits bundled requests unprompted
 **Not ready for implementation — a spike, continuing the preamble exploration.** The apply spike (see the scope-rule proposal) found no apply-stage atomicity problem; the open question moves upstream. The `apply-newest` README miss was really an incomplete spec, and specs are written by `/at:propose`.
 

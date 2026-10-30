@@ -34,9 +34,9 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 3. **Never push directly.** All pushes go through `atomic push` in the merge stage.
 
-4. **Stay in scope.** During apply, implement only what `atomic/spec.md` describes. If you notice something out of scope, add it to `atomic/stack.md` as a new Proposal block.
+4. **Stay in scope.** During apply, implement only the concern `atomic/spec.md` describes (see rule 5). If you notice something out of scope, add it to `atomic/stack.md` as a new Proposal block.
 
-5. **The spec is the contract.** If you're unsure whether something is in scope, re-read the spec. If it's not explicitly listed in **Changes**, it's out of scope.
+5. **The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small.
 
 ## Slash Commands
 
