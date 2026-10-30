@@ -1,6 +1,6 @@
 # /at:stack — Design an Incremental Proposal Stack
 
-Your job is to guide the user exploring a feature and the composing it into atomic, safely-shippable proposals. Each propsal becomes an independantly deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
+Your job is to guide the user exploring a feature and composing it into atomic, safely-shippable proposals. Each proposal becomes an independently deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
 
 ## Steps
 
@@ -15,11 +15,9 @@ Run `atomic show-stack`.
 
 ### 2. Explore everything that needs to change
 
-Ask the user to describe the feature in much detail as they like, then enter exploration mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
+Ask the user to describe the feature in as much detail as they like, then enter explore mode. You are a thinking partner helping the user explore. Think deeply. Visualize freely. Follow the conversation wherever it goes.
 
-Enter explore mode. You are a thinking partner to helping the user explore. Think deeply. Visualize freely. Follow the conversation wherever it goes.
-
-**IMPORTANT: Exploration mode is for thinking, not implementing.** You may read the spec files in `/specs` for context, search code, and investigate the codebase, but you must NEVER write code or implement anything. If the user asks you to implement something tangential or small, offer to add it as a proposal to the existing stack before returning to the main problem.
+**IMPORTANT: Exploration mode is for thinking, not implementing.** You may read the behaviour files in `behaviours/` for context, search code, and investigate the codebase, but you must NEVER write code or implement anything. If the user asks you to implement something tangential or small, offer to add it as a proposal to the existing stack before returning to the main problem.
 
 When things crystallize — the problem space feels understood, the major pieces are visible, the key decisions have surfaced — you might offer a summary of what you've learned and ask: "Ready to turn this into a stack?"
 
@@ -91,7 +89,7 @@ Reframe the exploration as a user story:
 
 > "As a \<persona\> I want \<feature\> so that \<goal\>."
 
-which goes under the header header line and the context block at the top of stack.md. Push back on vague stories — the user story should be specific enough that a developer could use it to decide whether a proposal is in or out of scope.
+which goes under the header line and the context block at the top of stack.md. Push back on vague stories — the user story should be specific enough that a developer could use it to decide whether a proposal is in or out of scope.
 
 ### 4. Group into proposals
 
@@ -107,7 +105,7 @@ Apply these throughout every step. Don't just check them at the end — use them
 
 **Testability rule**: each proposal should add capability verifiable independently — by running the CLI, reading a file, or observing a behaviour change. If a proposal produces no observable output until a later one lands, reconsider the split.
 
-**Expand/contract pattern**: (Parallel Change ) when a proposal involves replacing, migrating or upgrading something that already exists (an api, a schema, a behaviour), decompose it into at least three proposals to support continuous deployment stability:
+**Expand/contract pattern**: (Parallel Change) when a proposal involves replacing, migrating or upgrading something that already exists (an api, a schema, a behaviour), decompose it into at least three proposals to support continuous deployment stability:
 1. **Add** — introduce the new thing alongside the old. Purely additive, no removals. Safe to ship immediately.
 2. **Switch** — migrate behaviour to use the new thing. Old thing still exists but is now dormant. System fully functional.
 3. **Remove** — delete the old thing and all references to it. Pure cleanup, zero behaviour change.
@@ -132,11 +130,11 @@ For each proposal in order, consider:
 
 - **What the system can do after this commit** that it couldn't before
 - **What is deliberately deferred** to a later proposal
-- **Shallow thinking** we will have a later moment to consider each propsal in detail from a technical angle, so we are really thinking about dependencies between parts of the system and not breaking anything, slowly moving towards the feature goal, rather than deep technical analysis.
+- **Shallow thinking** we will have a later moment to consider each proposal in detail from a technical angle, so we are really thinking about dependencies between parts of the system and not breaking anything, slowly moving towards the feature goal, rather than deep technical analysis.
 
 If the answer to "what can you do after this?" is "nothing yet, you need the next one too" — that's a sign the proposals should be merged or restructured. Surface it.
 
-If the proposal contains multiple different ideas consider if they can be split into smaller propsals.
+If the proposal contains multiple different ideas consider if they can be split into smaller proposals.
 
 
 ### 6. Present the feature to the user for confirmation

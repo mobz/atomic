@@ -2,19 +2,6 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Fix stale path, duplicated paragraph, and typos in `/at:stack`
-
-Split from "Fix stale and contradictory text in `/at:propose` and `/at:stack`" — the propose.md half landed separately.
-
-- `stack.md` line 22 tells Claude to read spec files in `/specs` — should be `behaviours/`.
-- `stack.md` lines 18 and 20 duplicate the "explore mode … Think deeply. Visualize freely." paragraph — keep one.
-- Typos in `stack.md`: "and the composing" → "and composing" (line 3), "propsal(s)" → "proposal(s)" (lines 3, 135, 139), "independantly" → "independently" (line 3), "in much detail" → "in as much detail" (line 18), "thinking partner to helping" → "thinking partner helping" (line 20).
-
-Do this before the stack-context proposal below, which also edits this file.
-
-**Done when:** stack.md has no `/specs` reference, no duplicated explore paragraph, and none of the listed typos.
-
-===========
 Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline
 
 `README.md` still describes the original design: four stages (`propose → apply → review → merge`), `/propose` `/review` `/merge` without the `at:` namespace, `atomic advance`, `atomic merge-specs`, `--human`, `.atomic/`, `specs/`, and state stored in git refs.
