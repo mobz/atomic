@@ -1,5 +1,5 @@
-Stack: Shared pipeline context docs
-As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
+Stack: Pipeline cleanup and hardening
+As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
 Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline
