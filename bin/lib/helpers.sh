@@ -81,3 +81,44 @@ output_json() {
     fi
   fi
 }
+
+# Snapshot the whole working tree (tracked changes, untracked files, spec.md;
+# .gitignore respected, as with `atomic commit`) to a commit on top of HEAD that
+# no branch, tag, or stash points at — git gc prunes it once it expires. Then
+# revert every path except the given keep paths: tracked files back to HEAD,
+# and files the snapshot added deleted. Only files held by the snapshot are
+# deleted, so everything discarded is recoverable from it.
+# Usage: snapshot_and_revert <message> [keep-path...]
+# Prints the snapshot SHA, or nothing if the working tree matches HEAD.
+snapshot_and_revert() {
+  local message="$1"; shift
+  local keep=("$@") excludes=() k
+
+  for k in "${keep[@]+"${keep[@]}"}"; do
+    excludes+=(":!$k")
+  done
+
+  local tmp_index tree sha
+  tmp_index=$(mktemp -u)
+  GIT_INDEX_FILE="$tmp_index" git read-tree HEAD
+  GIT_INDEX_FILE="$tmp_index" git add -A
+  tree=$(GIT_INDEX_FILE="$tmp_index" git write-tree)
+  rm -f "$tmp_index"
+
+  [[ "$tree" == "$(git rev-parse 'HEAD^{tree}')" ]] && return 0
+
+  sha=$(git commit-tree "$tree" -p HEAD -m "$message")
+
+  git restore --source=HEAD --staged --worktree -- . "${excludes[@]+"${excludes[@]}"}"
+
+  local f
+  while IFS= read -r f; do
+    for k in "${keep[@]+"${keep[@]}"}"; do
+      [[ "$f" == "$k" ]] && continue 2
+    done
+    rm -f "$f"
+    rmdir -p "$(dirname "$f")" 2>/dev/null || true
+  done < <(git diff --name-only --diff-filter=A HEAD "$sha")
+
+  echo "$sha"
+}

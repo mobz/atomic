@@ -25,3 +25,4 @@
 - Inline spec format template removed from propose.md step 5; inline state parentheticals removed from all three commands — these now live in spec-context.md.
 - `atomic/stacks/` directory introduced for archiving named stacks; `atomic/stacks/stack-awareness.md` holds the in-progress stack-awareness feature proposals.
 - `.claude/docs/behaviour-context.md` covers the `behaviours/` store (feature-scoped files, one per domain), the `## Behaviour:` / Given/When/Then format, and read-before-write; injected into apply.md only, after spec-context. apply.md step 2 no longer carries an inline format block.
+- `bin/lib/helpers.sh` `snapshot_and_revert <message> [keep-path...]`: saves the whole working tree (temp index + `git add -A`, `.gitignore` respected) as an unreferenced commit on HEAD, then reverts everything except keep paths (tracked → HEAD, snapshot-added files deleted); prints the SHA, or nothing if the tree matches HEAD. Used by `atomic rollback`.

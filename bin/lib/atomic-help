@@ -11,7 +11,7 @@ Commands:
   commit           Create git commit (refuses if any [ ] items remain in spec.md)
   push             Push current branch to origin
   clean            Remove spec.md (clear active pipeline)
-  rollback         Revert all tracked changes incl. stack.md (restores popped proposal, drops deferrals), remove spec.md; prints discarded deferrals
+  rollback         Abandon the active spec and revert all changes
 
 Flags:
   --json           Machine-readable JSON output instead of human-readable

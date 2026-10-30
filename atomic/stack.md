@@ -2,14 +2,16 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Make `/at:apply` rollback and start over remove untracked files created during the apply
-Deferred from propose: split from "Make rollback and start over in `/at:apply` reset code without clobbering the stack".
+Proposal: Add `atomic start-over` that snapshots the previous attempt, reverts code and untracked files while keeping the spec and stack, and resets checkboxes
+Deferred from propose: split from "Make `/at:apply` rollback and start over remove untracked files created during the apply" — the rollback half is the current spec.
 
-Related gap noticed: `git reset --hard` (rollback) and `git restore` (start over) do not remove untracked files, so new files created during apply (e.g. a new `behaviours/*.md` or `.claude/docs/*.md`) survive both rollback and start over.
+Start over (inside Discuss in `apply.md`) runs `git restore --source=HEAD --staged --worktree -- . ':!atomic/stack.md'` plus a python one-liner to untick checkboxes. Untracked files created during the attempt survive, and the previous attempt is not recoverable.
 
-Design considerations:
-- e.g. `git clean` scoped to exclude `atomic/spec.md` — but it must never delete untracked files the user created outside this apply. Options: record untracked files present when apply starts and only remove new ones; or have apply list files it creates.
-- Update the "inline review — rollback" and "inline review — start over" scenarios in `behaviours/pipeline-apply.md`.
+Design:
+- New `bin/lib/atomic-start-over` (`cmd_start_over`): `snapshot_and_revert "atomic start over: <intent>" atomic/stack.md atomic/spec.md` (helper added to `helpers.sh` by the rollback commit) — snapshot holds the whole previous attempt; revert keeps the stack and spec; untracked files created during the attempt are removed. Then reset every `[X]` to `[ ]` in spec.md (replacing the python one-liner).
+- Output: "Started over. Previous attempt is available at <short-sha> (restore with ...)". `--json` with `snapshot`.
+- `apply.md` Discuss → Start over: replace the git restore + python one-liner with `atomic start-over`; relay the SHA when announcing the start over.
+- Dispatch entry in `bin/atomic`, help line, `cli-atomic.md` scenarios, and update "discuss, agent chooses to start over" in `pipeline-apply.md`.
 
 ===========
 Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline

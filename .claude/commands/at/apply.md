@@ -91,13 +91,13 @@ Invoke the `/at:merge` skill to commit and push.
 
 ### Rollback
 
-The user says rollback or abandon — revert everything to HEAD, including the stack (the popped proposal returns; deferrals added during this apply are dropped), and delete the spec:
+The user says rollback or abandon — snapshot everything to an unreferenced commit, then revert everything to HEAD: tracked files including the stack (the popped proposal returns; deferrals added during this apply are dropped), untracked files created during the apply, and the spec:
 
 ```bash
 atomic rollback
 ```
 
-Confirm: "Changes reverted. Pipeline cleared."
+Confirm: "Changes reverted. Pipeline cleared." and relay the snapshot line from the output — the SHA the discarded changes are available at and the restore command — so the user can get them back if needed.
 
 If `atomic rollback` printed discarded deferrals, list them by intent and ask whether to add any back to the end of the stack. Don't assume yes — a rollback is often a change of direction, and deferrals found while on the wrong track may be wrong too. Re-add only the ones the user picks, verbatim from the rollback output.
 

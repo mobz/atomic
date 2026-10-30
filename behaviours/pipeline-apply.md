@@ -53,12 +53,12 @@
 ### inline review — rollback, no deferrals
 - **Given:** user wants to abandon the work; no proposals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and `atomic/spec.md` is removed; Claude confirms the pipeline is cleared and tells the user to run `/at:propose`
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, and tells the user to run `/at:propose`
 
 ### inline review — rollback, with deferrals
 - **Given:** user wants to abandon the work; deferrals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and `atomic/spec.md` is removed; Claude confirms the pipeline is cleared, lists the discarded deferrals by intent, and asks whether to add any back to the end of the stack — without assuming yes, since a rollback is often a change of direction
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, lists the discarded deferrals by intent, and asks whether to add any back to the end of the stack — without assuming yes, since a rollback is often a change of direction
 
 ### inline review — rollback, deferrals re-added
 - **Given:** a rollback discarded deferrals and Claude has offered them back

@@ -1,7 +1,8 @@
-# Abandon the active spec: revert all tracked changes, including atomic/stack.md
-# (which puts back the proposal /at:propose popped and drops any deferrals),
-# and remove spec.md. Discarded deferrals are printed in full so they can be
-# offered back to the user.
+# Abandon the active spec: snapshot the working tree to an unreferenced commit,
+# then revert everything to HEAD — tracked files (including atomic/stack.md,
+# which puts back the proposal /at:propose popped and drops any deferrals),
+# untracked files created during the apply, and spec.md. Discarded deferrals
+# are printed in full so they can be offered back to the user.
 
 STACK_SEP="==========="
 
@@ -45,12 +46,14 @@ cmd_rollback() {
     done
   fi
 
-  git restore --source=HEAD --staged --worktree -- .
-  # A stack.md created during the apply is untracked, so restore leaves it.
-  git cat-file -e "HEAD:$stack" 2>/dev/null || rm -f "$stack"
   rm -f "$head_stack"
 
-  rm -f "$ATOMIC_DIR/spec.md"
+  # Snapshot everything (spec.md included) and revert it all: tracked files
+  # back to HEAD, untracked files created during the apply removed.
+  local spec_intent snapshot short
+  spec_intent=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || true)
+  snapshot=$(snapshot_and_revert "atomic rollback: ${spec_intent:-no spec}")
+  short=${snapshot:0:8}
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     local intents=() d intent
@@ -59,9 +62,13 @@ cmd_rollback() {
       intents+=("\"${intent//\"/\\\"}\"")
     done
     local IFS=,
-    printf '{"ok":true,"discarded":[%s]}\n' "${intents[*]+"${intents[*]}"}"
+    printf '{"ok":true,"snapshot":"%s","discarded":[%s]}\n' "$snapshot" "${intents[*]+"${intents[*]}"}"
   else
-    echo "Code and stack reverted to HEAD. spec.md removed."
+    if [[ -n "$snapshot" ]]; then
+      echo "Rolled back. Discarded changes are available at $short (restore with: git restore --source=$short -- .)"
+    else
+      echo "Rolled back. Nothing to discard."
+    fi
     if [[ ${#deferrals[@]} -gt 0 ]]; then
       echo "Discarded ${#deferrals[@]} deferral(s) added during this apply:"
       printf '\n%s\n' "${deferrals[@]}"

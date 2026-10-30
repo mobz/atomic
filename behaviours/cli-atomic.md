@@ -86,9 +86,19 @@
 - **Then:** prints a warning with instructions to add a remote, exits 0 (does not fail)
 
 ### rollback — reverts code and stack
-- **Given:** `atomic/spec.md` exists; tracked files are modified, staged, or deleted; `atomic/stack.md` has had its top proposal popped and/or deferrals added
+- **Given:** `atomic/spec.md` exists; tracked files are modified, staged, or deleted; untracked files were created during the apply; `atomic/stack.md` has had its top proposal popped and/or deferrals added
 - **When:** `atomic rollback` is run
-- **Then:** all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal returns, deferrals are dropped); `atomic/spec.md` is removed; `atomic status` reports `none`; exits 0
+- **Then:** all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal returns, deferrals are dropped); untracked files (including `atomic/spec.md`) are removed, along with directories left empty; `.gitignore`d files are untouched; `git status` is clean; `atomic status` reports `none`; exits 0
+
+### rollback — snapshot of discarded changes
+- **Given:** the working tree differs from HEAD
+- **When:** `atomic rollback` is run
+- **Then:** before reverting, the whole working tree (tracked changes, untracked files, spec.md; `.gitignore` respected) is saved as a commit on top of HEAD that no branch, tag, or stash references, with message `atomic rollback: <spec intent>`; prints "Rolled back. Discarded changes are available at <short-sha> (restore with: git restore --source=<short-sha> -- .)"; running that command restores the discarded content (staged/unstaged distinction is not preserved)
+
+### rollback — nothing to discard
+- **Given:** the working tree matches HEAD
+- **When:** `atomic rollback` is run
+- **Then:** no snapshot commit is created; prints "Rolled back. Nothing to discard."
 
 ### rollback — discarded deferrals reported
 - **Given:** the working-tree `atomic/stack.md` contains Proposal blocks that are not in HEAD's stack
@@ -98,17 +108,17 @@
 ### rollback — no deferrals
 - **Given:** every Proposal block in the working-tree `atomic/stack.md` is also in HEAD's stack
 - **When:** `atomic rollback` is run
-- **Then:** prints only "Code and stack reverted to HEAD. spec.md removed."
+- **Then:** prints only the snapshot line; no deferral output
 
 ### rollback — stack.md created during the apply
 - **Given:** HEAD has no `atomic/stack.md`; one was created during the apply
 - **When:** `atomic rollback` is run
-- **Then:** its blocks are reported as discarded deferrals and the file is removed
+- **Then:** its blocks are reported as discarded deferrals and the file is removed (it is held in the snapshot)
 
 ### rollback — JSON output
 - **Given:** any state
 - **When:** `atomic rollback --json` is run
-- **Then:** prints `{"ok":true,"discarded":["<intent>", ...]}` (empty array when nothing was discarded)
+- **Then:** prints `{"ok":true,"snapshot":"<sha or empty>","discarded":["<intent>", ...]}` (`snapshot` empty when nothing changed; `discarded` empty when there were no deferrals)
 
 ### clean
 - **Given:** any state
