@@ -2,6 +2,63 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
+Proposal: Make `atomic reset` delete only ephemeral pipeline files
+
+Urgent prerequisite — `atomic reset` is called by `/at:apply` (Rollback) and `/at:propose` (start fresh), and currently destroys the backlog.
+
+`bin/lib/atomic-reset` runs `find "$ATOMIC_DIR" -mindepth 1 -not -name '.gitkeep' -delete`, which deletes every file in `atomic/` — including the committed `context.md`, `stack.md`, and the whole `stacks/` directory.
+
+Fix: make reset remove only `atomic/spec.md`, matching `atomic clean` (`rm -f "$ATOMIC_DIR/spec.md"`). Update the human-readable output ("atomic/ cleared") and the `reset` line in `bin/lib/atomic-help` so neither implies the directory is wiped.
+
+Also add/update a scenario in `behaviours/cli-atomic.md`: given `atomic/` contains spec.md, context.md, stack.md and stacks/, when `atomic reset` runs, then only spec.md is removed.
+
+(Duplicates the "Fix `atomic reset` deleting committed files" proposal parked in `atomic/stacks/stack-awareness.md` — remove it from there when this lands.)
+
+**Done when:** running `atomic reset` with a populated `atomic/` leaves context.md, stack.md and stacks/ intact and removes spec.md; `atomic status` reports `none`.
+
+===========
+Proposal: Remove stale pre-simplification references from `behaviours/`
+
+The behaviour store is meant to always match the code, but some scenarios still describe the old four-stage pipeline:
+- `behaviours/pipeline-apply.md:6` — "advances to apply stage" (stage tracking was removed; state is derived from spec.md checkboxes)
+- `behaviours/pipeline-apply.md:36` — writes domain specs to `specs/` (now `behaviours/`)
+- `behaviours/pipeline-apply.md:61` and `:66` — "advances to apply stage"
+- `behaviours/pipeline-merge.md:4` — "pipeline is in `review` stage" (should be state `ready`)
+- `behaviours/pipeline-merge.md:11` — "specs/ changes" (now `behaviours/`)
+
+Fix each to describe current behaviour. Wording-only; no changes to commands or CLI.
+
+**Done when:** `grep -n "advance\|specs/\|review\` stage" behaviours/` returns nothing, and every scenario in pipeline-apply.md and pipeline-merge.md matches the current `apply.md` / `merge.md`.
+
+===========
+Proposal: Fix stale and contradictory text in `/at:propose` and `/at:stack`
+
+- `propose.md` step 1 says "The stack is not modified regardless of what the user chooses — that is `/at:merge`'s job." This contradicts step 6, which pops the top proposal when spec.md is written, and `merge.md` never touches the stack. Replace the line with one consistent with step 6 (the stack is not modified during orientation; popping happens in step 6).
+- `stack.md` line 22 tells Claude to read spec files in `/specs` — should be `behaviours/`.
+- `stack.md` lines 18 and 20 duplicate the "explore mode … Think deeply. Visualize freely." paragraph — keep one.
+- Typos in `stack.md`: "and the composing" → "and composing" (line 3), "propsal(s)" → "proposal(s)" (lines 3, 135, 139), "independantly" → "independently" (line 3), "in much detail" → "in as much detail" (line 18), "thinking partner to helping" → "thinking partner helping" (line 20).
+
+Do this before the stack-context proposal below, which also edits these files.
+
+**Done when:** propose.md has no reference to `/at:merge` modifying the stack; stack.md has no `/specs` reference, no duplicated explore paragraph, and none of the listed typos.
+
+===========
+Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline
+
+`README.md` still describes the original design: four stages (`propose → apply → review → merge`), `/propose` `/review` `/merge` without the `at:` namespace, `atomic advance`, `atomic merge-specs`, `--human`, `.atomic/`, `specs/`, and state stored in git refs.
+
+Rewrite it to match current reality:
+- Pipeline: `propose → apply → merge`, plus `/at:stack` for decomposing a feature into a proposal stack
+- Commands: `/at:propose`, `/at:apply`, `/at:merge`, `/at:stack`
+- CLI reference from `bin/lib/atomic-help` (status, progress, reset, show-spec, show-context, show-stack, commit, push, clean; `--json`)
+- Structure: `.claude/commands/at/`, `.claude/docs/`, `atomic/` (spec.md ephemeral; context.md, stack.md committed), `behaviours/`, `bin/`
+- State: derived from spec.md checkbox state (none/proposed/applying/ready)
+
+CLAUDE.md: add `/at:merge` to the Slash Commands table (it is missing) and replace "Implement → specs → test loop" with "behaviours" in the Pipeline Stages table.
+
+**Done when:** README.md contains no reference to `advance`, `merge-specs`, `/review`, `.atomic/`, `specs/`, `--human` or git-ref state; CLAUDE.md lists all four `/at:*` commands.
+
+===========
 Proposal: Create stack-context.md and wire it into propose, apply, and stack
 
 Create `.claude/docs/stack-context.md` covering the stack.md format. Wire it into the three commands that read from or write to the stack. Trim the inline format explanations.

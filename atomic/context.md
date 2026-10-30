@@ -24,3 +24,4 @@
 - `.claude/docs/spec-context.md` covers spec.md format and pipeline state semantics; injected near top of propose.md, apply.md, merge.md.
 - Inline spec format template removed from propose.md step 5; inline state parentheticals removed from all three commands — these now live in spec-context.md.
 - `atomic/stacks/` directory introduced for archiving named stacks; `atomic/stacks/stack-awareness.md` holds the in-progress stack-awareness feature proposals.
+- `.claude/docs/behaviour-context.md` covers the `behaviours/` store (feature-scoped files, one per domain), the `## Behaviour:` / Given/When/Then format, and read-before-write; injected into apply.md only, after spec-context. apply.md step 2 no longer carries an inline format block.

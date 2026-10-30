@@ -3,6 +3,7 @@
 Your job is to implement the spec, run tests, and get user sign-off. Committing and pushing is handled by `/at:merge`.
 
 @.claude/docs/spec-context.md
+@.claude/docs/behaviour-context.md
 
 ## Entry
 
@@ -40,18 +41,7 @@ If `atomic/stack.md` does not exist, create it with just the Proposal block.
 
 ### 2. Update behavioral domain specs
 
-For each feature touched, create or update the corresponding behaviour file directly in `behaviours/` using the behavioural format:
-
-```markdown
-## Behaviour: <feature name>
-
-### <scenario name>
-- **Given:** system state / preconditions
-- **When:** action or event
-- **Then:** observable outcome(s)
-```
-
-Name files by domain (e.g. `pipeline-apply.md`). Read the existing file first if one exists — don't duplicate.
+For each feature touched, create or update the corresponding behaviour file directly in `behaviours/`. Name files by domain (e.g. `pipeline-apply.md`). Read the existing file first if one exists — don't duplicate.
 
 ### 3. Run tests
 
