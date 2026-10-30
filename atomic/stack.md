@@ -2,20 +2,6 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Remove stale pre-simplification references from `behaviours/`
-
-The behaviour store is meant to always match the code, but some scenarios still describe the old four-stage pipeline:
-- `behaviours/pipeline-apply.md:6` — "advances to apply stage" (stage tracking was removed; state is derived from spec.md checkboxes)
-- `behaviours/pipeline-apply.md:36` — writes domain specs to `specs/` (now `behaviours/`)
-- `behaviours/pipeline-apply.md:61` and `:66` — "advances to apply stage"
-- `behaviours/pipeline-merge.md:4` — "pipeline is in `review` stage" (should be state `ready`)
-- `behaviours/pipeline-merge.md:11` — "specs/ changes" (now `behaviours/`)
-
-Fix each to describe current behaviour. Wording-only; no changes to commands or CLI.
-
-**Done when:** `grep -n "advance\|specs/\|review\` stage" behaviours/` returns nothing, and every scenario in pipeline-apply.md and pipeline-merge.md matches the current `apply.md` / `merge.md`.
-
-===========
 Proposal: Fix stale and contradictory text in `/at:propose` and `/at:stack`
 
 - `propose.md` step 1 says "The stack is not modified regardless of what the user chooses — that is `/at:merge`'s job." This contradicts step 6, which pops the top proposal when spec.md is written, and `merge.md` never touches the stack. Replace the line with one consistent with step 6 (the stack is not modified during orientation; popping happens in step 6).
@@ -111,3 +97,11 @@ Design considerations:
 - Consider whether `atomic/.gitkeep` needs updating if context.md was the only non-ephemeral content driving the directory's existence (stack.md also lives there, so .gitkeep remains necessary).
 
 This is an expand/contract candidate: the switch proposal removes the `show-context` call from apply.md and the remove proposal deletes the file and command — but given there is no parallel implementation to migrate to, a single commit removing the file, command, and apply.md reference is probably appropriate.
+
+===========
+Proposal: Add behaviour scenarios for uncovered `/at:apply` and `/at:merge` entry states
+Deferred from propose: while specifying the stale-behaviours rewrite, found that `behaviours/pipeline-apply.md` has no scenarios for `/at:apply` entered in state `none` (tell user to run `/at:propose`), `applying` (re-entry: show progress, list remaining items, continue), or `ready` (skip to summary); and `behaviours/pipeline-merge.md` has no scenarios for `/at:merge` entered in `applying` (show progress, suggest `/at:apply`), `proposed` (tell user to run `/at:apply`), or `none` (nothing to merge). Adding coverage is a separate concern from correcting stale scenarios.
+
+===========
+Proposal: Make `atomic commit` keep spec.md when the git commit fails
+Deferred from propose: `bin/lib/atomic-commit` runs `rm -f "$ATOMIC_DIR/spec.md"` before `git add -A` / `git commit`. If the commit fails (nothing to commit, hook failure, etc.) the script exits non-zero under `set -e` but the spec is already gone and the pipeline drops to state `none`. Fix: remove spec.md only after `git commit` succeeds — e.g. `git add -A -- . ':!atomic/spec.md'`, commit, then `rm -f` (or remove first but restore on failure). Must still ensure spec.md is never committed. Update the "nothing to commit" scenario in `behaviours/pipeline-merge.md` and the commit scenarios in `behaviours/cli-atomic.md`.
