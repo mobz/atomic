@@ -53,7 +53,7 @@
 ### inline review — rollback
 - **Given:** user wants to abandon the work
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `git reset --hard HEAD` and `atomic reset`; confirms pipeline is cleared
+- **Then:** Claude runs `git reset --hard HEAD` and `atomic clean`; confirms pipeline is cleared
 
 ### inline review — start over
 - **Given:** user wants to reimplement from scratch with the current spec

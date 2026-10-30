@@ -35,10 +35,10 @@
 - **When:** `atomic progress` is run
 - **Then:** prints `No active spec`
 
-### reset
+### reset — removed
 - **Given:** any pipeline state
 - **When:** `atomic reset` is run
-- **Then:** all files in `atomic/` except `.gitkeep` are deleted, exits 0
+- **Then:** prints `{"error":"unknown command: reset"}` to stderr, exits non-zero; no files in `atomic/` are touched (use `atomic clean` to discard the spec)
 
 ### show-spec — file exists
 - **Given:** `atomic/spec.md` exists
@@ -88,4 +88,4 @@
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run
-- **Then:** `atomic/spec.md` is deleted; `atomic/context.md` and `atomic/stack.md` are preserved, exits 0
+- **Then:** `atomic/spec.md` is deleted; `atomic/context.md`, `atomic/stack.md`, and `atomic/stacks/` are preserved, exits 0

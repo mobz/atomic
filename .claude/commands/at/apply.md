@@ -95,7 +95,7 @@ The user says rollback or abandon — revert code and delete the spec:
 
 ```bash
 git reset --hard HEAD
-atomic reset
+atomic clean
 ```
 
 Confirm: "Changes reverted. Pipeline cleared. Run `/at:propose` to start fresh."

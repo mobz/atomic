@@ -2,21 +2,6 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Make `atomic reset` delete only ephemeral pipeline files
-
-Urgent prerequisite — `atomic reset` is called by `/at:apply` (Rollback) and `/at:propose` (start fresh), and currently destroys the backlog.
-
-`bin/lib/atomic-reset` runs `find "$ATOMIC_DIR" -mindepth 1 -not -name '.gitkeep' -delete`, which deletes every file in `atomic/` — including the committed `context.md`, `stack.md`, and the whole `stacks/` directory.
-
-Fix: make reset remove only `atomic/spec.md`, matching `atomic clean` (`rm -f "$ATOMIC_DIR/spec.md"`). Update the human-readable output ("atomic/ cleared") and the `reset` line in `bin/lib/atomic-help` so neither implies the directory is wiped.
-
-Also add/update a scenario in `behaviours/cli-atomic.md`: given `atomic/` contains spec.md, context.md, stack.md and stacks/, when `atomic reset` runs, then only spec.md is removed.
-
-(Duplicates the "Fix `atomic reset` deleting committed files" proposal parked in `atomic/stacks/stack-awareness.md` — remove it from there when this lands.)
-
-**Done when:** running `atomic reset` with a populated `atomic/` leaves context.md, stack.md and stacks/ intact and removes spec.md; `atomic status` reports `none`.
-
-===========
 Proposal: Remove stale pre-simplification references from `behaviours/`
 
 The behaviour store is meant to always match the code, but some scenarios still describe the old four-stage pipeline:

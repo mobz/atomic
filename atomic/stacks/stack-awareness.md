@@ -55,18 +55,6 @@ Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propo
 This is a large command — consider decomposing into its own stack when the time comes.
 
 ===========
-Proposal: Fix `atomic reset` deleting committed files
-
-`atomic reset` uses `find atomic/ -mindepth 1 -not -name '.gitkeep' -delete` which deletes ALL files in atomic/ including committed ones (context.md, stack.md). It should only delete ephemeral files — specifically spec.md.
-
-Fix: change the command to only delete `atomic/spec.md` (like `atomic clean` does), or whitelist the files to preserve: context.md, stack.md, .gitkeep.
-
-Current behaviour of `atomic clean` (correct pattern): `rm -f "$ATOMIC_DIR/spec.md"` — only removes spec.md.
-Current behaviour of `atomic reset` (broken): deletes everything except .gitkeep, including committed context.md and stack.md.
-
-The fix should make reset delete only spec.md, or at most any non-committed files in atomic/ (using `git ls-files` to distinguish tracked from untracked).
-
-===========
 Proposal: Migrate `/at:*` commands from `.claude/commands/` to `.claude/skills/`
 
 Claude Code's `.claude/skills/` interface combines slash commands and executable scripts in one definition — a skill can include both natural language instructions (like a command file) and shell scripts that run as part of the skill. This is a richer model than commands alone.

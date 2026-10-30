@@ -12,7 +12,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
    - **State: proposed** — tell the user there's an existing proposal and show the intent. Ask: review it, change it, or start fresh?
    - **State: applying** — warn that an apply is in progress. Show `atomic progress`. Ask: continue the apply, change the spec, or start fresh?
    - **State: ready** — tell the user all changes are complete. Suggest running `/at:apply` to merge, or confirm if they want to start a new proposal.
-   - If user wants to start fresh: run `atomic reset` first, then proceed.
+   - If user wants to start fresh: run `atomic clean` first, then proceed.
    - **State: none** and `$ARGUMENTS` provided — proceed directly to **Step 3**.
    - **State: none** and no `$ARGUMENTS` — run `atomic show-stack`. If a Proposal block exists, surface the top proposal:
      - Show its intent and context to the user.

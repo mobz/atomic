@@ -5,7 +5,6 @@ atomic — atomic commit pipeline CLI
 Commands:
   status           Pipeline state derived from spec.md (none/proposed/applying/ready)
   progress         M/N changes complete
-  reset            Delete spec.md and clear atomic/ pipeline state
   show-spec        Print current atomic/spec.md
   show-context     Print current atomic/context.md
   show-stack       Print current atomic/stack.md
