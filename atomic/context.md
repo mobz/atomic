@@ -11,7 +11,7 @@
 - Pipeline state derived from spec.md checkboxes: none/proposed/applying/ready.
 - `atomic progress` prints M/N changes complete.
 - `atomic commit` refuses if any [ ] items remain.
-- Each command in bin/lib/atomic-{status,progress,show-spec,show-context,show-stack,commit,push,clean,help}.
+- Each command in bin/lib/atomic-{status,progress,show-spec,show-context,show-stack,commit,push,clean,rollback,help}.
 - atomic/ tracked: .gitkeep, context.md, stack.md committed; spec.md ephemeral.
 - stack.md format: `Stack: <name>` header block, then `===========\nProposal: <intent>` blocks in order; top proposal = next commit.
 - `/at:propose` is stack-aware: on entry with no args, surfaces top stack proposal as default intent; when spec.md is written from a stack proposal, that proposal is popped from stack.md in the same step (state moves from queued → active); `$ARGUMENTS` or fresh discovery never touches stack.md.

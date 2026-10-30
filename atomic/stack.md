@@ -2,21 +2,6 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Make `/at:apply` rollback restore the popped proposal and keep deferrals
-Deferred from propose: split from "Make rollback and start over in `/at:apply` reset code without clobbering the stack" — the start-over half is the current spec.
-
-Rollback runs `git reset --hard HEAD` then `atomic clean`. The reset also reverts `atomic/stack.md` to HEAD. **Rollback (data loss):** restoring the popped proposal is correct (the spec is discarded), but any deferrals added during the apply are silently lost.
-
-Intended semantics:
-- **Rollback** — revert code; the popped proposal returns to the top of the stack; deferrals added during the apply are kept.
-
-Design considerations:
-- Rollback: needs to know which block was popped. Options: diff HEAD's stack.md against the working tree (removed block = popped, added blocks = deferrals); or have propose record the popped block (spec.md already carries its content verbatim). Pick the simplest that is deterministic.
-- This logic is too much for inline bash in apply.md — likely a new `atomic rollback` CLI command (revert code except stack.md, rebuild stack.md, `atomic clean`).
-- Open decision: if apply also inserted an urgent deferral at the top of the stack, where does the restored popped proposal go? Leaning: after the urgent deferral ("urgent" means it must land before what follows).
-- Update the "inline review — rollback" scenario in `behaviours/pipeline-apply.md`.
-
-===========
 Proposal: Make `/at:apply` rollback and start over remove untracked files created during the apply
 Deferred from propose: split from "Make rollback and start over in `/at:apply` reset code without clobbering the stack".
 

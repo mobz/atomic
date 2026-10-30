@@ -91,14 +91,17 @@ Invoke the `/at:merge` skill to commit and push.
 
 ### Rollback
 
-The user says rollback or abandon — revert code and delete the spec:
+The user says rollback or abandon — revert everything to HEAD, including the stack (the popped proposal returns; deferrals added during this apply are dropped), and delete the spec:
 
 ```bash
-git reset --hard HEAD
-atomic clean
+atomic rollback
 ```
 
-Confirm: "Changes reverted. Pipeline cleared. Run `/at:propose` to start fresh."
+Confirm: "Changes reverted. Pipeline cleared."
+
+If `atomic rollback` printed discarded deferrals, list them by intent and ask whether to add any back to the end of the stack. Don't assume yes — a rollback is often a change of direction, and deferrals found while on the wrong track may be wrong too. Re-add only the ones the user picks, verbatim from the rollback output.
+
+Then: "Run `/at:propose` to start fresh."
 
 ### Discuss
 

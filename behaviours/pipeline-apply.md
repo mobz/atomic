@@ -50,10 +50,20 @@
 - **When:** user says approve (or equivalent)
 - **Then:** Claude invokes `/at:merge`, which runs `atomic commit` (intent read from spec.md) and `atomic push`; Claude does not commit or push itself
 
-### inline review — rollback
-- **Given:** user wants to abandon the work
+### inline review — rollback, no deferrals
+- **Given:** user wants to abandon the work; no proposals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `git reset --hard HEAD` and `atomic clean`; confirms pipeline is cleared
+- **Then:** Claude runs `atomic rollback` — all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and `atomic/spec.md` is removed; Claude confirms the pipeline is cleared and tells the user to run `/at:propose`
+
+### inline review — rollback, with deferrals
+- **Given:** user wants to abandon the work; deferrals were added to `atomic/stack.md` during this apply
+- **When:** user says rollback or abandon
+- **Then:** Claude runs `atomic rollback` — all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and `atomic/spec.md` is removed; Claude confirms the pipeline is cleared, lists the discarded deferrals by intent, and asks whether to add any back to the end of the stack — without assuming yes, since a rollback is often a change of direction
+
+### inline review — rollback, deferrals re-added
+- **Given:** a rollback discarded deferrals and Claude has offered them back
+- **When:** the user picks some or all of them
+- **Then:** Claude appends only the picked blocks, verbatim from the `atomic rollback` output, to the end of `atomic/stack.md`
 
 ### inline review — discuss
 - **Given:** the summary has been shown

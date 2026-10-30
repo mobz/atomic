@@ -85,6 +85,31 @@
 - **When:** `atomic push` is run
 - **Then:** prints a warning with instructions to add a remote, exits 0 (does not fail)
 
+### rollback — reverts code and stack
+- **Given:** `atomic/spec.md` exists; tracked files are modified, staged, or deleted; `atomic/stack.md` has had its top proposal popped and/or deferrals added
+- **When:** `atomic rollback` is run
+- **Then:** all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal returns, deferrals are dropped); `atomic/spec.md` is removed; `atomic status` reports `none`; exits 0
+
+### rollback — discarded deferrals reported
+- **Given:** the working-tree `atomic/stack.md` contains Proposal blocks that are not in HEAD's stack
+- **When:** `atomic rollback` is run
+- **Then:** prints the count and each discarded block in full (from its `===========` line), so they can be re-added verbatim
+
+### rollback — no deferrals
+- **Given:** every Proposal block in the working-tree `atomic/stack.md` is also in HEAD's stack
+- **When:** `atomic rollback` is run
+- **Then:** prints only "Code and stack reverted to HEAD. spec.md removed."
+
+### rollback — stack.md created during the apply
+- **Given:** HEAD has no `atomic/stack.md`; one was created during the apply
+- **When:** `atomic rollback` is run
+- **Then:** its blocks are reported as discarded deferrals and the file is removed
+
+### rollback — JSON output
+- **Given:** any state
+- **When:** `atomic rollback --json` is run
+- **Then:** prints `{"ok":true,"discarded":["<intent>", ...]}` (empty array when nothing was discarded)
+
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run

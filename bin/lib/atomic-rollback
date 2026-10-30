@@ -1,0 +1,70 @@
+# Abandon the active spec: revert all tracked changes, including atomic/stack.md
+# (which puts back the proposal /at:propose popped and drops any deferrals),
+# and remove spec.md. Discarded deferrals are printed in full so they can be
+# offered back to the user.
+
+STACK_SEP="==========="
+
+# Print Proposal block k (1-based) of a stack file: from its separator line up
+# to, but not including, the next separator. Trailing blank lines are dropped
+# by the caller's command substitution.
+_stack_block() {
+  awk -v k="$2" -v sep="$STACK_SEP" '$0 == sep { n++; if (n > k) exit } n == k { print }' "$1"
+}
+
+_stack_count() {
+  grep -c "^${STACK_SEP}\$" "$1" || true
+}
+
+# Succeed if block text $2 appears as a whole block in stack file $1.
+_stack_has_block() {
+  local file="$1" block="$2" i count
+  count=$(_stack_count "$file")
+  for (( i = 1; i <= count; i++ )); do
+    [[ "$(_stack_block "$file" "$i")" == "$block" ]] && return 0
+  done
+  return 1
+}
+
+cmd_rollback() {
+  require_git
+  local stack="$ATOMIC_DIR/stack.md"
+
+  # Collect deferrals before reverting: blocks in the working-tree stack that
+  # are not in HEAD's stack.
+  local head_stack deferrals=() i count block
+  head_stack=$(mktemp)
+  git show "HEAD:$stack" > "$head_stack" 2>/dev/null || : > "$head_stack"
+  if [[ -f "$stack" ]]; then
+    count=$(_stack_count "$stack")
+    for (( i = 1; i <= count; i++ )); do
+      block=$(_stack_block "$stack" "$i")
+      if ! _stack_has_block "$head_stack" "$block"; then
+        deferrals+=("$block")
+      fi
+    done
+  fi
+
+  git restore --source=HEAD --staged --worktree -- .
+  # A stack.md created during the apply is untracked, so restore leaves it.
+  git cat-file -e "HEAD:$stack" 2>/dev/null || rm -f "$stack"
+  rm -f "$head_stack"
+
+  rm -f "$ATOMIC_DIR/spec.md"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    local intents=() d intent
+    for d in "${deferrals[@]+"${deferrals[@]}"}"; do
+      intent=$(sed -n '2s/^Proposal: //p' <<< "$d")
+      intents+=("\"${intent//\"/\\\"}\"")
+    done
+    local IFS=,
+    printf '{"ok":true,"discarded":[%s]}\n' "${intents[*]+"${intents[*]}"}"
+  else
+    echo "Code and stack reverted to HEAD. spec.md removed."
+    if [[ ${#deferrals[@]} -gt 0 ]]; then
+      echo "Discarded ${#deferrals[@]} deferral(s) added during this apply:"
+      printf '\n%s\n' "${deferrals[@]}"
+    fi
+  fi
+}
