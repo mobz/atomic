@@ -2,16 +2,17 @@ Stack: Shared pipeline context docs
 As a developer writing /at:* commands, I want pipeline file formats (spec, behaviour, stack) documented as shared context files injected into each command so that commands don't re-derive format knowledge inline, stay concise, and load only what they need.
 
 ===========
-Proposal: Fix stale and contradictory text in `/at:propose` and `/at:stack`
+Proposal: Fix stale path, duplicated paragraph, and typos in `/at:stack`
 
-- `propose.md` step 1 says "The stack is not modified regardless of what the user chooses — that is `/at:merge`'s job." This contradicts step 6, which pops the top proposal when spec.md is written, and `merge.md` never touches the stack. Replace the line with one consistent with step 6 (the stack is not modified during orientation; popping happens in step 6).
+Split from "Fix stale and contradictory text in `/at:propose` and `/at:stack`" — the propose.md half landed separately.
+
 - `stack.md` line 22 tells Claude to read spec files in `/specs` — should be `behaviours/`.
 - `stack.md` lines 18 and 20 duplicate the "explore mode … Think deeply. Visualize freely." paragraph — keep one.
 - Typos in `stack.md`: "and the composing" → "and composing" (line 3), "propsal(s)" → "proposal(s)" (lines 3, 135, 139), "independantly" → "independently" (line 3), "in much detail" → "in as much detail" (line 18), "thinking partner to helping" → "thinking partner helping" (line 20).
 
-Do this before the stack-context proposal below, which also edits these files.
+Do this before the stack-context proposal below, which also edits this file.
 
-**Done when:** propose.md has no reference to `/at:merge` modifying the stack; stack.md has no `/specs` reference, no duplicated explore paragraph, and none of the listed typos.
+**Done when:** stack.md has no `/specs` reference, no duplicated explore paragraph, and none of the listed typos.
 
 ===========
 Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline

@@ -21,7 +21,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
      - **Proceed** — use the proposal's intent as the starting point; go to **Step 3** (skip Discover).
      - **Modify** — use the proposal's intent as a starting point but ask follow-up questions; go to **Step 3**.
      - **Start fresh** — ignore the stack entry and go to **Step 2**.
-     - The stack is not modified regardless of what the user chooses — that is `/at:merge`'s job.
+     - The stack is not modified at this point — if a spec is written from this proposal, step 6 pops it.
    - If no stack proposal exists: proceed to **Step 2**.
 
 2. **Discover** — *(skip if `$ARGUMENTS` provided or user is proceeding with a stack proposal)* ask the user conversationally:
