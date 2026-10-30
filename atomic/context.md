@@ -11,7 +11,7 @@
 - Pipeline state derived from spec.md checkboxes: none/proposed/applying/ready.
 - `atomic progress` prints M/N changes complete.
 - `atomic commit` refuses if any [ ] items remain.
-- Each command in bin/lib/atomic-{status,progress,show-spec,show-context,show-stack,commit,push,clean,rollback,help}.
+- Each command in bin/lib/atomic-{status,progress,show-spec,show-context,show-stack,commit,push,clean,rollback,start-over,help}.
 - atomic/ tracked: .gitkeep, context.md, stack.md committed; spec.md ephemeral.
 - stack.md format: `Stack: <name>` header block, then `===========\nProposal: <intent>` blocks in order; top proposal = next commit.
 - `/at:propose` is stack-aware: on entry with no args, surfaces top stack proposal as default intent; when spec.md is written from a stack proposal, that proposal is popped from stack.md in the same step (state moves from queued → active); `$ARGUMENTS` or fresh discovery never touches stack.md.
@@ -25,4 +25,4 @@
 - Inline spec format template removed from propose.md step 5; inline state parentheticals removed from all three commands — these now live in spec-context.md.
 - `atomic/stacks/` directory introduced for archiving named stacks; `atomic/stacks/stack-awareness.md` holds the in-progress stack-awareness feature proposals.
 - `.claude/docs/behaviour-context.md` covers the `behaviours/` store (feature-scoped files, one per domain), the `## Behaviour:` / Given/When/Then format, and read-before-write; injected into apply.md only, after spec-context. apply.md step 2 no longer carries an inline format block.
-- `bin/lib/helpers.sh` `snapshot_and_revert <message> [keep-path...]`: saves the whole working tree (temp index + `git add -A`, `.gitignore` respected) as an unreferenced commit on HEAD, then reverts everything except keep paths (tracked → HEAD, snapshot-added files deleted); prints the SHA, or nothing if the tree matches HEAD. Used by `atomic rollback`.
+- `bin/lib/helpers.sh` `snapshot_and_revert <message> [keep-path...]`: saves the whole working tree (temp index + `git add -A`, `.gitignore` respected) as an unreferenced commit on HEAD, then reverts everything except keep paths (tracked → HEAD, snapshot-added files deleted); prints the SHA, or nothing if the tree matches HEAD. Used by `atomic rollback` and `atomic start-over` (which keeps spec.md and stack.md, and treats a snapshot differing from HEAD only in those as nothing to discard — spec.md is untracked, so it always differs).

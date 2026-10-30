@@ -1,0 +1,36 @@
+# Restart the active spec: snapshot the working tree to an unreferenced commit,
+# then revert everything to HEAD except atomic/spec.md and atomic/stack.md, and
+# untick every checkbox so the spec is back to `proposed`.
+
+cmd_start_over() {
+  require_git
+  local spec="$ATOMIC_DIR/spec.md"
+
+  if [[ ! -f "$spec" ]]; then
+    echo "error: no active spec — nothing to start over" >&2
+    exit 1
+  fi
+
+  local stack="$ATOMIC_DIR/stack.md" spec_intent snapshot short tmp
+  spec_intent=$(grep -m1 '^\*\*Intent:\*\*' "$spec" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || true)
+  snapshot=$(snapshot_and_revert "atomic start over: ${spec_intent:-no intent}" "$stack" "$spec")
+  # spec.md is untracked, so the snapshot always differs from HEAD; report
+  # nothing discarded when only the kept paths differ.
+  if [[ -n "$snapshot" ]] && git diff --quiet HEAD "$snapshot" -- . ":!$stack" ":!$spec"; then
+    snapshot=""
+  fi
+  short=${snapshot:0:8}
+
+  tmp=$(mktemp)
+  sed 's/^- \[X\]/- [ ]/' "$spec" > "$tmp"
+  cat "$tmp" > "$spec"
+  rm -f "$tmp"
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"snapshot":"%s"}\n' "$snapshot"
+  elif [[ -n "$snapshot" ]]; then
+    echo "Started over. Previous attempt is available at $short (restore with: git restore --source=$short -- .)"
+  else
+    echo "Started over. Nothing to discard."
+  fi
+}

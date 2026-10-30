@@ -120,6 +120,36 @@
 - **When:** `atomic rollback --json` is run
 - **Then:** prints `{"ok":true,"snapshot":"<sha or empty>","discarded":["<intent>", ...]}` (`snapshot` empty when nothing changed; `discarded` empty when there were no deferrals)
 
+### start-over — reverts code, keeps spec and stack
+- **Given:** `atomic/spec.md` exists; tracked files are modified, staged, or deleted; untracked files were created during the attempt; `atomic/stack.md` may have been popped or had deferrals added
+- **When:** `atomic start-over` is run
+- **Then:** all tracked changes except `atomic/stack.md` are reverted to HEAD; untracked files other than `atomic/spec.md` are removed, along with directories left empty; `.gitignore`d files are untouched; `atomic/stack.md` and `atomic/spec.md` keep their content; exits 0
+
+### start-over — checkboxes unticked
+- **Given:** `atomic/spec.md` has `[X]` items
+- **When:** `atomic start-over` is run
+- **Then:** every `- [X]` becomes `- [ ]`; nothing else in spec.md changes; `atomic status` reports `proposed`
+
+### start-over — snapshot of the previous attempt
+- **Given:** the working tree differs from HEAD outside `atomic/spec.md` and `atomic/stack.md`
+- **When:** `atomic start-over` is run
+- **Then:** before reverting, the whole working tree is saved as a commit on top of HEAD that no branch, tag, or stash references, with message `atomic start over: <spec intent>`; prints "Started over. Previous attempt is available at <short-sha> (restore with: git restore --source=<short-sha> -- .)"; running that command restores the previous attempt
+
+### start-over — nothing to discard
+- **Given:** the working tree differs from HEAD only in `atomic/spec.md` and `atomic/stack.md`
+- **When:** `atomic start-over` is run
+- **Then:** checkboxes are unticked; prints "Started over. Nothing to discard."
+
+### start-over — no spec
+- **Given:** `atomic/spec.md` does not exist
+- **When:** `atomic start-over` is run
+- **Then:** prints "error: no active spec — nothing to start over" to stderr, changes nothing, exits non-zero
+
+### start-over — JSON output
+- **Given:** `atomic/spec.md` exists
+- **When:** `atomic start-over --json` is run
+- **Then:** prints `{"ok":true,"snapshot":"<sha or empty>"}` (`snapshot` empty when nothing was discarded)
+
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run

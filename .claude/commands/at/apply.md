@@ -111,12 +111,13 @@ Anything else is a discuss round — a correction, missing test, scope adjustmen
 2. If the feedback changes scope or approach, update `atomic/spec.md` to reflect it — add, change, or remove `[ ]` items, or add a note under **Assumptions** — so the new information is recorded.
 3. Decide how to act on it:
    - **Adjust in place** (default) — make the change directly. Mark newly completed items `[X]`, uncheck items that need rework.
-   - **Start over** — if the new information means the current implementation is the wrong base to build on (wrong approach, tangled changes, easier to redo than to fix), tell the user you are starting over and why, then revert code while keeping the spec and the stack, and reset every checkbox:
+   - **Start over** — if the new information means the current implementation is the wrong base to build on (wrong approach, tangled changes, easier to redo than to fix), tell the user you are starting over and why, then snapshot the previous attempt and revert everything except the spec and the stack, unticking every checkbox:
 
      ```bash
-     git restore --source=HEAD --staged --worktree -- . ':!atomic/stack.md'
-     python3 -c "import re; p='atomic/spec.md'; s=open(p).read(); open(p,'w').write(re.sub(r'^- \[X\]', '- [ ]', s, flags=re.M))"
+     atomic start-over
      ```
+
+     Relay the snapshot line from the output — the SHA the previous attempt is available at and the restore command.
 4. Go back to **Step 1**.
 
 ---
