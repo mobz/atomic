@@ -2,22 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Rewrite README.md and update CLAUDE.md to describe the current pipeline
-
-`README.md` still describes the original design: four stages (`propose → apply → review → merge`), `/propose` `/review` `/merge` without the `at:` namespace, `atomic advance`, `atomic merge-specs`, `--human`, `.atomic/`, `specs/`, and state stored in git refs.
-
-Rewrite it to match current reality:
-- Pipeline: `propose → apply → merge`, plus `/at:stack` for decomposing a feature into a proposal stack
-- Commands: `/at:propose`, `/at:apply`, `/at:merge`, `/at:stack`
-- CLI reference from `bin/lib/atomic-help` (status, progress, reset, show-spec, show-context, show-stack, commit, push, clean; `--json`)
-- Structure: `.claude/commands/at/`, `.claude/docs/`, `atomic/` (spec.md ephemeral; context.md, stack.md committed), `behaviours/`, `bin/`
-- State: derived from spec.md checkbox state (none/proposed/applying/ready)
-
-CLAUDE.md: add `/at:merge` to the Slash Commands table (it is missing) and replace "Implement → specs → test loop" with "behaviours" in the Pipeline Stages table.
-
-**Done when:** README.md contains no reference to `advance`, `merge-specs`, `/review`, `.atomic/`, `specs/`, `--human` or git-ref state; CLAUDE.md lists all four `/at:*` commands.
-
-===========
 Proposal: Create stack-context.md and wire it into propose, apply, and stack
 
 Create `.claude/docs/stack-context.md` covering the stack.md format. Wire it into the three commands that read from or write to the stack. Trim the inline format explanations.

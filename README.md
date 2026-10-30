@@ -1,68 +1,92 @@
 # atomic
 
-A lightweight atomic commit pipeline CLI. Every change moves through an explicit four-stage workflow:
+A lightweight atomic commit pipeline for AI-assisted development. Every change is planned as one small, revertable commit, implemented by Claude Code against that plan, reviewed inline, and merged:
 
 ```
-propose → apply → review → merge
+propose → apply (implement → behaviours → test → inline review) → merge
 ```
 
-Built for single-dev use today, designed to extend to multi-agent stacked commits later.
+Larger features are broken down up front into a stack of proposals, each of which becomes one commit.
+
+This repo dogfoods itself — `atomic` is built using `atomic`.
 
 ## Pipeline
 
-| Stage | Command | Who |
-|-------|---------|-----|
-| Define the commit | `/propose` | User + Claude |
-| Implement + test | `/apply` | Claude (automatic) |
-| Review diff + specs | `/review` | User + Claude |
-| Commit + push | `/merge` | Claude (automatic) |
+| Command | Who | What happens |
+|---------|-----|--------------|
+| `/at:stack` | User + Claude | Design a feature as an ordered stack of proposals in `atomic/stack.md` |
+| `/at:propose` | User + Claude | Define exactly one atomic commit, usually from the top of the stack. Writes `atomic/spec.md` |
+| `/at:apply` | Claude + User | Implement the spec, update behaviours, run tests, then show a summary. The user approves, rolls back, or discusses (which re-enters the loop) |
+| `/at:merge` | Claude | Commit with the spec's intent as the message and push. Runs automatically on approve |
+
+Out-of-scope work noticed along the way is added to the stack rather than implemented.
 
 ## Quick Start
 
 ```bash
 # Check current pipeline state
-bin/atomic status --human
+bin/atomic status
 
-# Start a new commit
-# In Claude Code: /propose
-
-# Implement it
-# In Claude Code: /apply
-
-# Review it
-# In Claude Code: /review
-
-# Ship it
-# In Claude Code: /merge
+# In Claude Code:
+#   /at:propose   define the next commit
+#   /at:apply     implement it, review inline, approve to merge
 ```
 
 ## CLI Reference
 
 ```bash
-atomic status           # current stage + spec summary (JSON by default)
-atomic advance <stage>  # move to named stage
-atomic reset            # clear .atomic/ and remove pipeline refs
-atomic show-spec        # print .atomic/spec.md
-atomic show-context     # print .atomic/context.md
-atomic merge-specs      # merge .atomic/ domain specs into specs/
-atomic commit           # create git commit from current changes
-atomic push             # push current branch to origin
-atomic clean            # clear .atomic/ working state
+atomic status        # pipeline state derived from spec.md (none/proposed/applying/ready)
+atomic progress      # M/N changes complete
+atomic show-spec     # print atomic/spec.md
+atomic show-context  # print atomic/context.md
+atomic show-stack    # print atomic/stack.md
+atomic commit        # create git commit (refuses if any [ ] items remain in spec.md)
+atomic push          # push current branch to origin
+atomic clean         # remove spec.md (clear active pipeline)
+atomic rollback      # abandon the active spec and revert all changes
+atomic start-over    # revert all changes but keep the spec and stack, unticking every item
 
-# Add --human to any command for readable output
-atomic status --human
+# Add --json to any command for machine-readable output
+atomic status --json
 ```
+
+`rollback` and `start-over` save the discarded work as an unreferenced commit and print its SHA, so it can be restored with `git restore --source=<sha> -- .`.
 
 ## Structure
 
 ```
-.claude/commands/   ← pipeline slash commands for Claude Code
-.atomic/            ← gitignored pipeline working state
-specs/              ← committed spec store (always in sync with code)
-bin/atomic          ← the CLI
-CLAUDE.md           ← instructions for Claude Code sessions
+.claude/commands/at/  ← pipeline slash commands for Claude Code
+.claude/docs/         ← shared format context injected into the commands
+atomic/spec.md        ← active commit plan (ephemeral, never committed)
+atomic/context.md     ← evolving codebase understanding (committed)
+atomic/stack.md       ← ordered proposal queue (committed)
+behaviours/           ← BDD scenarios, always in sync with the code (committed)
+bin/atomic            ← the CLI
+CLAUDE.md             ← instructions for Claude Code sessions
 ```
 
-## State Storage
+## Behaviours
 
-Pipeline state lives in git refs (`refs/atomic/current/`) — concurrent-safe, pushed with the repo, visible via `git for-each-ref`.
+`behaviours/` holds feature-scoped BDD scenarios describing what the system observably does — one file per domain (e.g. `cli-atomic.md`, `pipeline-apply.md`), not one per commit:
+
+```markdown
+## Behaviour: <feature name>
+
+### <scenario name>
+- **Given:** system state / preconditions
+- **When:** action or event
+- **Then:** observable outcome(s)
+```
+
+During `/at:apply`, after implementing, Claude creates or updates the scenarios for every feature the commit touched — adding new ones, changing ones whose behaviour changed, removing ones that no longer hold. They are committed alongside the code in the same atomic commit, so the behaviour store always matches the code at every commit. The format and rules live in `.claude/docs/behaviour-context.md`, which is injected into `/at:apply`.
+
+## State
+
+Pipeline state is derived from the checkboxes in `atomic/spec.md`:
+
+| State | Condition |
+|-------|-----------|
+| `none` | spec.md does not exist |
+| `proposed` | all items are `[ ]` |
+| `applying` | some items are `[X]` |
+| `ready` | all items are `[X]` |

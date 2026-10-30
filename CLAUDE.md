@@ -24,11 +24,11 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 | Stage | Who | What happens |
 |-------|-----|--------------|
 | **propose** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
-| **apply** | Claude + User | Implement → specs → test loop. User reviews inline: approve, rollback, or discuss. Discuss re-enters the loop. Approve auto-merges. |
+| **apply** | Claude + User | Implement → behaviours → test loop. User reviews inline: approve, rollback, or discuss. Discuss re-enters the loop. Approve auto-merges. |
 
 ## Hard Rules
 
-1. **Never implement changes outside the `apply` stage.** If someone asks you to "just fix this quickly" outside of apply, decline and suggest running `/propose` first.
+1. **Never implement changes outside the `apply` stage.** If someone asks you to "just fix this quickly" outside of apply, decline and suggest running `/at:propose` first.
 
 2. **Never commit code directly.** All commits go through `atomic commit` in the merge stage. No `git commit` by hand.
 
@@ -44,6 +44,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 |---------|-------|-------------|
 | `/at:propose` | → propose | Define the next atomic commit interactively |
 | `/at:apply` | → apply | Implement, review inline, and merge — full loop |
+| `/at:merge` | → merge | Commit and push (runs automatically on approve) |
 | `/at:stack` | → stack | Design a feature as an incremental proposal stack |
 
 ## Key Paths

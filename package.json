@@ -1,7 +1,7 @@
 {
   "name": "atomic-commit-pipeline",
   "version": "0.1.0",
-  "description": "Atomic commit pipeline CLI — propose, apply, review, merge",
+  "description": "Atomic commit pipeline CLI — propose, apply, merge",
   "bin": {
     "atomic": "./bin/atomic"
   },
