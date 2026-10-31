@@ -58,7 +58,17 @@
 ### commit — all complete
 - **Given:** `atomic/spec.md` exists with all `[X]` items; changes are present
 - **When:** `atomic commit` is run
-- **Then:** intent is read from spec.md; spec.md is removed; all changes are staged and committed with the intent as message, exits 0
+- **Then:** intent is read from spec.md; all changes except spec.md are staged and committed with the intent as message; spec.md is then removed, exits 0
+
+### commit — git commit fails
+- **Given:** `atomic/spec.md` exists with all `[X]` items; `git commit` fails (nothing to commit, or e.g. a pre-commit hook rejects it)
+- **When:** `atomic commit` is run
+- **Then:** prints `error: commit failed — atomic/spec.md kept; fix the cause and run atomic commit again` to stderr, exits non-zero; spec.md is kept and `atomic status` shows `ready`
+
+### commit — spec.md staged by hand
+- **Given:** `atomic/spec.md` has been added to the index
+- **When:** `atomic commit` is run
+- **Then:** spec.md is unstaged before committing and is not part of the commit
 
 ### commit — incomplete spec
 - **Given:** `atomic/spec.md` exists with one or more `[ ]` items

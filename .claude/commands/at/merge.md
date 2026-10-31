@@ -12,7 +12,8 @@ Your job is to finalise the atomic commit: create the commit, push it, and leave
    - **proposed** — Tell the user to run `/at:apply` first.
    - **none** — nothing to merge.
 
-2. **Commit** — run `atomic commit`. Reads intent from spec.md, removes spec.md, stages all changes, and commits. Will refuse if any `[ ]` items remain.
+2. **Commit** — run `atomic commit`. Reads intent from spec.md, stages all changes except spec.md, commits, then removes spec.md. Will refuse if any `[ ]` items remain.
+   - If `atomic commit` fails (e.g. nothing to commit, a hook rejected it), show the error and stop — do not push. spec.md is kept and the state stays `ready`, so the user can fix the cause and run `/at:merge` again.
 
 3. **Push** — run `atomic push`. Pushes to origin if configured; prints a warning and continues if no remote is set.
 

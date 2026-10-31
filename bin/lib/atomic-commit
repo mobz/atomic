@@ -18,10 +18,16 @@ cmd_commit() {
     [[ -n "$raw" ]] && intent="$raw"
   fi
 
-  rm -f "$ATOMIC_DIR/spec.md"
-
+  # Stage everything except the spec; remove it only once the commit has
+  # succeeded, so a failed commit leaves the pipeline in state ready.
   git add -A
-  git commit -m "$intent"
+  git rm --cached -q --ignore-unmatch -- "$ATOMIC_DIR/spec.md"
+  if ! git commit -m "$intent"; then
+    echo "error: commit failed — atomic/spec.md kept; fix the cause and run atomic commit again" >&2
+    exit 1
+  fi
+
+  rm -f "$ATOMIC_DIR/spec.md"
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     local sha

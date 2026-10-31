@@ -2,10 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Make `atomic commit` keep spec.md when the git commit fails
-Deferred from propose: `bin/lib/atomic-commit` runs `rm -f "$ATOMIC_DIR/spec.md"` before `git add -A` / `git commit`. If the commit fails (nothing to commit, hook failure, etc.) the script exits non-zero under `set -e` but the spec is already gone and the pipeline drops to state `none`. Fix: remove spec.md only after `git commit` succeeds — e.g. `git add -A -- . ':!atomic/spec.md'`, commit, then `rm -f` (or remove first but restore on failure). Must still ensure spec.md is never committed. Update the "nothing to commit" scenario in `behaviours/pipeline-merge.md` and the commit scenarios in `behaviours/cli-atomic.md`.
-
-===========
 Proposal: State that stack additions discovered during a commit's work are committed with that commit
 Deferred from discussion of stack-commit semantics. Rule: a commit = stack removals (the pop) + stack additions discovered while doing that commit's work + behaviour changes + code changes. Today this is implicit for apply deferrals (they ride along via `git add -A`) and undefined for propose splits.
 
@@ -88,3 +84,11 @@ Design considerations:
 ===========
 Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
 Deferred from propose: while specifying the commit-consistency manifest, `/at:propose` reading it was considered and left out. Propose was already at ceiling in the preamble spike (complete specs, unstated docs/tests included), and `/at:apply` completes the concern from the manifest regardless. Revisit after the critic spike: add it only if specs that omit manifest artefacts cause problems apply does not catch (e.g. a Done-when that misses a listed artefact).
+
+===========
+Proposal: Make CLI error output follow `--json` consistently
+Deferred from apply: while making `atomic commit` keep spec.md on a failed commit, found that no command switches its error output on `--json`, so errors are inconsistent — plain text regardless of `--json` (`atomic commit` incomplete spec and the new "commit failed — atomic/spec.md kept" error, `atomic start-over` no active spec) vs always-JSON regardless of `--json` (`atomic show-spec` no spec, `require_git` in `helpers.sh`, unknown command in `bin/atomic`). The README promises "Add --json to any command for machine-readable output".
+
+Approach: one shared helper in `bin/lib/helpers.sh` (e.g. `die <message>`) that prints `{"ok":false,"error":"<message>"}` when `--json` is set and `error: <message>` otherwise, both to stderr, then exits 1; replace the five error sites above with it. Note `require_git` and the unknown-command path may run before or regardless of `--json` parsing — check ordering in `bin/atomic`.
+
+Consistency: update the error scenarios in `behaviours/cli-atomic.md` (reset/show-context removed, show-spec no spec, commit incomplete / failed, start-over no spec) and the README's `--json` note.

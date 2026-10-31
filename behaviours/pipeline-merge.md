@@ -23,7 +23,7 @@
 ### commit created
 - **Given:** `atomic/spec.md` exists with all items `[X]`; changes are present
 - **When:** `atomic commit` is run (no argument)
-- **Then:** the intent is read from spec.md; spec.md is removed; all changes are staged (`git add -A`) and committed with the intent as the message — including code and `behaviours/` changes, never spec.md
+- **Then:** the intent is read from spec.md; all changes except spec.md are staged (`git add -A`, spec.md unstaged) and committed with the intent as the message — including code and `behaviours/` changes, never spec.md; spec.md is removed only after the commit succeeds
 
 ### push succeeds
 - **Given:** a remote named `origin` is configured
@@ -43,4 +43,9 @@
 ### nothing to commit
 - **Given:** `atomic/spec.md` exists with all items `[X]`; no other changes exist in the working tree
 - **When:** `atomic commit` is run
-- **Then:** spec.md is removed, `git commit` reports nothing to commit, and the command exits non-zero; no empty commit is created
+- **Then:** `git commit` reports nothing to commit; `atomic commit` prints `error: commit failed — atomic/spec.md kept; fix the cause and run atomic commit again` and exits non-zero; spec.md is kept and `atomic status` shows `ready`; no empty commit is created
+
+### commit fails
+- **Given:** state is `ready` and `atomic commit` fails (nothing to commit, or a hook rejects the commit)
+- **When:** `/at:merge` runs step 2
+- **Then:** Claude shows the error and stops without running `atomic push`; spec.md is kept and the state stays `ready`; Claude tells the user to fix the cause and run `/at:merge` again
