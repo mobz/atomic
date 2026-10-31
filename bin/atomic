@@ -10,7 +10,6 @@ source "$SCRIPT_DIR/lib/helpers.sh"
 source "$SCRIPT_DIR/lib/atomic-status"
 source "$SCRIPT_DIR/lib/atomic-progress"
 source "$SCRIPT_DIR/lib/atomic-show-spec"
-source "$SCRIPT_DIR/lib/atomic-show-context"
 source "$SCRIPT_DIR/lib/atomic-show-stack"
 source "$SCRIPT_DIR/lib/atomic-commit"
 source "$SCRIPT_DIR/lib/atomic-push"
@@ -37,7 +36,6 @@ case "$CMD" in
   status)          cmd_status ;;
   progress)        cmd_progress ;;
   show-spec)       cmd_show_spec ;;
-  show-context)    cmd_show_context ;;
   show-stack)      cmd_show_stack ;;
   commit)          cmd_commit ;;
   push)            cmd_push ;;

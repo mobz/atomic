@@ -14,8 +14,7 @@ Run `atomic status`. Check the state:
 - **applying** — re-entry. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
 - **ready** — all items done. Skip straight to **Step 5** (show summary).
 
-Read the spec: `atomic show-spec`.  
-Read context: `atomic show-context`.
+Read the spec: `atomic show-spec`.
 
 ---
 
@@ -46,11 +45,7 @@ Run `atomic progress`. If any `[ ]` items remain, go back to **Step 1**.
 
 When `atomic progress` shows all items complete (e.g. `5/5 changes complete`), proceed to Step 5.
 
-### 5. Update context
-
-Update `atomic/context.md` with anything learned during this iteration.
-
-### 6. Show summary and ask
+### 5. Show summary and ask
 
 Write a PR-quality summary with no diff output. Structure it as:
 

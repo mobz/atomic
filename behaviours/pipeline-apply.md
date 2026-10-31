@@ -3,7 +3,7 @@
 ### entering apply
 - **Given:** state is `proposed` (`atomic/spec.md` exists, all items `[ ]`)
 - **When:** user runs `/at:apply`
-- **Then:** Claude reads spec and context, begins the implementation loop
+- **Then:** Claude reads the spec, begins the implementation loop
 
 ### implement loop — first entry
 - **Given:** state is `proposed`
@@ -38,7 +38,7 @@
 ### test loop — passing
 - **Given:** implementation is complete and behaviour files in `behaviours/` have been created or updated for each feature touched
 - **When:** test suite is run
-- **Then:** if tests pass, Claude checks `atomic progress`; if items remain it returns to the implement step, otherwise it updates `atomic/context.md` and shows the summary
+- **Then:** if tests pass, Claude checks `atomic progress`; if items remain it returns to the implement step, otherwise it shows the summary
 
 ### test loop — failing
 - **Given:** tests fail after implementation

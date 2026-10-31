@@ -2,27 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Remove `atomic/context.md` from the repository
-
-`atomic/context.md` is a hand-maintained codebase summary updated during each apply. Its purpose — giving Claude orientation at the start of a session — is better served by Claude reading the actual codebase and git history directly. The file is easy to get out of sync, adds a maintenance burden to every apply, and may give Claude false confidence in stale information.
-
-Design considerations:
-- The file is currently referenced by `atomic show-context` and read at the start of `/at:apply`. Both references need to be removed or redirected.
-- `atomic show-context` command (`bin/lib/atomic-show-context`) would need to be removed or repurposed.
-- The dispatch entry in `bin/atomic` for `show-context` would be removed.
-- `/at:apply` currently runs `atomic show-context` on entry — this instruction would be replaced with guidance to orient via `git log`, `bin/atomic status`, and direct file reading.
-- `atomic/context.md` itself is committed and tracked — removal requires a `git rm`.
-- Consider whether `atomic/.gitkeep` needs updating if context.md was the only non-ephemeral content driving the directory's existence (stack.md also lives there, so .gitkeep remains necessary).
-
-This is an expand/contract candidate: the switch proposal removes the `show-context` call from apply.md and the remove proposal deletes the file and command — but given there is no parallel implementation to migrate to, a single commit removing the file, command, and apply.md reference is probably appropriate.
-
-Why remove rather than formalise: every other atomic artefact has a defined format and purpose (`spec-context.md`, `stack-context.md`, `behaviour-context.md`); `context.md` has neither, and its "update with anything learned" rule makes it an append-only log. The current file is already partly wrong ("State after 'direct-to-specs' commit"; start over "uses python3" — it uses sed; `atomic/stacks/stack-awareness.md`), partly history ("removed entirely", "now clean"), and mostly duplicates the format docs, README, help, or the code itself. Decisions and their reasons belong in commit messages and specs; gotchas belong as comments next to the code they affect. The formal "what must stay in step" role is taken by the commit-consistency manifest (next proposal).
-
-- Before deleting, move any fact that is still true and not recorded elsewhere to its proper home — e.g. the experiment harness pointer (`../atomic-experiments/preamble`) into CLAUDE.md or the README.
-- Remove apply.md step 5 ("Update context") and renumber: the summary becomes step 5, which makes the `ready` entry's "Skip straight to **Step 5** (show summary)" correct. This absorbs the "Fix the `ready` entry in `/at:apply` pointing at the wrong step" proposal — delete that proposal from the stack in this commit.
-- Update everything that mentions it: CLAUDE.md Key Paths, README (CLI reference `show-context`, Structure tree), `atomic help`, `behaviours/` (e.g. the test-loop scenario "updates `atomic/context.md`", `cli-atomic.md` show-context scenarios), `/at:apply` entry ("Read context").
-
-===========
 Proposal: Add a commit-consistency manifest (`atomic/consistency.md`) and check every apply against it
 Lands before the critic spike (end of stack): the manifest is useful to `/at:apply` on its own; the spike then measures whether a `diff-critic` agent or verify wording adds anything on top.
 
@@ -42,14 +21,6 @@ Deferred from propose: while specifying the stale-behaviours rewrite, found that
 ===========
 Proposal: Make `atomic commit` keep spec.md when the git commit fails
 Deferred from propose: `bin/lib/atomic-commit` runs `rm -f "$ATOMIC_DIR/spec.md"` before `git add -A` / `git commit`. If the commit fails (nothing to commit, hook failure, etc.) the script exits non-zero under `set -e` but the spec is already gone and the pipeline drops to state `none`. Fix: remove spec.md only after `git commit` succeeds — e.g. `git add -A -- . ':!atomic/spec.md'`, commit, then `rm -f` (or remove first but restore on failure). Must still ensure spec.md is never committed. Update the "nothing to commit" scenario in `behaviours/pipeline-merge.md` and the commit scenarios in `behaviours/cli-atomic.md`.
-
-===========
-Proposal: Fix the `ready` entry in `/at:apply` pointing at the wrong step
-`.claude/commands/at/apply.md` line 14 says "**ready** — all items done. Skip straight to **Step 5** (show summary)." but step 5 is "Update context" and the summary is "### 6. Show summary and ask". Change it to "Skip straight to **Step 6** (show summary)." — resuming an interrupted apply should re-show the summary for approval without re-running the context update. Line 54 ("proceed to Step 5") is correct and stays: on first completion, context is updated before the summary.
-
-Consider adding a `/at:apply` entered-in-`ready` scenario to `behaviours/pipeline-apply.md` — or leave it to the "Add behaviour scenarios for uncovered `/at:apply` and `/at:merge` entry states" proposal above.
-
-Note: `ready` means all items are ticked, not that the user approved — the summary/approve step (Review 3) is the only code review, so the `ready` entry must land on it.
 
 ===========
 Proposal: State that stack additions discovered during a commit's work are committed with that commit

@@ -50,7 +50,6 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 ## Key Paths
 
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
-- `atomic/context.md` — evolving codebase understanding, committed with each atomic commit
 - `atomic/stack.md` — ordered proposal queue; out-of-scope items from apply land here; top proposal feeds the next `/at:propose`
 - `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)

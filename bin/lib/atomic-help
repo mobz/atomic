@@ -6,7 +6,6 @@ Commands:
   status           Pipeline state derived from spec.md (none/proposed/applying/ready)
   progress         M/N changes complete
   show-spec        Print current atomic/spec.md
-  show-context     Print current atomic/context.md
   show-stack       Print current atomic/stack.md
   commit           Create git commit (refuses if any [ ] items remain in spec.md)
   push             Push current branch to origin

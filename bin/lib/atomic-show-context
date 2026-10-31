@@ -1,5 +1,0 @@
-cmd_show_context() {
-  if [[ -f "$ATOMIC_DIR/context.md" ]]; then
-    cat "$ATOMIC_DIR/context.md"
-  fi
-}

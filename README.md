@@ -38,7 +38,6 @@ bin/atomic status
 atomic status        # pipeline state derived from spec.md (none/proposed/applying/ready)
 atomic progress      # M/N changes complete
 atomic show-spec     # print atomic/spec.md
-atomic show-context  # print atomic/context.md
 atomic show-stack    # print atomic/stack.md
 atomic commit        # create git commit (refuses if any [ ] items remain in spec.md)
 atomic push          # push current branch to origin
@@ -58,7 +57,6 @@ atomic status --json
 .claude/commands/at/  ← pipeline slash commands for Claude Code
 .claude/docs/         ← shared format context injected into the commands
 atomic/spec.md        ← active commit plan (ephemeral, never committed)
-atomic/context.md     ← evolving codebase understanding (committed)
 atomic/stack.md       ← ordered proposal queue (committed)
 behaviours/           ← BDD scenarios, always in sync with the code (committed)
 bin/atomic            ← the CLI

@@ -50,15 +50,10 @@
 - **When:** `atomic show-spec` is run
 - **Then:** prints error to stderr and exits non-zero
 
-### show-context — file exists
-- **Given:** `atomic/context.md` exists
+### show-context — removed
+- **Given:** any pipeline state
 - **When:** `atomic show-context` is run
-- **Then:** prints contents of `atomic/context.md` to stdout
-
-### show-context — no context
-- **Given:** `atomic/context.md` does not exist
-- **When:** `atomic show-context` is run
-- **Then:** prints nothing and exits 0
+- **Then:** prints `{"error":"unknown command: show-context"}` to stderr, exits non-zero
 
 ### commit — all complete
 - **Given:** `atomic/spec.md` exists with all `[X]` items; changes are present
@@ -153,4 +148,4 @@
 ### clean
 - **Given:** any state
 - **When:** `atomic clean` is run
-- **Then:** `atomic/spec.md` is deleted; `atomic/context.md`, `atomic/stack.md`, and `atomic/stacks/` are preserved, exits 0
+- **Then:** `atomic/spec.md` is deleted; `atomic/stack.md` and `atomic/stacks/` are preserved, exits 0
