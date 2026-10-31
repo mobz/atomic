@@ -57,11 +57,14 @@ atomic status --json
 .claude/commands/at/  ← pipeline slash commands for Claude Code
 .claude/docs/         ← shared format context injected into the commands
 atomic/spec.md        ← active commit plan (ephemeral, never committed)
+atomic/consistency.md ← artefacts that must agree with the code at every commit (committed)
 atomic/stack.md       ← ordered proposal queue (committed)
 behaviours/           ← BDD scenarios, always in sync with the code (committed)
 bin/atomic            ← the CLI
 CLAUDE.md             ← instructions for Claude Code sessions
 ```
+
+`atomic/consistency.md` is the repo's commit-consistency manifest: one entry per artefact (README, help text, docs, behaviours, …) saying what must agree with what. `/at:apply` checks every change against it and updates the manifest when the change adds or removes something it should list. Its format lives in `.claude/docs/consistency-context.md`.
 
 ## Behaviours
 

@@ -36,7 +36,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 4. **Stay in scope.** During apply, implement only the concern `atomic/spec.md` describes (see rule 5). If you notice something out of scope, add it to `atomic/stack.md` as a new Proposal block.
 
-5. **The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small.
+5. **The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours, and everything listed in `atomic/consistency.md` — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small.
 
 ## Slash Commands
 
@@ -50,6 +50,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 ## Key Paths
 
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
+- `atomic/consistency.md` — commit-consistency manifest: every artefact that must agree with the code at every commit; `/at:apply` checks each change against it
 - `atomic/stack.md` — ordered proposal queue; out-of-scope items from apply land here; top proposal feeds the next `/at:propose`
 - `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)

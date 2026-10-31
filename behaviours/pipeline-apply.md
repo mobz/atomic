@@ -3,7 +3,7 @@
 ### entering apply
 - **Given:** state is `proposed` (`atomic/spec.md` exists, all items `[ ]`)
 - **When:** user runs `/at:apply`
-- **Then:** Claude reads the spec, begins the implementation loop
+- **Then:** Claude reads the spec and `atomic/consistency.md`, then begins the implementation loop
 
 ### implement loop — first entry
 - **Given:** state is `proposed`
@@ -19,6 +19,21 @@
 - **Given:** the spec's change makes tests, docs (README, help text), or behaviours stale or untested, and the spec's Changes do not list them
 - **When:** Claude implements the change
 - **Then:** Claude updates them in this commit so the codebase is releasable; unrelated issues it notices along the way are still deferred to `atomic/stack.md`, not fixed
+
+### implement loop — manifest artefact made stale
+- **Given:** `atomic/consistency.md` exists and lists an artefact the change makes stale (e.g. `README.md` — CLI reference matches `atomic help`, and the change adds a command)
+- **When:** Claude implements the change
+- **Then:** Claude updates that artefact in this commit, even if the spec's Changes do not list it
+
+### implement loop — manifest maintained
+- **Given:** `atomic/consistency.md` exists and the change adds, renames, or removes an artefact or kind of component that must stay in step (e.g. a new doc the commands rely on)
+- **When:** Claude implements the change
+- **Then:** Claude adds, updates, or removes the matching entry in `atomic/consistency.md` in this commit
+
+### implement loop — manifest artefact unaffected
+- **Given:** `atomic/consistency.md` lists an artefact the change does not make stale
+- **When:** Claude implements the change
+- **Then:** Claude leaves that artefact untouched; the manifest does not prompt drive-by edits
 
 ### scope enforcement — future work
 - **Given:** Claude notices a clearly out-of-scope item unrelated to the concern (future work, unrelated improvement) during implementation

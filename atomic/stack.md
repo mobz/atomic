@@ -2,19 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Add a commit-consistency manifest (`atomic/consistency.md`) and check every apply against it
-Lands before the critic spike (end of stack): the manifest is useful to `/at:apply` on its own; the spike then measures whether a `diff-critic` agent or verify wording adds anything on top.
-
-Design (from discussion):
-- A committed file listing every artefact in this repo that must be consistent with the code at every commit, each with what must agree. First entry is the file itself, maintained as commands, components, docs, and artefacts are added or removed.
-- Seed for this repo: `atomic/consistency.md` (itself); `README.md` (pipeline/commands table, CLI reference matches `atomic help`, Structure tree, State table); `bin/lib/atomic-help` (one line per command, matches `bin/atomic` dispatch); `CLAUDE.md` (pipeline stages, slash commands table, key paths, hard rules); `.claude/docs/*-context.md` (formats the commands rely on); `.claude/commands/at/*.md` (step numbers and cross-references, `@` includes); `behaviours/*.md` (scenarios for every touched feature); `package.json` (description; `test` script — atomic has no test suite yet).
-- Format: a short header saying what the file is for, then one bullet per artefact: path or glob — what must agree with what. Keep it a checklist, not docs.
-- Wiring: `/at:apply` reads it (and the critic, if adopted) — every listed item is part of the concern when the change makes it stale (CLAUDE.md rule 5 already makes those in scope; the manifest makes them concrete). The summary's "What changed" covers manifest items touched. `/at:propose` may use it to write complete Changes lists.
-- Repos without one: decide whether apply creates it on first run (a deferral at top of stack, or part of an `atomic init`), or just falls back to the generic rule.
-- Shared format doc: `.claude/docs/consistency-context.md`, injected where the manifest is used — like the stack and spec formats.
-- Behaviours: `pipeline-apply.md` scenarios — change makes a listed artefact stale → updated in the same commit; change adds a new command/artefact → manifest entry added; listed artefact untouched by the change → left alone.
-
-===========
 Proposal: Add behaviour scenarios for uncovered `/at:apply` and `/at:merge` entry states
 Deferred from propose: while specifying the stale-behaviours rewrite, found that `behaviours/pipeline-apply.md` has no scenarios for `/at:apply` entered in state `none` (tell user to run `/at:propose`), `applying` (re-entry: show progress, list remaining items, continue), or `ready` (skip to summary); and `behaviours/pipeline-merge.md` has no scenarios for `/at:merge` entered in `applying` (show progress, suggest `/at:apply`), `proposed` (tell user to run `/at:apply`), or `none` (nothing to merge). Adding coverage is a separate concern from correcting stale scenarios.
 
@@ -80,7 +67,7 @@ Proposal: Measure whether an adversarial diff critic, steered by a per-repo comm
 - `/at:apply` scope is fine after the df6d3bf rule rewording: unstated README/test/behaviour updates are made 5/5, planted incidental issues (help typo, duplicated helper) are left alone 5/5.
 - The remaining failure is **ticked but not done**: in `apply-title-length` the baseline raises the limit and ticks the item, but the planted `truncate` off-by-one makes titles 61 characters, failing Done-when — 0/5. An adversarial `diff-critic` agent run before the summary (unrelated change / stale or untested / not done, incl. edge cases) fixed it 3/5, never hurt precision, at ~1.7x cost ($0.50 vs $0.30 API-equivalent per run).
 
-**New idea to test — a commit-consistency manifest as steering.** A committed, per-repo file (working name `atomic/consistency.md`) itemising every artefact that must stay consistent with the code at every commit: README, docs, help text, tests, behaviours, infra, CI, DB schema/migrations, generated files, examples, changelog — whatever the repo has, with what in each must agree (e.g. "README CLI reference must match `atomic help`"). **The first item is the file itself:** it must be updated when a change adds a new command, component, function family, doc, or artefact that must stay in step (and entries removed when the thing goes). The critic checks the diff against each item instead of guessing what "stale" means in this repo; apply itself may read it too.
+**New idea to test — a commit-consistency manifest as steering.** A committed, per-repo file (`atomic/consistency.md`, format in `.claude/docs/consistency-context.md`) itemising every artefact that must stay consistent with the code at every commit: README, docs, help text, tests, behaviours, infra, CI, DB schema/migrations, generated files, examples, changelog — whatever the repo has, with what in each must agree (e.g. "README CLI reference must match `atomic help`"). **The first item is the file itself:** it must be updated when a change adds a new command, component, function family, doc, or artefact that must stay in step (and entries removed when the thing goes). The critic checks the diff against each item instead of guessing what "stale" means in this repo; apply itself may read it too.
 
 **Harness work needed (the fixture is too simple to show a manifest's value):**
 - Add non-obvious consistency artefacts to the fixture that a generic "tests/README/behaviours" reading misses: e.g. a shell completion file listing commands, a `docs/` man-style page, a JSON schema for `todo.json`, a CHANGELOG, an example config, a data-format version/migration step.
@@ -90,4 +77,18 @@ Proposal: Measure whether an adversarial diff critic, steered by a per-repo comm
 
 **Variants (apply):** baseline; manifest only (apply step reads it); verify wording only ("before ticking, check each Done-when with an actual command, including boundaries"); `diff-critic`; `diff-critic` + manifest; verify wording + manifest. Score stale-artefact misses, Done-when failures, unrelated changes, manifest self-update, and cost. Drop `title-length`/`newest` cells already at ceiling once the new scenarios exist. Headless runs use the claude.ai plan's 5-hour limit (~60–100 runs per window) — batch per scenario, runners skip valid runs and stop on the limit.
 
-**Decision this spike feeds:** whether atomic adds the critic, the verify wording, or both on top of the manifest (added by the consistency-manifest proposal earlier in the stack), and whether the manifest's wiring needs changing.
+**Decision this spike feeds:** whether atomic adds the critic, the verify wording, or both on top of the manifest (`atomic/consistency.md`, now in atomic — refresh the fixture to pick up its format doc and apply wiring), and whether the manifest's wiring needs changing.
+
+===========
+Proposal: Add `atomic init` to set up atomic in a repo, including a template `atomic/consistency.md`
+Deferred from propose: while specifying the commit-consistency manifest, found that a repo gets a manifest only by someone writing one. No init or install mechanism exists today (the CLI, README, and commands have none; the experiment fixture was set up by copying files in by hand).
+
+Design considerations:
+- What else init creates: `atomic/` (with `.gitkeep`), a `stack.md` header, possibly `.claude/commands/at/`, `.claude/docs/`, and a starting CLAUDE.md — i.e. this is the question of how atomic is installed into another repo.
+- Bash can write only the manifest template (header + self-entry, per `.claude/docs/consistency-context.md`). Listing the repo's real artefacts (README, tests, infra, schemas, CI) needs judgement — the agent fills it in afterwards, or init is (partly) a `/at:init` slash command.
+- Re-running init on an initialised repo must not clobber an existing manifest or stack.
+- Behaviours: `cli-atomic.md` scenarios for a fresh repo and a re-run; README CLI reference and Quick Start; `atomic help`.
+
+===========
+Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
+Deferred from propose: while specifying the commit-consistency manifest, `/at:propose` reading it was considered and left out. Propose was already at ceiling in the preamble spike (complete specs, unstated docs/tests included), and `/at:apply` completes the concern from the manifest regardless. Revisit after the critic spike: add it only if specs that omit manifest artefacts cause problems apply does not catch (e.g. a Done-when that misses a listed artefact).

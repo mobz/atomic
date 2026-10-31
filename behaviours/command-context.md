@@ -24,3 +24,8 @@
 - **Given:** behaviour-context.md carries the canonical behaviour file format
 - **When:** `/at:apply` updates behaviour files in step 2
 - **Then:** the command file contains no inline fenced behaviour template; step 2 keeps only the procedural instruction to create or update a file per feature touched
+
+### consistency-context loaded in apply
+- **Given:** `.claude/docs/consistency-context.md` exists and is referenced via `@` in apply.md alongside the other context docs, before `## Entry`
+- **When:** `/at:apply` is invoked
+- **Then:** the `atomic/consistency.md` manifest format and rules (self-entry first, stale entries are in scope, unaffected entries left alone, manifest maintained in the same commit) are available to Claude without being restated inline

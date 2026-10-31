@@ -5,6 +5,7 @@ Your job is to implement the spec, run tests, and get user sign-off. Committing 
 @.claude/docs/spec-context.md
 @.claude/docs/behaviour-context.md
 @.claude/docs/stack-context.md
+@.claude/docs/consistency-context.md
 
 ## Entry
 
@@ -14,7 +15,8 @@ Run `atomic status`. Check the state:
 - **applying** — re-entry. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
 - **ready** — all items done. Skip straight to **Step 5** (show summary).
 
-Read the spec: `atomic show-spec`.
+Read the spec: `atomic show-spec`.  
+Read the commit-consistency manifest `atomic/consistency.md`.
 
 ---
 
@@ -24,7 +26,7 @@ Read the spec: `atomic show-spec`.
 
 Work through the unchecked `- [ ]` items in the spec. As each change is made, update the checkbox in `atomic/spec.md` from `- [ ]` to `- [X]`. Be precise — mark an item `[X]` only when it is fully implemented.
 
-Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit.
+Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit.  Check the change against every entry in `atomic/consistency.md`, and update the manifest itself if the change adds, renames, or removes something it should list (see the manifest format).
 
 If anything is clearly out of scope (unrelated to the concern), do not implement it. Add it to `atomic/stack.md` as a deferred Proposal block (see the stack format). Where it goes depends on urgency:
 
