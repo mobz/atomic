@@ -16,6 +16,12 @@ Design considerations:
 
 This is an expand/contract candidate: the switch proposal removes the `show-context` call from apply.md and the remove proposal deletes the file and command — but given there is no parallel implementation to migrate to, a single commit removing the file, command, and apply.md reference is probably appropriate.
 
+Why remove rather than formalise: every other atomic artefact has a defined format and purpose (`spec-context.md`, `stack-context.md`, `behaviour-context.md`); `context.md` has neither, and its "update with anything learned" rule makes it an append-only log. The current file is already partly wrong ("State after 'direct-to-specs' commit"; start over "uses python3" — it uses sed; `atomic/stacks/stack-awareness.md`), partly history ("removed entirely", "now clean"), and mostly duplicates the format docs, README, help, or the code itself. Decisions and their reasons belong in commit messages and specs; gotchas belong as comments next to the code they affect. The formal "what must stay in step" role is taken by the commit-consistency manifest (next proposal).
+
+- Before deleting, move any fact that is still true and not recorded elsewhere to its proper home — e.g. the experiment harness pointer (`../atomic-experiments/preamble`) into CLAUDE.md or the README.
+- Remove apply.md step 5 ("Update context") and renumber: the summary becomes step 5, which makes the `ready` entry's "Skip straight to **Step 5** (show summary)" correct. This absorbs the "Fix the `ready` entry in `/at:apply` pointing at the wrong step" proposal — delete that proposal from the stack in this commit.
+- Update everything that mentions it: CLAUDE.md Key Paths, README (CLI reference `show-context`, Structure tree), `atomic help`, `behaviours/` (e.g. the test-loop scenario "updates `atomic/context.md`", `cli-atomic.md` show-context scenarios), `/at:apply` entry ("Read context").
+
 ===========
 Proposal: Add a commit-consistency manifest (`atomic/consistency.md`) and check every apply against it
 Lands before the critic spike (end of stack): the manifest is useful to `/at:apply` on its own; the spike then measures whether a `diff-critic` agent or verify wording adds anything on top.
