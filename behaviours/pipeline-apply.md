@@ -5,6 +5,21 @@
 - **When:** user runs `/at:apply`
 - **Then:** Claude reads the spec and `atomic/consistency.md`, then begins the implementation loop
 
+### entering apply — no spec
+- **Given:** state is `none` (`atomic/spec.md` does not exist)
+- **When:** user runs `/at:apply`
+- **Then:** Claude tells the user there is no spec to apply and to run `/at:propose` first; nothing is implemented
+
+### entering apply — re-entry while applying
+- **Given:** state is `applying` (some items `[X]`, some `[ ]`)
+- **When:** user runs `/at:apply`
+- **Then:** Claude shows `atomic progress`, lists the remaining `[ ]` items, and continues the loop from where it left off; `[X]` items are not redone
+
+### entering apply — ready
+- **Given:** state is `ready` (all items `[X]`)
+- **When:** user runs `/at:apply`
+- **Then:** Claude skips straight to step 5 — shows the summary and asks approve, rollback, or discuss — without re-implementing or re-running the loop
+
 ### implement loop — first entry
 - **Given:** state is `proposed`
 - **When:** Claude starts the implement step

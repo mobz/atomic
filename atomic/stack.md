@@ -2,10 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Add behaviour scenarios for uncovered `/at:apply` and `/at:merge` entry states
-Deferred from propose: while specifying the stale-behaviours rewrite, found that `behaviours/pipeline-apply.md` has no scenarios for `/at:apply` entered in state `none` (tell user to run `/at:propose`), `applying` (re-entry: show progress, list remaining items, continue), or `ready` (skip to summary); and `behaviours/pipeline-merge.md` has no scenarios for `/at:merge` entered in `applying` (show progress, suggest `/at:apply`), `proposed` (tell user to run `/at:apply`), or `none` (nothing to merge). Adding coverage is a separate concern from correcting stale scenarios.
-
-===========
 Proposal: Make `atomic commit` keep spec.md when the git commit fails
 Deferred from propose: `bin/lib/atomic-commit` runs `rm -f "$ATOMIC_DIR/spec.md"` before `git add -A` / `git commit`. If the commit fails (nothing to commit, hook failure, etc.) the script exits non-zero under `set -e` but the spec is already gone and the pipeline drops to state `none`. Fix: remove spec.md only after `git commit` succeeds — e.g. `git add -A -- . ':!atomic/spec.md'`, commit, then `rm -f` (or remove first but restore on failure). Must still ensure spec.md is never committed. Update the "nothing to commit" scenario in `behaviours/pipeline-merge.md` and the commit scenarios in `behaviours/cli-atomic.md`.
 

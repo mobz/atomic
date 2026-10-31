@@ -5,6 +5,21 @@
 - **When:** user runs `/at:merge`
 - **Then:** Claude runs `atomic status` and proceeds to commit only because the state is `ready`
 
+### entering merge — applying
+- **Given:** state is `applying` (some items still `[ ]`)
+- **When:** user runs `/at:merge`
+- **Then:** Claude shows `atomic progress`, tells the user how many items remain, and suggests running `/at:apply` to complete them; no commit is made
+
+### entering merge — proposed
+- **Given:** state is `proposed` (no items `[X]` yet)
+- **When:** user runs `/at:merge`
+- **Then:** Claude tells the user to run `/at:apply` first; no commit is made
+
+### entering merge — no spec
+- **Given:** state is `none`
+- **When:** user runs `/at:merge`
+- **Then:** Claude tells the user there is nothing to merge; no commit is made
+
 ### commit created
 - **Given:** `atomic/spec.md` exists with all items `[X]`; changes are present
 - **When:** `atomic commit` is run (no argument)
