@@ -92,3 +92,30 @@ Deferred from apply: while making `atomic commit` keep spec.md on a failed commi
 Approach: one shared helper in `bin/lib/helpers.sh` (e.g. `die <message>`) that prints `{"ok":false,"error":"<message>"}` when `--json` is set and `error: <message>` otherwise, both to stderr, then exits 1; replace the five error sites above with it. Note `require_git` and the unknown-command path may run before or regardless of `--json` parsing — check ordering in `bin/atomic`.
 
 Consistency: update the error scenarios in `behaviours/cli-atomic.md` (reset/show-context removed, show-spec no spec, commit incomplete / failed, start-over no spec) and the README's `--json` note.
+
+===========
+Proposal: Standardise the user interaction pattern — every formal review point ends with a fixed, specifically worded choice
+Today the commands hand control back to the user in inconsistent ways: `/at:apply`'s summary ends with a fixed block (**Approve** / **Rollback** / "Or tell me what to change"), but `/at:propose` step 4 just says "Confirm with the user" (in practice a free-form "Should I write it?"), the propose entry states use inline lists ("Ask: proceed with this, modify it, or start fresh…", "review it, change it, or start fresh?"), `/at:stack` step 6 ends "Stack written. Run `/at:propose`… or ask me to make an adjustment", the rollback deferral re-add is "ask whether to add any back", and wrong-state handoffs either "tell the user to run" or "suggest running" a command. The user cannot tell at a glance whether they are at a gate, what words the agent will act on, or what each choice does.
+
+Design:
+- Distinguish three kinds of hand-back and give each one fixed shape:
+  - **Review point** (a gate: the agent will act on the answer — write the spec, write the stack, merge, roll back, re-add deferrals, resume an in-progress pipeline): ends with a choice block in the same form as apply's —
+    ```
+    > **<Verb>** — <what happens>
+    > **<Verb>** — <what happens>
+    > Or tell me what to change
+    ```
+    Bold single-word verbs the user can type back; each line says exactly what the agent will do; "Or tell me what to change" (discuss) is always last and always implied. The agent acts only on a clear choice; anything else is discuss.
+  - **Handoff** (the stage is done, or the state is wrong for this command): one fixed line, e.g. `Next: /at:apply — implement this spec`; no question.
+  - **Clarifying question** (during discovery/explore): free-form, but never used for a gate.
+- Candidate review points and verbs (decide during propose):
+  - `/at:propose` entry from the stack: **Proceed** / **Modify** / **Fresh**; entry in `proposed` / `applying` / `ready`: e.g. **Review** / **Continue** / **Fresh** (with `atomic clean`).
+  - `/at:propose` step 4 (summarise back): **Write** — write the spec and pop the stack.
+  - `/at:apply` step 5: **Approve** / **Rollback** (unchanged — the reference pattern).
+  - `/at:apply` rollback: deferral re-add — **Re-add** <which> / **Drop**.
+  - `/at:stack` entry (stack exists): **Extend** / **Fresh**; step 6: **Write** — write `atomic/stack.md`.
+  - Stack-only "Plan:" commits made outside the pipeline (current practice in this repo): **Commit** — commit and push the stack change — after showing the diff.
+- Handoffs to convert: propose step 7, merge step 4 and its wrong-state branches, apply `none` entry and rollback's "Run `/at:propose`", stack step 6's tail.
+- Put the pattern in a shared doc (e.g. `.claude/docs/interaction-context.md`) injected into all four commands, so each command lists only its own choices; add the doc to `atomic/consistency.md` and add a manifest entry that every review point uses the choice block.
+- Behaviours: update the scenarios that quote today's wording (`pipeline-propose.md` entry/summarise/confirm, `pipeline-stack.md`, `pipeline-apply.md` rollback re-add, `pipeline-merge.md` wrong-state entries) and add a `command-context.md` scenario for the injected doc.
+- Possible split: (1) the shared doc + `/at:propose`, the most-used gate; (2) `/at:stack`, `/at:merge`, rollback re-add, and handoffs. Decide during propose.
