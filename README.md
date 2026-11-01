@@ -24,6 +24,9 @@ Out-of-scope work noticed along the way is added to the stack rather than implem
 ## Quick Start
 
 ```bash
+# Set up atomic/ in a repo
+bin/atomic init
+
 # Check current pipeline state
 bin/atomic status
 
@@ -35,6 +38,7 @@ bin/atomic status
 ## CLI Reference
 
 ```bash
+atomic init          # scaffold atomic
 atomic status        # pipeline state derived from spec.md (none/proposed/applying/ready)
 atomic progress      # M/N changes complete
 atomic show-spec     # print atomic/spec.md
@@ -65,7 +69,7 @@ bin/atomic            ← the CLI
 CLAUDE.md             ← instructions for Claude Code sessions
 ```
 
-`atomic/consistency.md` is the repo's commit-consistency manifest: one entry per artefact (README, help text, docs, behaviours, …) saying what must agree with what. `/at:apply` checks every change against it and updates the manifest when the change adds or removes something it should list. Its format lives in `.claude/docs/consistency-context.md`.
+`atomic/consistency.md` is the repo's commit-consistency manifest: one entry per artefact (README, help text, docs, behaviours, …) saying what must agree with what. `/at:apply` checks every change against it and updates the manifest when the change adds or removes something it should list. Its format lives in `.claude/docs/consistency-context.md`; `atomic init` writes a starting manifest holding just its own entry.
 
 ## Behaviours
 

@@ -1,0 +1,49 @@
+# Scaffold a repo's atomic/ directory: create it if missing and write a
+# template commit-consistency manifest. Never overwrites an existing file and
+# commits nothing. The template follows the format in
+# .claude/docs/consistency-context.md.
+
+_init_manifest_template() {
+  cat <<'EOF'
+# Commit consistency
+
+Every artefact that must agree with the code at every commit. `/at:apply` checks each change against this list.
+
+- `atomic/consistency.md` — this file; maintained as commands, components, docs, and artefacts are added, renamed, or removed
+EOF
+}
+
+cmd_init() {
+  require_git
+  local manifest="$ATOMIC_DIR/consistency.md"
+  local created=() existing=() new_manifest=false
+
+  if [[ -d "$ATOMIC_DIR" ]]; then
+    existing+=("$ATOMIC_DIR/")
+  else
+    mkdir -p "$ATOMIC_DIR"
+    created+=("$ATOMIC_DIR/")
+  fi
+
+  if [[ -e "$manifest" ]]; then
+    existing+=("$manifest")
+  else
+    _init_manifest_template > "$manifest"
+    new_manifest=true
+    created+=("$manifest")
+  fi
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    local c="" e="" p
+    for p in ${created[@]+"${created[@]}"}; do c+="${c:+,}\"$p\""; done
+    for p in ${existing[@]+"${existing[@]}"}; do e+="${e:+,}\"$p\""; done
+    printf '{"ok":true,"created":[%s],"existing":[%s]}\n' "$c" "$e"
+  else
+    for p in ${created[@]+"${created[@]}"}; do echo "created  $p"; done
+    for p in ${existing[@]+"${existing[@]}"}; do echo "exists   $p"; done
+    if [[ "$new_manifest" == "true" ]]; then
+      echo
+      echo "Next: add an entry to $manifest for each artefact that must agree with the code (README, docs, tests, CI, schemas…)."
+    fi
+  fi
+}

@@ -2,14 +2,12 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Add `atomic init` to set up atomic in a repo, including a template `atomic/consistency.md`
-Deferred from propose: while specifying the commit-consistency manifest, found that a repo gets a manifest only by someone writing one. No init or install mechanism exists today (the CLI, README, and commands have none; the experiment fixture was set up by copying files in by hand).
+Proposal: Install atomic's Claude Code files into a repo — `.claude/commands/at/`, `.claude/docs/`, and a CLAUDE.md section
+Deferred from propose: split off from `atomic init` (the scaffold of `atomic/`). This is the distribution question: how a repo gets the `/at:*` commands and their `@`-included docs from atomic's install directory (`$SCRIPT_DIR/..`). Decide copy vs symlink, how updates reach an installed repo (re-run overwrites atomic-owned files only? version stamp?), and how the CLAUDE.md section is added without clobbering an existing CLAUDE.md (append a marked block, skip if present). Likely an `atomic init` extension or flag. Behaviours, README Quick Start, help.
 
-Design considerations:
-- What else init creates: `atomic/` (with `.gitkeep`), a `stack.md` header, possibly `.claude/commands/at/`, `.claude/docs/`, and a starting CLAUDE.md — i.e. this is the question of how atomic is installed into another repo.
-- Bash can write only the manifest template (header + self-entry, per `.claude/docs/consistency-context.md`). Listing the repo's real artefacts (README, tests, infra, schemas, CI) needs judgement — the agent fills it in afterwards, or init is (partly) a `/at:init` slash command.
-- Re-running init on an initialised repo must not clobber an existing manifest or stack.
-- Behaviours: `cli-atomic.md` scenarios for a fresh repo and a re-run; README CLI reference and Quick Start; `atomic help`.
+===========
+Proposal: Add `/at:init` — run `atomic init`, survey the repo, and propose the real `atomic/consistency.md` entries for approval
+Deferred from propose: split off from `atomic init`. Bash writes only the manifest template; listing a repo's real artefacts (README, docs, tests, CI, infra, schemas, migrations, generated files) needs judgement. The command surveys the repo, drafts one bullet per artefact in the format of `.claude/docs/consistency-context.md`, shows them, and writes only what the user approves. Depends on the install proposal above (the command must exist in the target repo). Behaviours: a new `pipeline-init.md`; CLAUDE.md and README command tables.
 
 ===========
 Proposal: Make CLI error output follow `--json` consistently
