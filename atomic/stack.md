@@ -2,14 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Use `atomic stack-add` for planning additions — from `/at:stack` "extend" and ad hoc — and document it in CLAUDE.md
-Deferred from propose: split off from the `atomic stack-add` CLI commit (expand/contract — the CLI is additive, this is the switch).
-- `/at:stack` "extend": append each new proposal via `atomic stack-add` instead of editing stack.md; "replace/start fresh" rewrites the whole file and should require no active spec (it would conflict with the pop).
-- CLAUDE.md: document ad-hoc use — unrelated additions go through `atomic stack-add`, never hand-edited into a working tree that holds a spec's changes; replace the hand-made "Plan:" commit exception.
-- Review: the agent shows the exact block and gets explicit approval before running `atomic stack-add` (plan commits need a review step).
-- Consider whether `atomic commit` with no spec.md should keep its fallback (message "atomic commit", `git add -A`) or refuse — it is the path that currently sweeps stray stack edits into vague commits.
-
-===========
 Proposal: Measure whether an adversarial diff critic, steered by a per-repo commit-consistency manifest, closes the "ticked but not done" gap in `/at:apply`
 **Not ready for implementation — a spike.** Harness: `../atomic-experiments/preamble` (fixture, scenarios, variants, runners, judge, `analyze.py`; results in `runs/`).
 
@@ -78,3 +70,11 @@ Design:
 - Put the pattern in a shared doc (e.g. `.claude/docs/interaction-context.md`) injected into all four commands, so each command lists only its own choices; add the doc to `atomic/consistency.md` and add a manifest entry that every review point uses the choice block.
 - Behaviours: update the scenarios that quote today's wording (`pipeline-propose.md` entry/summarise/confirm, `pipeline-stack.md`, `pipeline-apply.md` rollback re-add, `pipeline-merge.md` wrong-state entries) and add a `command-context.md` scenario for the injected doc.
 - Possible split: (1) the shared doc + `/at:propose`, the most-used gate; (2) `/at:stack`, `/at:merge`, rollback re-add, and handoffs. Decide during propose.
+
+===========
+Proposal: Decide whether `atomic commit` refuses when there is no `atomic/spec.md`
+Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack` and CLAUDE.md (a CLI behaviour change, a separate concern). With no spec, `atomic commit` falls back to message "atomic commit" and `git add -A` — the path that sweeps stray edits (e.g. hand-edited stack additions) into vague commits. Options: refuse with an error pointing at `/at:propose` or `atomic stack-add`; or keep the fallback. Update `cli-atomic.md` "commit — no spec", help, README, and `merge.md` if it changes.
+
+===========
+Proposal: Decide how a `/at:stack` "start fresh" or "replace" rewrite of `atomic/stack.md` is committed
+Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack`. A rewritten stack in state `none` currently rides along with the first spec's commit (via `git add -A`), mixing planning into that commit. Options: an `atomic stack-replace` CLI that commits the new file as `Plan: <stack name>` (state `none` only); or have `/at:stack` require committing the rewrite immediately via an existing command. Keep the review step: show the full stack and get approval before committing.

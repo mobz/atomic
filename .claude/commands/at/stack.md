@@ -12,8 +12,8 @@ Run `atomic show-stack`.
 
 - **No stack** — proceed to Step 2.
 - **Stack exists** — show it. Ask: extend it, or start fresh?
-  - **Extend** — add new proposals to the bottom. Jump to Step 3 to brainstorm additions.
-  - **Start fresh** — start over; new user story, new proposals.
+  - **Extend** — add new proposals to the bottom. Jump to Step 3 to brainstorm additions. The new proposals are appended in Step 6 via `atomic stack-add`, never by editing `atomic/stack.md`.
+  - **Start fresh** (or replace) — start over; new user story, new proposals. Run `atomic status` first: if a spec is active (state is not `none`), refuse — rewriting the stack would clobber the proposal `/at:propose` popped. Tell the user to finish the spec (`/at:apply`) or roll it back first.
 
 ### 2. Explore everything that needs to change
 
@@ -143,7 +143,17 @@ If the proposal contains multiple different ideas consider if they can be split 
 
 Present the ordered proposals in summary to the user explaining any splits you made and why but also write the complete stack and proposals so the user can view them in detail in a code editor.
 
-Write `atomic/stack.md` using the stack format.
+**Extending an existing stack:** show each new proposal as the exact block that will be appended and ask for approval. Once the user approves, append each one, in order, with `atomic stack-add` — intent as the argument, the rest of the block on stdin:
+
+```bash
+atomic stack-add "<intent>" <<'EOF'
+<detail>
+EOF
+```
+
+Each call creates its own `Plan: <intent>` commit, works in any pipeline state, and leaves any in-progress spec's changes untouched. Do not edit `atomic/stack.md` by hand when extending.
+
+**New stack (or start fresh):** write `atomic/stack.md` using the stack format.
 
 Rules:
 - The `Stack:` header and user story context always come first

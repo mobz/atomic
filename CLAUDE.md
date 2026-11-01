@@ -30,13 +30,15 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 1. **Never implement changes outside the `apply` stage.** If someone asks you to "just fix this quickly" outside of apply, decline and suggest running `/at:propose` first.
 
-2. **Never commit code directly.** All commits go through `atomic commit` in the merge stage. No `git commit` by hand.
+2. **Never commit code directly.** All commits go through `atomic commit` in the merge stage, or `atomic stack-add` for planning additions (rule 6). No `git commit` by hand.
 
 3. **Never push directly.** All pushes go through `atomic push` in the merge stage.
 
 4. **Stay in scope.** During apply, implement only the concern `atomic/spec.md` describes (see rule 5). If you notice something out of scope, add it to `atomic/stack.md` as a new Proposal block.
 
 5. **The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours, and everything listed in `atomic/consistency.md` — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small.
+
+6. **Planning additions go through `atomic stack-add`.** A proposal unrelated to the active spec's work (planning, not a deferral) is appended with `atomic stack-add "<intent>"` (body on stdin), which commits only that block as `Plan: <intent>` in any pipeline state — never hand-edit it into a working tree that holds a spec's changes. Always show the user the exact block and get explicit approval before running it. Deferrals — out-of-scope work that came out of the active spec — are unchanged: written into `atomic/stack.md` and committed with the spec.
 
 ## Slash Commands
 
@@ -51,7 +53,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
 - `atomic/consistency.md` — commit-consistency manifest: every artefact that must agree with the code at every commit; `/at:apply` checks each change against it
-- `atomic/stack.md` — ordered proposal queue; out-of-scope items from propose and apply land here as deferrals, committed with the spec they came from (unrelated planning additions are committed on their own); top proposal feeds the next `/at:propose`
+- `atomic/stack.md` — ordered proposal queue; out-of-scope items from propose and apply land here as deferrals, committed with the spec they came from (unrelated planning additions are committed on their own via `atomic stack-add`, rule 6); top proposal feeds the next `/at:propose`
 - `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
 - `bin/atomic` — the CLI (use it, don't work around it)
 

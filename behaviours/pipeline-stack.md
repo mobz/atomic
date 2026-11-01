@@ -13,12 +13,17 @@
 ### stack — extend existing
 - **Given:** user chooses to extend the existing stack
 - **When:** user says extend or equivalent
-- **Then:** Claude brainstorms additions and appends new proposals to the bottom of the existing stack; Stack: header and existing proposals are preserved
+- **Then:** Claude brainstorms additions, shows each new proposal as the exact block to be appended, and asks for approval; once approved, each is appended to the end of the stack with `atomic stack-add`, one `Plan: <intent>` commit per proposal; `atomic/stack.md` is not hand-edited; Stack: header and existing proposals are preserved; an in-progress spec's changes (pop, deferrals, code) are left uncommitted
 
 ### stack — replace existing
-- **Given:** user chooses to replace the existing stack
+- **Given:** user chooses to replace the existing stack; `atomic status` is `none`
 - **When:** user says replace or start fresh
 - **Then:** Claude proceeds with a new user story and overwrites `atomic/stack.md` entirely
+
+### stack — replace refused while a spec is active
+- **Given:** `atomic status` is `proposed`, `applying`, or `ready`
+- **When:** user chooses to replace the stack or start fresh
+- **Then:** Claude refuses — rewriting the stack would clobber the proposal `/at:propose` popped — and tells the user to finish the spec with `/at:apply` or roll it back first; `atomic/stack.md` is not modified
 
 ### stack — user story elicitation
 - **Given:** Claude is defining a new stack
