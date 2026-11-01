@@ -16,6 +16,7 @@ source "$SCRIPT_DIR/lib/atomic-push"
 source "$SCRIPT_DIR/lib/atomic-clean"
 source "$SCRIPT_DIR/lib/atomic-rollback"
 source "$SCRIPT_DIR/lib/atomic-start-over"
+source "$SCRIPT_DIR/lib/atomic-stack-add"
 source "$SCRIPT_DIR/lib/atomic-help"
 
 # ── dispatch ──────────────────────────────────────────────────────────────────
@@ -42,6 +43,7 @@ case "$CMD" in
   clean)           cmd_clean ;;
   rollback)        cmd_rollback ;;
   start-over)      cmd_start_over ;;
+  stack-add)       cmd_stack_add "${ARGS[0]:-}" ;;
   ""|help|--help)  cmd_help ;;
   *)               echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
 esac

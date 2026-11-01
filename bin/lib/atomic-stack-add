@@ -1,0 +1,75 @@
+# Append a planning proposal (unrelated to the active spec) to the end of
+# atomic/stack.md and commit only that addition, in any pipeline state. The
+# commit is built from HEAD in a temporary index, so the working tree and the
+# real index — which may hold an in-progress spec's pop, deferrals, and code —
+# are untouched; the append is then mirrored into the working-tree stack.
+
+# Print the separator needed before appending a block to content whose last
+# two bytes (hex) are $1: nothing if it already ends in a blank line. A "."
+# is appended and stripped by the caller, since command substitution would
+# otherwise drop the newlines.
+_stack_add_sep() {
+  case "$1" in
+    0a0a) printf '.' ;;
+    *0a)  printf '\n.' ;;
+    *)    printf '\n\n.' ;;
+  esac
+}
+
+cmd_stack_add() {
+  require_git
+  local intent="${1:-}" stack="$ATOMIC_DIR/stack.md"
+
+  if [[ -z "$intent" ]]; then
+    echo "error: usage: atomic stack-add \"<intent>\" (body on stdin)" >&2
+    exit 1
+  fi
+  if [[ "$intent" == *$'\n'* ]]; then
+    echo "error: intent must be a single line" >&2
+    exit 1
+  fi
+  if ! git cat-file -e "HEAD:$stack" 2>/dev/null; then
+    echo "error: $stack is not committed in HEAD — create the stack first" >&2
+    exit 1
+  fi
+
+  local body=""
+  [[ -t 0 ]] || body=$(cat)
+  if printf '%s\n' "$body" | grep -qx "$STACK_SEP"; then
+    echo "error: body must not contain a '$STACK_SEP' line" >&2
+    exit 1
+  fi
+
+  local block="${STACK_SEP}"$'\n'"Proposal: ${intent}"$'\n'
+  [[ -n "$body" ]] && block+="${body}"$'\n'
+
+  # Build the commit from HEAD's stack plus the block, in a temporary index.
+  local head sep blob tree commit message="Plan: $intent"
+  head=$(git rev-parse HEAD)
+  sep=$(_stack_add_sep "$(git show "HEAD:$stack" | tail -c 2 | xxd -p)"); sep=${sep%.}
+  blob=$( { git show "HEAD:$stack"; printf '%s%s' "$sep" "$block"; } | git hash-object -w --stdin )
+  export GIT_INDEX_FILE
+  GIT_INDEX_FILE="$(git rev-parse --git-dir)/atomic-stack-add.index.$$"
+  git read-tree HEAD
+  git update-index --cacheinfo "100644,$blob,$stack"
+  tree=$(git write-tree)
+  rm -f "$GIT_INDEX_FILE"
+  unset GIT_INDEX_FILE
+  commit=$(git commit-tree "$tree" -p "$head" -m "$message")
+  git update-ref -m "atomic stack-add: $intent" HEAD "$commit" "$head"
+
+  # The real index entry follows the new HEAD; mirror the append in the
+  # working tree, leaving any in-progress stack changes in place.
+  git reset -q -- "$stack"
+  if [[ -f "$stack" ]]; then
+    sep=$(_stack_add_sep "$(tail -c 2 "$stack" | xxd -p)"); sep=${sep%.}
+    printf '%s%s' "$sep" "$block" >> "$stack"
+  fi
+
+  if [[ "$JSON_OUTPUT" == "true" ]]; then
+    printf '{"ok":true,"sha":"%s","message":"%s"}\n' "$commit" "${message//\"/\\\"}"
+  else
+    echo "Added to stack: $intent"
+    git log -1 --oneline
+  fi
+}

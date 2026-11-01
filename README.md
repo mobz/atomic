@@ -44,6 +44,7 @@ atomic push          # push current branch to origin
 atomic clean         # remove spec.md (clear active pipeline)
 atomic rollback      # abandon the active spec and revert all changes
 atomic start-over    # revert all changes but keep the spec and stack, unticking every item
+atomic stack-add "<intent>"  # append a planning proposal (body on stdin) to the stack and commit only that
 
 # Add --json to any command for machine-readable output
 atomic status --json

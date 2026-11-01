@@ -12,6 +12,7 @@ Commands:
   clean            Remove spec.md (clear active pipeline)
   rollback         Abandon the active spec and revert all changes
   start-over       Revert all changes but keep the spec and stack, unticking every item
+  stack-add        Append a planning proposal to the stack and commit only that (body on stdin)
 
 Flags:
   --json           Machine-readable JSON output instead of human-readable

@@ -2,37 +2,12 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Add a CLI command that appends an unrelated proposal to the stack and commits it on its own, in any pipeline state
-Deferred from discussion of stack-commit semantics. Unrelated stack additions (planning, not deferrals — see the deferral definition proposal) currently get swept into whatever `atomic commit` runs next via `git add -A`. Observed in this repo: `6017fcc` (behaviour-context) also carries four unrelated README/behaviour proposals. You should be able to add an unrelated item at any time — including mid-propose or mid-apply — without it touching the in-progress work, and without the in-progress work leaking into it.
-
-**The command is about adding an item, not committing whatever is in stack.md.** It takes the proposal (intent + body) as input, appends it, and commits only that. Name it for what it does, e.g. `atomic stack-add` (working name `commit-stack` from discussion).
-
-**Why not commit the working-tree stack.md:** mid-apply the working tree's stack.md also contains the pop (top proposal removed) and any deferrals — both belong to the spec's commit, not this one.
-
-**Why not stash → append → commit → stash pop:** tested on a scratch clone. When the in-progress work has also appended a deferral at the end of stack.md, `git stash pop` conflicts on stack.md (both sides append at EOF). It also briefly removes the user's in-progress changes from the working tree.
-
-**Approach (tested on a scratch clone mid-apply — popped top proposal, a deferral at the end, a code change, spec.md present):** build the commit from HEAD without touching the working tree or real index:
-```
-export GIT_INDEX_FILE=$(mktemp -u); git read-tree HEAD
-blob=$( { git show HEAD:atomic/stack.md; printf '%s' "$BLOCK"; } | git hash-object -w --stdin )
-git update-index --cacheinfo 100644,$blob,atomic/stack.md
-tree=$(git write-tree); rm -f "$GIT_INDEX_FILE"; unset GIT_INDEX_FILE
-c=$(git commit-tree "$tree" -p HEAD -m "Plan: <intent>"); git update-ref HEAD "$c"
-git reset -q -- atomic/stack.md        # real index entry follows new HEAD
-printf '%s' "$BLOCK" >> atomic/stack.md  # mirror the append in the working tree
-```
-Result: the new commit contains only the appended block (+4 lines); the remaining working-tree diff is exactly the pop + deferral + code change; spec.md untouched.
-
-Design considerations:
-- Placement: always the end of the stack (the user's "add to end of stack"). Urgent/prerequisite items are deferrals and go through apply's top-of-stack path instead.
-- Input: intent as an argument, body via stdin (or `--body-file`); validate the block (`===========` / `Proposal:` lines) before committing.
-- If `atomic/stack.md` does not exist in HEAD: create it from the block (no Stack: header — or require one; decide).
-- `atomic/stacks/*` (parked stacks): out of scope unless a `--stack <name>` target is cheap.
-- Push: decide whether `stack-add` pushes immediately (via `atomic push`) or leaves it for the next merge. Note that a mid-apply `stack-add` puts a commit between the spec's base and its eventual commit — fine for linear history, but rollback/start-over (`git reset --hard HEAD`) now resets to the plan commit, which is what we want.
-- Wiring: `/at:stack` "extend" could append each new proposal via this command; "replace/start fresh" rewrites the whole file and should require no active spec (it would conflict with the pop). Document ad-hoc use in CLAUDE.md.
+Proposal: Use `atomic stack-add` for planning additions — from `/at:stack` "extend" and ad hoc — and document it in CLAUDE.md
+Deferred from propose: split off from the `atomic stack-add` CLI commit (expand/contract — the CLI is additive, this is the switch).
+- `/at:stack` "extend": append each new proposal via `atomic stack-add` instead of editing stack.md; "replace/start fresh" rewrites the whole file and should require no active spec (it would conflict with the pop).
+- CLAUDE.md: document ad-hoc use — unrelated additions go through `atomic stack-add`, never hand-edited into a working tree that holds a spec's changes; replace the hand-made "Plan:" commit exception.
+- Review: the agent shows the exact block and gets explicit approval before running `atomic stack-add` (plan commits need a review step).
 - Consider whether `atomic commit` with no spec.md should keep its fallback (message "atomic commit", `git add -A`) or refuse — it is the path that currently sweeps stray stack edits into vague commits.
-- Expand/contract: adding the CLI command is additive; wiring it into `/at:stack` and CLAUDE.md is the switch. Propose as two commits.
-- Behaviours: `cli-atomic.md` scenarios — adds in state `none`; adds mid-apply leaving pop/deferrals/code uncommitted; rejects a malformed block.
 
 ===========
 Proposal: Measure whether an adversarial diff critic, steered by a per-repo commit-consistency manifest, closes the "ticked but not done" gap in `/at:apply`
