@@ -1,5 +1,7 @@
-# Scaffold a repo's atomic/ directory: create it if missing and write a
-# template commit-consistency manifest. Never overwrites an existing file and
+# Install a one-off starting point for atomic in the current repo: create
+# atomic/ with a template commit-consistency manifest, and copy atomic's /at:*
+# commands and their shared docs from atomic's own checkout. The repo owns and
+# evolves these files afterwards — init never overwrites an existing file and
 # commits nothing. The template follows the format in
 # .claude/docs/consistency-context.md.
 
@@ -32,6 +34,22 @@ cmd_init() {
     new_manifest=true
     created+=("$manifest")
   fi
+
+  # Copy the commands and docs wholesale; in atomic's own repo every target
+  # already exists, so nothing is written.
+  local src file rel
+  src="$(cd "$SCRIPT_DIR/.." && pwd)"
+  for file in "$src"/.claude/commands/at/*.md "$src"/.claude/docs/*.md; do
+    [[ -f "$file" ]] || continue
+    rel="${file#"$src"/}"
+    if [[ -e "$rel" ]]; then
+      existing+=("$rel")
+    else
+      mkdir -p "$(dirname "$rel")"
+      cp "$file" "$rel"
+      created+=("$rel")
+    fi
+  done
 
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     local c="" e="" p

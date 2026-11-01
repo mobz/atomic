@@ -3,7 +3,7 @@ cmd_help() {
 atomic — atomic commit pipeline CLI
 
 Commands:
-  init             Scaffold atomic/ with a template consistency manifest (never overwrites)
+  init             Scaffold atomic/ and copy the /at:* commands and docs (never overwrites)
   status           Pipeline state derived from spec.md (none/proposed/applying/ready)
   progress         M/N changes complete
   show-spec        Print current atomic/spec.md

@@ -21,10 +21,23 @@ This repo dogfoods itself — `atomic` is built using `atomic`.
 
 Out-of-scope work noticed along the way is added to the stack rather than implemented, and committed with the change it came out of.
 
+## Install
+
+Put a clone of atomic's `bin/` on your PATH — the `/at:*` commands call `atomic` directly:
+
+```bash
+git clone git@github.com:mobz/atomic.git ~/src/atomic
+export PATH="$HOME/src/atomic/bin:$PATH"
+```
+
+Then, in the repo you want to use it in, run `atomic init`. It creates `atomic/` with a starting `atomic/consistency.md` and copies the `/at:*` commands (`.claude/commands/at/`) and their shared docs (`.claude/docs/`) into the repo.
+
+Init installs a one-off starting point. From then on the repo owns those files and evolves its pipeline on its own — atomic does not update them, and re-running `atomic init` only fills in files that are missing, never overwriting one that exists.
+
 ## Quick Start
 
 ```bash
-# Set up atomic/ in a repo
+# Set up atomic in a repo
 bin/atomic init
 
 # Check current pipeline state

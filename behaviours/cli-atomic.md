@@ -1,19 +1,24 @@
 ## Behaviour: atomic CLI
 
 ### init — fresh repo
-- **Given:** a git repo with no `atomic/` directory
-- **When:** `atomic init` is run from the repo root
-- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); prints `created` for each, then a hint to add an entry for each artefact that must agree with the code; does not create `atomic/stack.md`; commits nothing; exits 0
+- **Given:** a git repo with no `atomic/` directory and no `.claude/commands/at/` or `.claude/docs/`
+- **When:** atomic's `bin/atomic init` is run from the repo root
+- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); copies every `.claude/commands/at/*.md` and `.claude/docs/*.md` from atomic's checkout, byte-identical; does not copy `.claude/settings.local.json`; prints `created` for each path, then a hint to add an entry for each artefact that must agree with the code; does not create `atomic/stack.md` or CLAUDE.md; commits nothing; exits 0
 
 ### init — re-run
-- **Given:** `atomic/` and `atomic/consistency.md` already exist (e.g. this repo)
-- **When:** `atomic init` is run
-- **Then:** nothing is written — both are reported `exists`, the manifest is byte-identical, no hint is printed; exits 0
+- **Given:** a repo `atomic init` has already been run in, where a copied command has since been edited
+- **When:** `atomic init` is run again
+- **Then:** nothing is written — every path is reported `exists`, the edited command and the manifest are unchanged, no hint is printed; exits 0
 
 ### init — partial setup
-- **Given:** `atomic/` exists but `atomic/consistency.md` does not
+- **Given:** some of the paths init writes exist and some do not (e.g. `atomic/` exists but the manifest does not, or one copied doc was deleted)
 - **When:** `atomic init` is run
-- **Then:** only the manifest is created; `atomic/` is reported `exists`, the manifest `created`, and the hint is printed
+- **Then:** only the missing files are created; existing ones are reported `exists` and left as they are; the hint is printed only if the manifest was created
+
+### init — atomic's own repo
+- **Given:** `atomic init` is run in atomic's own checkout (source and target are the same files)
+- **When:** `atomic init` is run
+- **Then:** every path is reported `exists` and nothing changes
 
 ### init — not a git repo
 - **Given:** the current directory is not inside a git repository
@@ -22,7 +27,7 @@
 
 ### init — JSON output
 - **When:** `atomic init --json` is run
-- **Then:** prints `{"ok":true,"created":[…],"existing":[…]}` listing `atomic/` and `atomic/consistency.md` under whichever applies
+- **Then:** prints `{"ok":true,"created":[…],"existing":[…]}` listing `atomic/`, `atomic/consistency.md`, and every copied command and doc path under whichever applies
 
 ### status — no active pipeline
 - **Given:** `atomic/spec.md` does not exist
