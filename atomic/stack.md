@@ -2,22 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: State that stack additions discovered during a commit's work are committed with that commit
-Deferred from discussion of stack-commit semantics. Rule: a commit = stack removals (the pop) + stack additions discovered while doing that commit's work + behaviour changes + code changes. Today this is implicit for apply deferrals (they ride along via `git add -A`) and undefined for propose splits.
-
-Definition to introduce (the term is used in apply.md — "Deferred items", "Deferred from apply:" — but never defined):
-
-> **Deferral:** a Proposal block for work discovered while preparing or doing the active spec (during `/at:propose` or `/at:apply`) that is outside its scope. Deferrals are part of that spec's story and are committed with the spec's commit. A proposal **unrelated** to the active spec's work is not a deferral — it is **planning**, and is committed on its own via the stack-add path, whatever the pipeline state.
-
-The boundary is "did this come out of the active spec's work?", not "is a spec active?" — you can add unrelated items mid-apply without them riding along in the spec's commit. Widen the block format's source line to `Deferred from propose:` / `Deferred from apply:`. Decide where the definition lives: `CLAUDE.md`, or the planned `.claude/docs/stack-context.md` if that has landed by then (it is the natural home for stack format and semantics).
-
-- `apply.md` step 1: state that deferred Proposal blocks are part of this apply's commit (and are listed in the summary's Deferred items, which already exists).
-- `propose.md` step 3 says "suggest adding them to the stack" without saying who writes them or when. Define it: when the user accepts a split, step 6 writes the split-off proposals to the stack alongside the pop (immediately after the Stack: header, i.e. as the next proposals), so they land in this spec's commit.
-- Update `CLAUDE.md` Key Paths entry for `atomic/stack.md` to reflect the rule.
-- Behaviours: add a propose scenario for "split accepted — split-off proposals written to stack with the pop"; note in pipeline-apply that deferrals are committed with the apply.
-- Wording-only for apply; propose gains a defined write. Does not cover `/at:stack` or ad-hoc additions — see the stack-only commit proposal.
-
-===========
 Proposal: Add a CLI command that appends an unrelated proposal to the stack and commits it on its own, in any pipeline state
 Deferred from discussion of stack-commit semantics. Unrelated stack additions (planning, not deferrals — see the deferral definition proposal) currently get swept into whatever `atomic commit` runs next via `git add -A`. Observed in this repo: `6017fcc` (behaviour-context) also carries four unrelated README/behaviour proposals. You should be able to add an unrelated item at any time — including mid-propose or mid-apply — without it touching the in-progress work, and without the in-progress work leaking into it.
 

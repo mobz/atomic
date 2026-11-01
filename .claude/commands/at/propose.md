@@ -39,13 +39,18 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
    - Some changes would still make sense to ship without the others
    - It would be hard to write a focused "Done when" that covers all the changes precisely
 
-   When you spot these signs, don't just flag it — propose the split. Name the two (or three) commits it should become and suggest adding them to the stack. Refuse to write a spec you wouldn't be confident reviewing yourself.
+   When you spot these signs, don't just flag it — propose the split. Name the two (or three) commits it should become: one becomes this spec, and if the user accepts the split, the split-off proposals are deferrals that step 6 writes to the stack. Refuse to write a spec you wouldn't be confident reviewing yourself.
 
 4. **Summarise back** — present the spec in plain language before writing anything. Confirm with the user. If they want changes, loop back.
 
 5. **Write the spec** — once confirmed, write `atomic/spec.md` using the spec.md format. If the proposal (from the stack or from `$ARGUMENTS`) contained detailed design notes — steps, rules, examples, format definitions, implementation approach — carry them forward verbatim into the relevant Changes items or as an additional context block. Do not compress them into one-line summaries. The spec must be fully self-contained; once the proposal is popped from the stack, it is gone.
 
-6. **Pop the stack** — if this spec was sourced from the top stack proposal, pop that Proposal block from `atomic/stack.md` (see the stack format). If the spec came from `$ARGUMENTS` or a fresh discovery, skip this step.
+6. **Update the stack** — in the same step as writing the spec, update `atomic/stack.md` (see the stack format):
+   - **Pop** — if this spec was sourced from the top stack proposal, pop that Proposal block. If the spec came from `$ARGUMENTS` or a fresh discovery, there is nothing to pop.
+   - **Split-offs** — write the proposals from an accepted split immediately after the `Stack:` header block, so they are the next proposals.
+   - **Other deferrals** — write any other out-of-scope findings from this conversation as `Deferred from propose:` blocks, placed at the end or top of the stack by urgency.
+
+   These deferrals are committed with this spec's commit.
 
 7. **Confirm** — tell the user the spec is written. Say: "Ready to apply. Run `/at:apply` when you want the agent to implement this."
 

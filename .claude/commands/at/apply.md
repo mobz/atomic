@@ -28,7 +28,7 @@ Work through the unchecked `- [ ]` items in the spec. As each change is made, up
 
 Complete the concern: also update everything the change makes stale or untested — tests, README and other docs, help text, behaviours — even if the spec does not list it, so the codebase is releasable after this commit.  Check the change against every entry in `atomic/consistency.md`, and update the manifest itself if the change adds, renames, or removes something it should list (see the manifest format).
 
-If anything is clearly out of scope (unrelated to the concern), do not implement it. Add it to `atomic/stack.md` as a deferred Proposal block (see the stack format). Where it goes depends on urgency:
+If anything is clearly out of scope (unrelated to the concern), do not implement it. Add it to `atomic/stack.md` as a deferral (see the stack format) — deferrals are part of this apply's commit and are listed in the summary's Deferred items. Where it goes depends on urgency:
 
 - **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `===========` block.
 - **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the Stack: header block, before the first `===========`.

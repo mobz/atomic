@@ -35,6 +35,11 @@
 - **When:** Claude implements the change
 - **Then:** Claude updates them in this commit so the codebase is releasable; unrelated issues it notices along the way are still deferred to `atomic/stack.md`, not fixed
 
+### implement loop — deferrals committed with the apply
+- **Given:** Claude notices out-of-scope work while implementing the spec
+- **When:** Claude defers it
+- **Then:** it is added to `atomic/stack.md` as a `Deferred from apply:` Proposal block, listed under Deferred items in the summary, and committed with this apply's commit on approve (or dropped by `atomic rollback`)
+
 ### implement loop — manifest artefact made stale
 - **Given:** `atomic/consistency.md` exists and lists an artefact the change makes stale (e.g. `README.md` — CLI reference matches `atomic help`, and the change adds a command)
 - **When:** Claude implements the change

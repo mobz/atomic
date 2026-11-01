@@ -19,7 +19,7 @@ This repo dogfoods itself — `atomic` is built using `atomic`.
 | `/at:apply` | Claude + User | Implement the spec, update behaviours, run tests, then show a summary. The user approves, rolls back, or discusses (which re-enters the loop) |
 | `/at:merge` | Claude | Commit with the spec's intent as the message and push. Runs automatically on approve |
 
-Out-of-scope work noticed along the way is added to the stack rather than implemented.
+Out-of-scope work noticed along the way is added to the stack rather than implemented, and committed with the change it came out of.
 
 ## Quick Start
 

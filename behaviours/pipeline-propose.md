@@ -36,9 +36,19 @@
 - **Then:** the top Proposal block is removed from `atomic/stack.md` in the same step (from its `===========` line to, but not including, the next `===========`); the Stack: header block is preserved; spec.md and stack.md are written together
 
 ### propose — spec written from arguments or fresh discovery
-- **Given:** spec was sourced from `$ARGUMENTS` or a fresh discovery conversation
+- **Given:** spec was sourced from `$ARGUMENTS` or a fresh discovery conversation, and no deferrals came out of the conversation
 - **When:** Claude writes `atomic/spec.md`
 - **Then:** `atomic/stack.md` is not modified
+
+### propose — split accepted
+- **Given:** Claude proposed splitting the work into several commits and the user accepted the split
+- **When:** Claude writes `atomic/spec.md` for the first of them
+- **Then:** in the same step, the split-off proposals are written to `atomic/stack.md` immediately after the `Stack:` header block (as the next proposals), alongside the pop if the spec came from the stack; they are deferrals, so they are committed with this spec's commit
+
+### propose — out-of-scope finding
+- **Given:** during the propose conversation, Claude or the user noticed work outside the spec's scope that is not a split-off
+- **When:** Claude writes `atomic/spec.md`
+- **Then:** in the same step, the finding is written to `atomic/stack.md` as a `Deferred from propose:` Proposal block — at the end of the stack, or the top if it is an urgent bug or prerequisite — whether or not the spec came from the stack; it is committed with this spec's commit
 
 ### propose — no stack, no arguments
 - **Given:** pipeline state is `none`, no `$ARGUMENTS` provided, and `atomic/stack.md` does not exist or has no Proposal blocks

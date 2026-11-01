@@ -20,13 +20,17 @@ Proposal: <intent sentence for the commit after that>
 - Each proposal block starts with `===========` on its own line, immediately followed by `Proposal: <intent>`, then any detail.
 - **Ordering:** the top proposal is the next commit to work on; top-to-bottom is the order work will be done in.
 
-**Adding a deferred item** (out-of-scope work noticed during apply):
+**Deferral:** a Proposal block for work discovered while preparing or doing the active spec (during `/at:propose` or `/at:apply`) that is outside its scope. Deferrals are part of that spec's story and are committed with the spec's commit (and dropped by `atomic rollback`). A proposal **unrelated** to the active spec's work is not a deferral — it is **planning**, and is committed on its own, never in the spec's commit, whatever the pipeline state. The boundary is "did this come out of the active spec's work?", not "is a spec active?".
+
+**Adding a deferral:**
 
 ```
 ===========
 Proposal: <brief description of the deferred item>
-Deferred from apply: <what was noticed and why it's out of scope>
+Deferred from propose: <what was noticed and why it's out of scope>
 ```
+
+Use `Deferred from apply:` for deferrals found during `/at:apply`.
 
 - **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements): append after the last block.
 - **Top of stack** — for urgent bugs or required prerequisites: insert directly after the `Stack:` header block, before the first `===========`.
