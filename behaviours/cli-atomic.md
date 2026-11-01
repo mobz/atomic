@@ -16,9 +16,9 @@
 - **Then:** the commands and docs are copied from atomic's real checkout, not from the symlink's directory
 
 ### init — fresh repo
-- **Given:** a git repo with no `atomic/` directory and no `.claude/commands/at/` or `.claude/docs/`
+- **Given:** a git repo with no `atomic/` directory, no `.claude/commands/at/` or `.claude/docs/`, and no `CLAUDE.md`
 - **When:** atomic's `bin/atomic init` is run from the repo root
-- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); copies every `.claude/commands/at/*.md` and `.claude/docs/*.md` from atomic's checkout, byte-identical; does not copy `.claude/settings.local.json`; prints `created` for each path, then a hint to add an entry for each artefact that must agree with the code; does not create `atomic/stack.md` or CLAUDE.md; commits nothing; exits 0
+- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); copies every `.claude/commands/at/*.md` and `.claude/docs/*.md`, and `CLAUDE.md`, from atomic's checkout, byte-identical; does not copy `.claude/settings.local.json` or `CLAUDE.local.md`; prints `created` for each path, then a hint to add an entry for each artefact that must agree with the code; does not create `atomic/stack.md`; commits nothing; exits 0
 
 ### init — re-run
 - **Given:** a repo `atomic init` has already been run in, where a copied command has since been edited
@@ -30,10 +30,15 @@
 - **When:** `atomic init` is run
 - **Then:** only the missing files are created; existing ones are reported `exists` and left as they are; the hint is printed only if the manifest was created
 
+### init — existing CLAUDE.md
+- **Given:** a git repo that already has its own `CLAUDE.md`
+- **When:** `atomic init` is run
+- **Then:** `CLAUDE.md` is left unchanged and reported `exists`; a hint is printed to merge atomic's rules into it from `<atomic checkout>/CLAUDE.md` (absolute path); the other files are copied as usual
+
 ### init — atomic's own repo
 - **Given:** `atomic init` is run in atomic's own checkout (source and target are the same files)
 - **When:** `atomic init` is run
-- **Then:** every path is reported `exists` and nothing changes
+- **Then:** every path is reported `exists`, no CLAUDE.md merge hint is printed, and nothing changes
 
 ### init — not a git repo
 - **Given:** the current directory is not inside a git repository
@@ -42,7 +47,7 @@
 
 ### init — JSON output
 - **When:** `atomic init --json` is run
-- **Then:** prints `{"ok":true,"created":[…],"existing":[…]}` listing `atomic/`, `atomic/consistency.md`, and every copied command and doc path under whichever applies
+- **Then:** prints `{"ok":true,"created":[…],"existing":[…]}` listing `atomic/`, `atomic/consistency.md`, every copied command and doc path, and `CLAUDE.md` under whichever applies
 
 ### status — no active pipeline
 - **Given:** `atomic/spec.md` does not exist

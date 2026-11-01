@@ -1,6 +1,6 @@
 # Install a one-off starting point for atomic in the current repo: create
 # atomic/ with a template commit-consistency manifest, and copy atomic's /at:*
-# commands and their shared docs from atomic's own checkout. The repo owns and
+# commands, their shared docs, and CLAUDE.md from atomic's own checkout. The repo owns and
 # evolves these files afterwards — init never overwrites an existing file and
 # commits nothing. The template follows the format in
 # .claude/docs/consistency-context.md.
@@ -18,7 +18,7 @@ EOF
 cmd_init() {
   require_git
   local manifest="$ATOMIC_DIR/consistency.md"
-  local created=() existing=() new_manifest=false
+  local created=() existing=() new_manifest=false claude_exists=false
 
   if [[ -d "$ATOMIC_DIR" ]]; then
     existing+=("$ATOMIC_DIR/")
@@ -35,11 +35,12 @@ cmd_init() {
     created+=("$manifest")
   fi
 
-  # Copy the commands and docs wholesale; in atomic's own repo every target
-  # already exists, so nothing is written.
+  # Copy the commands, docs, and CLAUDE.md wholesale; in atomic's own repo
+  # every target already exists, so nothing is written.
   local src file rel
   src="$(cd "$SCRIPT_DIR/.." && pwd)"
-  for file in "$src"/.claude/commands/at/*.md "$src"/.claude/docs/*.md; do
+  [[ -e CLAUDE.md && "$src" != "$(pwd)" ]] && claude_exists=true
+  for file in "$src"/.claude/commands/at/*.md "$src"/.claude/docs/*.md "$src/CLAUDE.md"; do
     [[ -f "$file" ]] || continue
     rel="${file#"$src"/}"
     if [[ -e "$rel" ]]; then
@@ -62,6 +63,10 @@ cmd_init() {
     if [[ "$new_manifest" == "true" ]]; then
       echo
       echo "Next: add an entry to $manifest for each artefact that must agree with the code (README, docs, tests, CI, schemas…)."
+    fi
+    if [[ "$claude_exists" == "true" ]]; then
+      echo
+      echo "CLAUDE.md left as is — merge atomic's rules into it from $src/CLAUDE.md."
     fi
   fi
 }

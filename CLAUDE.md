@@ -1,20 +1,18 @@
 # atomic — Claude Code Instructions
 
-## What This Project Is
+## How This Repo Works
 
-`atomic` is a CLI tool that implements a lightweight atomic commit pipeline. Every unit of work moves through an explicit pipeline:
+This repo uses `atomic`, a lightweight atomic commit pipeline. Every unit of work — one atomic commit — moves through an explicit pipeline:
 
 ```
 propose → apply (loop: implement → behaviours → test → review) → merge
 ```
 
-This repo dogfoods itself — `atomic` is built using `atomic`.
-
 ## Start of Every Session
 
 **Always run this first:**
 ```bash
-bin/atomic status
+atomic status
 ```
 
 This tells you the current pipeline stage and the active spec intent. Orient yourself before doing anything else.
@@ -55,7 +53,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 - `atomic/consistency.md` — commit-consistency manifest: every artefact that must agree with the code at every commit; `/at:apply` checks each change against it
 - `atomic/stack.md` — ordered proposal queue; out-of-scope items from propose and apply land here as deferrals, committed with the spec they came from (unrelated planning additions are committed on their own via `atomic stack-add`, rule 6); top proposal feeds the next `/at:propose`
 - `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
-- `bin/atomic` — the CLI (use it, don't work around it)
+- `atomic` — the CLI (on PATH; use it, don't work around it)
 
 ## Behaviour File Format
 

@@ -37,7 +37,7 @@ export PATH="$HOME/src/atomic/bin:$PATH"
 npm install -g git+ssh://git@github.com/mobz/atomic.git
 ```
 
-Then, in the repo you want to use it in, run `atomic init`. It creates `atomic/` with a starting `atomic/consistency.md` and copies the `/at:*` commands (`.claude/commands/at/`) and their shared docs (`.claude/docs/`) into the repo.
+Then, in the repo you want to use it in, run `atomic init`. It creates `atomic/` with a starting `atomic/consistency.md` and copies the `/at:*` commands (`.claude/commands/at/`), their shared docs (`.claude/docs/`), and — if the repo has none — a starting `CLAUDE.md` into the repo. If the repo already has a `CLAUDE.md`, init leaves it alone and points you at atomic's to merge the rules in by hand.
 
 Init installs a one-off starting point. From then on the repo owns those files and evolves its pipeline on its own — atomic does not update them, and re-running `atomic init` only fills in files that are missing, never overwriting one that exists.
 
@@ -86,7 +86,8 @@ atomic/consistency.md ← artefacts that must agree with the code at every commi
 atomic/stack.md       ← ordered proposal queue (committed)
 behaviours/           ← BDD scenarios, always in sync with the code (committed)
 bin/atomic            ← the CLI
-CLAUDE.md             ← instructions for Claude Code sessions
+CLAUDE.md             ← instructions for Claude Code sessions (generic; copied by `atomic init`)
+CLAUDE.local.md       ← notes for developing atomic itself (not copied)
 ```
 
 `atomic/consistency.md` is the repo's commit-consistency manifest: one entry per artefact (README, help text, docs, behaviours, …) saying what must agree with what. `/at:apply` checks every change against it and updates the manifest when the change adds or removes something it should list. Its format lives in `.claude/docs/consistency-context.md`; `atomic init` writes a starting manifest holding just its own entry.
