@@ -2,10 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Make `bin/atomic` resolve symlinks to find `lib/`, so `npm link` and `npm install -g` work
-Deferred from apply: while adding the README Install section for `atomic init`, found that `bin/atomic` run through a symlink (what `npm link` / `npm install -g` install, per `package.json` `bin`) sets `SCRIPT_DIR` to the symlink's directory and fails: `lib/helpers.sh: No such file or directory`. Resolve the link chain before computing `SCRIPT_DIR` (Bash 3.2 / BSD — no `readlink -f`; loop on `readlink`), then let README Install offer `npm link` alongside adding `bin/` to PATH. Behaviour: `cli-atomic.md` — runs via a symlink.
-
-===========
 Proposal: Have `atomic init` write a starting CLAUDE.md from a template when the repo has none
 Deferred from propose: split off from copying the `/at:*` commands and docs in `atomic init`. Init installs a one-off starting point the repo then owns (no updates from atomic, no markers, never overwrite). Add a template in atomic (e.g. `templates/CLAUDE.md`) holding the generic parts of this repo's CLAUDE.md — pipeline, hard rules, slash commands, Key Paths, behaviour file format — without this repo's own text ("dogfoods itself", `bin/atomic status`). Write it only when `CLAUDE.md` is missing; if one exists, leave it and print a hint (merging into an existing CLAUDE.md needs judgement — `/at:init`). Manifest entry: the template matches the commands' hard rules, slash commands, and Key Paths. Behaviours, README Install.
 

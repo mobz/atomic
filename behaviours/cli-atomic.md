@@ -1,5 +1,20 @@
 ## Behaviour: atomic CLI
 
+### invocation — through a symlink
+- **Given:** `atomic` on PATH is a symlink to atomic's `bin/atomic` (as `npm link` or `npm install -g` create)
+- **When:** any command is run, e.g. `atomic status`
+- **Then:** the link is followed to the real script and `lib/` is found next to it; the command behaves exactly as when `bin/atomic` is run directly
+
+### invocation — through a relative symlink chain
+- **Given:** `atomic` on PATH is a relative symlink to another relative symlink that points at `bin/atomic`
+- **When:** any command is run
+- **Then:** each relative target is resolved against its own link's directory, and the command works
+
+### init — through a symlink
+- **Given:** `atomic` on PATH is a symlink to atomic's `bin/atomic`
+- **When:** `atomic init` is run in a fresh git repo
+- **Then:** the commands and docs are copied from atomic's real checkout, not from the symlink's directory
+
 ### init — fresh repo
 - **Given:** a git repo with no `atomic/` directory and no `.claude/commands/at/` or `.claude/docs/`
 - **When:** atomic's `bin/atomic init` is run from the repo root

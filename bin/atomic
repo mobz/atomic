@@ -4,7 +4,16 @@ set -euo pipefail
 ATOMIC_DIR="atomic"
 BEHAVIOURS_DIR="behaviours"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Follow symlinks (e.g. from `npm link`) to the real script, so lib/ is found
+# next to it. Bash 3.2 / BSD has no `readlink -f`, so resolve one link at a
+# time, treating a relative target as relative to the link's directory.
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+  LINK_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ "$SOURCE" == /* ]] || SOURCE="$LINK_DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
 
 source "$SCRIPT_DIR/lib/helpers.sh"
 source "$SCRIPT_DIR/lib/atomic-init"

@@ -23,11 +23,18 @@ Out-of-scope work noticed along the way is added to the stack rather than implem
 
 ## Install
 
-Put a clone of atomic's `bin/` on your PATH — the `/at:*` commands call `atomic` directly:
+Get `atomic` on your PATH — the `/at:*` commands call it directly. Any of:
 
 ```bash
+# from a clone: link it with npm…
 git clone git@github.com:mobz/atomic.git ~/src/atomic
+cd ~/src/atomic && npm link
+
+# …or put its bin/ on PATH
 export PATH="$HOME/src/atomic/bin:$PATH"
+
+# or install it globally without a clone
+npm install -g git+ssh://git@github.com/mobz/atomic.git
 ```
 
 Then, in the repo you want to use it in, run `atomic init`. It creates `atomic/` with a starting `atomic/consistency.md` and copies the `/at:*` commands (`.claude/commands/at/`) and their shared docs (`.claude/docs/`) into the repo.
