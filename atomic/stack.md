@@ -2,27 +2,6 @@ Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
 ===========
-Proposal: Measure whether an adversarial diff critic, steered by a per-repo commit-consistency manifest, closes the "ticked but not done" gap in `/at:apply`
-**Not ready for implementation — a spike.** Harness: `../atomic-experiments/preamble` (fixture, scenarios, variants, runners, judge, `analyze.py`; results in `runs/`).
-
-**Findings so far (atomic df6d3bf, Opus, ~5 runs per cell, headless `claude -p`):**
-- `/at:propose` is at ceiling. Baseline judged good on 30/30 across six scenarios (explicit bundle, implicit bundle, horizontal-slice trap, storage migration, breaking rename, single-concern control) — hand-checked: splits are vertical, the control is not split, migration risks are raised, incidental issues are deferred. A preamble ("senior engineer who ships atomic commits…") made no measurable difference. A propose-stage adversarial critic (`spec-critic` agent) made no measurable difference at ~1.8x cost, and tended to write split-offs into the spec instead of the stack. The preamble hypothesis is dropped.
-- `/at:apply` scope is fine after the df6d3bf rule rewording: unstated README/test/behaviour updates are made 5/5, planted incidental issues (help typo, duplicated helper) are left alone 5/5.
-- The remaining failure is **ticked but not done**: in `apply-title-length` the baseline raises the limit and ticks the item, but the planted `truncate` off-by-one makes titles 61 characters, failing Done-when — 0/5. An adversarial `diff-critic` agent run before the summary (unrelated change / stale or untested / not done, incl. edge cases) fixed it 3/5, never hurt precision, at ~1.7x cost ($0.50 vs $0.30 API-equivalent per run).
-
-**New idea to test — a commit-consistency manifest as steering.** A committed, per-repo file (`atomic/consistency.md`, format in `.claude/docs/consistency-context.md`) itemising every artefact that must stay consistent with the code at every commit: README, docs, help text, tests, behaviours, infra, CI, DB schema/migrations, generated files, examples, changelog — whatever the repo has, with what in each must agree (e.g. "README CLI reference must match `atomic help`"). **The first item is the file itself:** it must be updated when a change adds a new command, component, function family, doc, or artefact that must stay in step (and entries removed when the thing goes). The critic checks the diff against each item instead of guessing what "stale" means in this repo; apply itself may read it too.
-
-**Harness work needed (the fixture is too simple to show a manifest's value):**
-- Add non-obvious consistency artefacts to the fixture that a generic "tests/README/behaviours" reading misses: e.g. a shell completion file listing commands, a `docs/` man-style page, a JSON schema for `todo.json`, a CHANGELOG, an example config, a data-format version/migration step.
-- New apply scenarios where a reasonable spec silently invalidates one of them (add a command → completions + man page; add a field → schema + migration; rename a flag → completions, docs, changelog), plus at least one more edge-case Done-when trap like `title-length`, so "not done" isn't measured on a single bug.
-- A manifest-maintenance scenario: the change adds a new artefact (e.g. a new docs page or a new subcommand family) — does the manifest get its own entry updated?
-- Keep a control where the manifest lists items the change does not touch — check it doesn't cause drive-by edits.
-
-**Variants (apply):** baseline; manifest only (apply step reads it); verify wording only ("before ticking, check each Done-when with an actual command, including boundaries"); `diff-critic`; `diff-critic` + manifest; verify wording + manifest. Score stale-artefact misses, Done-when failures, unrelated changes, manifest self-update, and cost. Drop `title-length`/`newest` cells already at ceiling once the new scenarios exist. Headless runs use the claude.ai plan's 5-hour limit (~60–100 runs per window) — batch per scenario, runners skip valid runs and stop on the limit.
-
-**Decision this spike feeds:** whether atomic adds the critic, the verify wording, or both on top of the manifest (`atomic/consistency.md`, now in atomic — refresh the fixture to pick up its format doc and apply wiring), and whether the manifest's wiring needs changing.
-
-===========
 Proposal: Add `atomic init` to set up atomic in a repo, including a template `atomic/consistency.md`
 Deferred from propose: while specifying the commit-consistency manifest, found that a repo gets a manifest only by someone writing one. No init or install mechanism exists today (the CLI, README, and commands have none; the experiment fixture was set up by copying files in by hand).
 
@@ -31,10 +10,6 @@ Design considerations:
 - Bash can write only the manifest template (header + self-entry, per `.claude/docs/consistency-context.md`). Listing the repo's real artefacts (README, tests, infra, schemas, CI) needs judgement — the agent fills it in afterwards, or init is (partly) a `/at:init` slash command.
 - Re-running init on an initialised repo must not clobber an existing manifest or stack.
 - Behaviours: `cli-atomic.md` scenarios for a fresh repo and a re-run; README CLI reference and Quick Start; `atomic help`.
-
-===========
-Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
-Deferred from propose: while specifying the commit-consistency manifest, `/at:propose` reading it was considered and left out. Propose was already at ceiling in the preamble spike (complete specs, unstated docs/tests included), and `/at:apply` completes the concern from the manifest regardless. Revisit after the critic spike: add it only if specs that omit manifest artefacts cause problems apply does not catch (e.g. a Done-when that misses a listed artefact).
 
 ===========
 Proposal: Make CLI error output follow `--json` consistently
@@ -76,5 +51,5 @@ Proposal: Decide whether `atomic commit` refuses when there is no `atomic/spec.m
 Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack` and CLAUDE.md (a CLI behaviour change, a separate concern). With no spec, `atomic commit` falls back to message "atomic commit" and `git add -A` — the path that sweeps stray edits (e.g. hand-edited stack additions) into vague commits. Options: refuse with an error pointing at `/at:propose` or `atomic stack-add`; or keep the fallback. Update `cli-atomic.md` "commit — no spec", help, README, and `merge.md` if it changes.
 
 ===========
-Proposal: Decide how a `/at:stack` "start fresh" or "replace" rewrite of `atomic/stack.md` is committed
-Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack`. A rewritten stack in state `none` currently rides along with the first spec's commit (via `git add -A`), mixing planning into that commit. Options: an `atomic stack-replace` CLI that commits the new file as `Plan: <stack name>` (state `none` only); or have `/at:stack` require committing the rewrite immediately via an existing command. Keep the review step: show the full stack and get approval before committing.
+Proposal: Decide how planning edits other than a plain append are committed — rewriting, reordering, removing, and moving proposals between `atomic/stack.md` and `atomic/stacks/*`
+Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack`. `atomic stack-add` only appends one block to the end of `atomic/stack.md`; every other planning edit has no committed path. A `/at:stack` "start fresh" or "replace" rewrite in state `none` currently rides along with the first spec's commit (via `git add -A`), mixing planning into that commit; moving a proposal to a parked stack (e.g. the critic spike to `atomic/stacks/research.md`) needed a one-off hand `Plan:` commit. Options: an `atomic stack-replace` CLI that commits a new file as `Plan: <stack name>` (state `none` only); a general `atomic plan-commit` that commits only `atomic/stack.md` and `atomic/stacks/*` from a reviewed working-tree change (state `none` only, since mid-apply the stack also holds the pop and deferrals); or `stack-move`/`stack-remove` commands built like `stack-add` (from HEAD in a temporary index). Keep the review step: show the exact change and get approval before committing.
