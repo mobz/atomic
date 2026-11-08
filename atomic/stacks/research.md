@@ -24,3 +24,22 @@ Harness: `../atomic-experiments/preamble`. Spikes here are not ready for impleme
 
 ## Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
 Deferred from propose: while specifying the commit-consistency manifest, `/at:propose` reading it was considered and left out. Propose was already at ceiling in the preamble spike (complete specs, unstated docs/tests included), and `/at:apply` completes the concern from the manifest regardless. Revisit after the critic spike: add it only if specs that omit manifest artefacts cause problems apply does not catch (e.g. a Done-when that misses a listed artefact).
+
+## Proposal: Measure how Claude's cheapest and most expensive models compare across the pipeline's task types, to find where a cheaper model is good enough
+**Not ready for implementation — a spike.** The project's goal is full cycles on laptop-sized models (see the README), and this spike is the first step: find which pipeline tasks a cheap model already does well, and which still need an expensive one. Compare Haiku 5.5 (cheapest) with Opus 5.5 (most expensive), and add Sonnet 5.5 as a midpoint where a cell's result is unclear.
+
+**Task types (one cell per task type and model):**
+- planning: `/at:stack` decomposition — vertical slices, expand/contract, ordering
+- specifying: `/at:propose` — splitting bundles, deferring incidental issues, a precise Done-when
+- implementing: `/at:apply` — the concern completed (tests, docs, behaviours, consistency manifest), scope held, Done-when actually met (the `title-length` "ticked but not done" trap)
+- reviewing: the `diff-critic` agent — finding stale artefacts and not-done items without false positives
+- quality control: checking Done-when with actual commands, including edge cases
+
+**Method:** reuse the harness in `../atomic-experiments/preamble` (fixture, scenarios, judge, `analyze.py`). Run each scenario per model at about 5 runs per cell, pinning the model with `claude -p --model`. Keep the judge model fixed (Opus) so scoring doesn't vary with the model under test. Score quality as for the critic spike, and record cost (API-equivalent $), wall time and tokens per run. Report quality per dollar for each task type.
+
+**Questions:**
+- For which task types is Haiku at or near Opus quality?
+- Where Haiku falls short, does a cheaper fix close the gap? Candidates are a smaller packet, a sharper prompt, a reviewer pass, or a Haiku critic over Haiku output.
+- Do mixed assignments beat all-Opus on quality per dollar? For example, Opus plans and Haiku implements and reviews.
+
+**Decision this spike feeds:** which model each `/at:*` stage and agent should default to, and which prompt or packet-size changes would move more stages down to cheaper models. Any resulting change is proposed onto the active stack.
