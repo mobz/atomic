@@ -1,6 +1,16 @@
 # Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
+## Proposal: State the project's purpose and positioning — exploring value-for-money agentic development by breaking engineering work into small, agile-sized packets that smaller models can do faster and more reliably
+The README intro describes *what* atomic is (an atomic commit pipeline) but not *why* it exists. The goal of the project: explore agentic development with a focus on value for money. Atomic breaks engineering jobs into small packets, using tried and tested agile methods (user stories, vertical slicing, expand/contract, one concern per commit), so the work can be done by smaller models, faster and more reliably.
+
+Changes:
+- `README.md` — a short purpose paragraph (or "Why" section) after the opening line. It connects the existing mechanics to the goal: small specs and stacks are what let a smaller, cheaper model implement each step reliably. Keep the current pipeline description as it is.
+- `package.json` — a `description` that reflects the positioning, not just "propose, apply, merge".
+- `CLAUDE.local.md` — one line telling agents developing atomic to weigh design choices by this goal (cost, speed and reliability with smaller models).
+
+Not `CLAUDE.md`: it is generic and copied into other repos, and the positioning is about atomic itself, not about repos that use it.
+
 ## Proposal: Add `/at:init` — run `atomic init`, survey the repo, propose the real `atomic/consistency.md` entries, and merge atomic's rules into an existing CLAUDE.md, each for approval
 Deferred from propose: split off from `atomic init`. Bash writes only starting points; the judgement steps belong here. (1) Manifest: listing a repo's real artefacts (README, docs, tests, CI, infra, schemas, migrations, generated files) — survey the repo, draft one bullet per artefact in the format of `.claude/docs/consistency-context.md`, show them, write only what the user approves. (2) CLAUDE.md: when the repo already has one (so init left it alone), merge in the pipeline, hard rules, slash commands, and Key Paths from atomic's own `CLAUDE.md` (generic, copied by `atomic init` when a repo has none), fitting the repo's existing text; show the merged result and write only on approval. Depends on the install proposals above (the command must exist in the target repo, and `atomic init` must copy `CLAUDE.md`). Behaviours: a new `pipeline-init.md`; CLAUDE.md and README command tables.
 
