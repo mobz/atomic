@@ -1,5 +1,7 @@
 # atomic
 
+atomic explores agentic development with a focus on value for money. It breaks engineering work into small packets using tried and tested agile methods — user stories, vertical slicing, expand/contract, one concern per commit — so that every SDLC step on each packet (development, code review, quality control, and to some extent planning) can be done by smaller, more efficient models, faster and more reliably, and each change is small enough for a human to review in one pass. The goal is to run full cycles on laptop-sized models, getting better value and performance by running multiple stacks in parallel rather than one large model on one large task.
+
 A lightweight atomic commit pipeline for AI-assisted development. Every change is planned as one small, revertable commit, implemented by Claude Code against that plan, reviewed inline, and merged:
 
 ```

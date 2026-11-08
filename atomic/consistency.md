@@ -12,4 +12,4 @@ Every artefact that must agree with the code at every commit. `/at:apply` checks
 - `.claude/docs/*-context.md` — each format matches what the commands and CLI read and write (e.g. `spec-context.md` states match `spec_state` in `bin/lib/helpers.sh`)
 - `.claude/commands/at/*.md` — "Step N" references point at the right steps; `@` includes point at existing files; CLI commands they call exist
 - `behaviours/*.md` — scenarios describe the current behaviour of every touched command and feature
-- `package.json` — description matches the pipeline; `test` script (no test suite yet — list tests here when added)
+- `package.json` — description matches the README's purpose and the pipeline; `test` script (no test suite yet — list tests here when added)
