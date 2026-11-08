@@ -66,7 +66,7 @@ cmd_init() {
     fi
     if [[ "$claude_exists" == "true" ]]; then
       echo
-      echo "CLAUDE.md left as is — merge atomic's rules into it from $src/CLAUDE.md."
+      echo "CLAUDE.md left as is — run /at:init to merge atomic's rules into it from $src/CLAUDE.md."
     fi
   fi
 }

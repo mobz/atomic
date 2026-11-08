@@ -1,9 +1,6 @@
 # Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
-## Proposal: Add a CLAUDE.md merge step to `/at:init` — when the repo already had a CLAUDE.md, merge atomic's rules into it for approval
-Deferred from propose: split off from adding `/at:init`. When the repo already has a CLAUDE.md, `atomic init` leaves it alone and prints a hint. Merge in the pipeline, hard rules, slash commands, and Key Paths from atomic's own `CLAUDE.md` (generic, at `$src/CLAUDE.md` as named in the hint), fitting the repo's existing text and headings rather than appending a block; show the merged result and write only on approval. Replaces `/at:init`'s "merge isn't automated yet" step. Behaviours: extend `pipeline-init.md`.
-
 ## Proposal: Make CLI error output follow `--json` consistently
 Deferred from apply: while making `atomic commit` keep spec.md on a failed commit, found that no command switches its error output on `--json`, so errors are inconsistent — plain text regardless of `--json` (`atomic commit` incomplete spec and the new "commit failed — atomic/spec.md kept" error, `atomic start-over` no active spec) vs always-JSON regardless of `--json` (`atomic show-spec` no spec, `require_git` in `helpers.sh`, unknown command in `bin/atomic`). The README promises "Add --json to any command for machine-readable output".
 

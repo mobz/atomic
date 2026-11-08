@@ -33,7 +33,7 @@
 ### init — existing CLAUDE.md
 - **Given:** a git repo that already has its own `CLAUDE.md`
 - **When:** `atomic init` is run
-- **Then:** `CLAUDE.md` is left unchanged and reported `exists`; a hint is printed to merge atomic's rules into it from `<atomic checkout>/CLAUDE.md` (absolute path); the other files are copied as usual
+- **Then:** `CLAUDE.md` is left unchanged and reported `exists`; the hint `CLAUDE.md left as is — run /at:init to merge atomic's rules into it from <atomic checkout>/CLAUDE.md` is printed (absolute path); the other files are copied as usual
 
 ### init — atomic's own repo
 - **Given:** `atomic init` is run in atomic's own checkout (source and target are the same files)
