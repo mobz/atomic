@@ -30,8 +30,8 @@ Complete the concern: also update everything the change makes stale or untested 
 
 If anything is clearly out of scope (unrelated to the concern), do not implement it. Add it to `atomic/stack.md` as a deferral (see the stack format) — deferrals are part of this apply's commit and are listed in the summary's Deferred items. Where it goes depends on urgency:
 
-- **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `===========` block.
-- **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the Stack: header block, before the first `===========`.
+- **End of stack** — for clearly out-of-scope items (future work, nice-to-haves, unrelated improvements). Append after the last `## Proposal:` block.
+- **Top of stack** — for urgent bugs or required prerequisites that must land before subsequent proposals can work. Insert after the `Stack:` header block, before the first `## Proposal:`.
 
 ### 2. Update behavioral domain specs
 

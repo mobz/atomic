@@ -15,9 +15,14 @@
 ### stack header
 - **Given:** a stack.md file
 - **When:** the file is read
-- **Then:** the first line is `Stack: <short feature name>`; optional free-text context follows on subsequent lines (user story, goals, scope)
+- **Then:** the first line is the heading `# Stack: <short feature name>`; optional free-text context follows on subsequent lines (user story, goals, scope)
 
 ### proposal block
 - **Given:** a stack.md file with one or more proposals
 - **When:** the file is read
-- **Then:** each proposal begins with a `===========` separator line followed by `Proposal: <intent>`; free-text context may follow; proposals are ordered top-to-bottom with the next commit at the top
+- **Then:** each proposal begins with a `## Proposal: <intent>` heading, preceded by one blank line, and runs to the next `## Proposal:` heading or the end of the file; free-text context may follow, using only `###` or deeper headings; proposals are ordered top-to-bottom with the next commit at the top
+
+### renders as markdown
+- **Given:** a stack.md file
+- **When:** it is viewed in a markdown renderer (e.g. on GitHub)
+- **Then:** the stack name is the top-level heading and each proposal is a second-level section titled `Proposal: <intent>`

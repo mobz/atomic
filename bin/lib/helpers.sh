@@ -2,6 +2,10 @@
 # Shared utilities for all atomic subcommands.
 # Sourced by bin/atomic before any command file.
 
+# Every Proposal block in a stack file starts with a line beginning with this
+# heading; the block runs to the next such line (see .claude/docs/stack-context.md).
+STACK_HEADING="## Proposal: "
+
 in_git_repo() {
   git rev-parse --git-dir &>/dev/null
 }

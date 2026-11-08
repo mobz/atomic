@@ -48,9 +48,9 @@
 ### stack — written output
 - **Given:** user confirms the full proposal sequence
 - **When:** Claude writes `atomic/stack.md`
-- **Then:** the file starts with `Stack: <name>` on the first line, followed by the user story and optional context, then `===========` / `Proposal:` blocks in order; each proposal block contains enough detail for apply to implement without re-deriving the design
+- **Then:** the file starts with `# Stack: <name>` on the first line, followed by the user story and optional context, then `## Proposal: <intent>` blocks in order; each proposal block contains enough detail for apply to implement without re-deriving the design
 
 ### stack — Stack: header required
 - **Given:** any stack.md being written by `/at:stack`
 - **When:** the file is created or replaced
-- **Then:** the first line is always `Stack: <name>`; a stack.md without this header is invalid
+- **Then:** the first line is always `# Stack: <name>`; a stack.md without this header is invalid

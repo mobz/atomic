@@ -85,7 +85,7 @@ Then add anything the user missed that's obviously required.
 
 ### 3. Reframe the exploration as a user story
 
-Generate a short name for the stack which becomes the `Stack:` header line.
+Generate a short name for the stack which becomes the `# Stack: <name>` header line.
 
 Reframe the exploration as a user story:
 
@@ -156,8 +156,8 @@ Each call creates its own `Plan: <intent>` commit, works in any pipeline state, 
 **New stack (or start fresh):** write `atomic/stack.md` using the stack format.
 
 Rules:
-- The `Stack:` header and user story context always come first
-- Each proposal block starts with `===========` on its own line, followed immediately by `Proposal: <intent>`
+- The `# Stack: <name>` header and user story context always come first
+- Each proposal block starts with a `## Proposal: <intent>` heading on its own line, preceded by one blank line; headings inside its detail use `###` or deeper
 - Proposals are ordered top-to-bottom: the top proposal is the next commit to work on
 - Include enough detail in each proposal block that apply can implement it without re-deriving the design
 

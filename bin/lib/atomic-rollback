@@ -4,17 +4,15 @@
 # untracked files created during the apply, and spec.md. Discarded deferrals
 # are printed in full so they can be offered back to the user.
 
-STACK_SEP="==========="
-
-# Print Proposal block k (1-based) of a stack file: from its separator line up
-# to, but not including, the next separator. Trailing blank lines are dropped
+# Print Proposal block k (1-based) of a stack file: from its heading line up
+# to, but not including, the next heading. Trailing blank lines are dropped
 # by the caller's command substitution.
 _stack_block() {
-  awk -v k="$2" -v sep="$STACK_SEP" '$0 == sep { n++; if (n > k) exit } n == k { print }' "$1"
+  awk -v k="$2" -v h="$STACK_HEADING" 'index($0, h) == 1 { n++; if (n > k) exit } n == k { print }' "$1"
 }
 
 _stack_count() {
-  grep -c "^${STACK_SEP}\$" "$1" || true
+  grep -c "^${STACK_HEADING}" "$1" || true
 }
 
 # Succeed if block text $2 appears as a whole block in stack file $1.
@@ -58,7 +56,7 @@ cmd_rollback() {
   if [[ "$JSON_OUTPUT" == "true" ]]; then
     local intents=() d intent
     for d in "${deferrals[@]+"${deferrals[@]}"}"; do
-      intent=$(sed -n '2s/^Proposal: //p' <<< "$d")
+      intent=$(sed -n "1s/^${STACK_HEADING}//p" <<< "$d")
       intents+=("\"${intent//\"/\\\"}\"")
     done
     local IFS=,

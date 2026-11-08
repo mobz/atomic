@@ -1,20 +1,17 @@
-Stack: Pipeline cleanup and hardening
+# Stack: Pipeline cleanup and hardening
 As a developer using atomic, I want the docs, CLI, and /at:* commands to match how the pipeline actually works — shared format context, accurate entry states and behaviours, safe failure paths, and clear rules for how the stack is committed — so that each command can be followed exactly without hitting stale or contradictory instructions.
 
-===========
-Proposal: Add `/at:init` — run `atomic init`, survey the repo, propose the real `atomic/consistency.md` entries, and merge atomic's rules into an existing CLAUDE.md, each for approval
+## Proposal: Add `/at:init` — run `atomic init`, survey the repo, propose the real `atomic/consistency.md` entries, and merge atomic's rules into an existing CLAUDE.md, each for approval
 Deferred from propose: split off from `atomic init`. Bash writes only starting points; the judgement steps belong here. (1) Manifest: listing a repo's real artefacts (README, docs, tests, CI, infra, schemas, migrations, generated files) — survey the repo, draft one bullet per artefact in the format of `.claude/docs/consistency-context.md`, show them, write only what the user approves. (2) CLAUDE.md: when the repo already has one (so init left it alone), merge in the pipeline, hard rules, slash commands, and Key Paths from atomic's own `CLAUDE.md` (generic, copied by `atomic init` when a repo has none), fitting the repo's existing text; show the merged result and write only on approval. Depends on the install proposals above (the command must exist in the target repo, and `atomic init` must copy `CLAUDE.md`). Behaviours: a new `pipeline-init.md`; CLAUDE.md and README command tables.
 
-===========
-Proposal: Make CLI error output follow `--json` consistently
+## Proposal: Make CLI error output follow `--json` consistently
 Deferred from apply: while making `atomic commit` keep spec.md on a failed commit, found that no command switches its error output on `--json`, so errors are inconsistent — plain text regardless of `--json` (`atomic commit` incomplete spec and the new "commit failed — atomic/spec.md kept" error, `atomic start-over` no active spec) vs always-JSON regardless of `--json` (`atomic show-spec` no spec, `require_git` in `helpers.sh`, unknown command in `bin/atomic`). The README promises "Add --json to any command for machine-readable output".
 
 Approach: one shared helper in `bin/lib/helpers.sh` (e.g. `die <message>`) that prints `{"ok":false,"error":"<message>"}` when `--json` is set and `error: <message>` otherwise, both to stderr, then exits 1; replace the five error sites above with it. Note `require_git` and the unknown-command path may run before or regardless of `--json` parsing — check ordering in `bin/atomic`.
 
 Consistency: update the error scenarios in `behaviours/cli-atomic.md` (reset/show-context removed, show-spec no spec, commit incomplete / failed, start-over no spec) and the README's `--json` note.
 
-===========
-Proposal: Standardise the user interaction pattern — every formal review point ends with a fixed, specifically worded choice
+## Proposal: Standardise the user interaction pattern — every formal review point ends with a fixed, specifically worded choice
 Today the commands hand control back to the user in inconsistent ways: `/at:apply`'s summary ends with a fixed block (**Approve** / **Rollback** / "Or tell me what to change"), but `/at:propose` step 4 just says "Confirm with the user" (in practice a free-form "Should I write it?"), the propose entry states use inline lists ("Ask: proceed with this, modify it, or start fresh…", "review it, change it, or start fresh?"), `/at:stack` step 6 ends "Stack written. Run `/at:propose`… or ask me to make an adjustment", the rollback deferral re-add is "ask whether to add any back", and wrong-state handoffs either "tell the user to run" or "suggest running" a command. The user cannot tell at a glance whether they are at a gate, what words the agent will act on, or what each choice does.
 
 Design:
@@ -40,10 +37,8 @@ Design:
 - Behaviours: update the scenarios that quote today's wording (`pipeline-propose.md` entry/summarise/confirm, `pipeline-stack.md`, `pipeline-apply.md` rollback re-add, `pipeline-merge.md` wrong-state entries) and add a `command-context.md` scenario for the injected doc.
 - Possible split: (1) the shared doc + `/at:propose`, the most-used gate; (2) `/at:stack`, `/at:merge`, rollback re-add, and handoffs. Decide during propose.
 
-===========
-Proposal: Decide whether `atomic commit` refuses when there is no `atomic/spec.md`
+## Proposal: Decide whether `atomic commit` refuses when there is no `atomic/spec.md`
 Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack` and CLAUDE.md (a CLI behaviour change, a separate concern). With no spec, `atomic commit` falls back to message "atomic commit" and `git add -A` — the path that sweeps stray edits (e.g. hand-edited stack additions) into vague commits. Options: refuse with an error pointing at `/at:propose` or `atomic stack-add`; or keep the fallback. Update `cli-atomic.md` "commit — no spec", help, README, and `merge.md` if it changes.
 
-===========
-Proposal: Decide how planning edits other than a plain append are committed — rewriting, reordering, removing, and moving proposals between `atomic/stack.md` and `atomic/stacks/*`
+## Proposal: Decide how planning edits other than a plain append are committed — rewriting, reordering, removing, and moving proposals between `atomic/stack.md` and `atomic/stacks/*`
 Deferred from propose: split off from wiring `atomic stack-add` into `/at:stack`. `atomic stack-add` only appends one block to the end of `atomic/stack.md`; every other planning edit has no committed path. A `/at:stack` "start fresh" or "replace" rewrite in state `none` currently rides along with the first spec's commit (via `git add -A`), mixing planning into that commit; moving a proposal to a parked stack (e.g. the critic spike to `atomic/stacks/research.md`) needed a one-off hand `Plan:` commit. Options: an `atomic stack-replace` CLI that commits a new file as `Plan: <stack name>` (state `none` only); a general `atomic plan-commit` that commits only `atomic/stack.md` and `atomic/stacks/*` from a reviewed working-tree change (state `none` only, since mid-apply the stack also holds the pop and deferrals); or `stack-move`/`stack-remove` commands built like `stack-add` (from HEAD in a temporary index). Keep the review step: show the exact change and get approval before committing.

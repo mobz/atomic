@@ -33,7 +33,7 @@
 ### propose — spec written from stack proposal, proposal popped
 - **Given:** user confirmed a spec sourced from the top stack proposal (accepted or modified)
 - **When:** Claude writes `atomic/spec.md`
-- **Then:** the top Proposal block is removed from `atomic/stack.md` in the same step (from its `===========` line to, but not including, the next `===========`); the Stack: header block is preserved; spec.md and stack.md are written together
+- **Then:** the top Proposal block is removed from `atomic/stack.md` in the same step (from its `## Proposal:` line to, but not including, the next `## Proposal:` line); the Stack: header block is preserved; spec.md and stack.md are written together
 
 ### propose — spec written from arguments or fresh discovery
 - **Given:** spec was sourced from `$ARGUMENTS` or a fresh discovery conversation, and no deferrals came out of the conversation

@@ -1,8 +1,7 @@
-Stack: Add stack awareness to the atomic pipeline
+# Stack: Add stack awareness to the atomic pipeline
 As a developer I want the atomic pipeline to maintain an ordered proposal queue so that I can decompose a feature into atomic commits upfront, capture out-of-scope discoveries without losing focus, and always know what comes next.
 
-===========
-Proposal: Support multiple named stacks
+## Proposal: Support multiple named stacks
 
 Currently `atomic/stack.md` is the single active stack. As work grows across multiple concurrent features or workstreams, a single file becomes a bottleneck — unrelated proposals accumulate in one queue and the stack loses its focus.
 
@@ -17,8 +16,7 @@ Design considerations:
 
 This is a significant change — decompose into its own stack when the time comes.
 
-===========
-Proposal: Associate each stack with a dedicated feature branch
+## Proposal: Associate each stack with a dedicated feature branch
 
 Currently all commits land on whatever branch is checked out — there's no connection between a stack and a branch. In a stacked diffs workflow, each stack represents a feature being built incrementally and should own a dedicated branch separate from the integration branch (main).
 
@@ -34,8 +32,7 @@ Design considerations:
 
 This ties into multi-stack support — each stack lives on its own branch, switching stacks means switching branches. Coordinate with the multiple named stacks proposal.
 
-===========
-Proposal: Add `/at:fix` command for surgical bug fixes in git history
+## Proposal: Add `/at:fix` command for surgical bug fixes in git history
 
 When a bug is discovered, the atomic commit philosophy says: fix it in the commit that introduced it so every commit is always complete. This requires a different workflow from a standard proposal — you're not writing new code, you're correcting history.
 
@@ -54,8 +51,7 @@ Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propo
 
 This is a large command — consider decomposing into its own stack when the time comes.
 
-===========
-Proposal: Migrate `/at:*` commands from `.claude/commands/` to `.claude/skills/`
+## Proposal: Migrate `/at:*` commands from `.claude/commands/` to `.claude/skills/`
 
 Claude Code's `.claude/skills/` interface combines slash commands and executable scripts in one definition — a skill can include both natural language instructions (like a command file) and shell scripts that run as part of the skill. This is a richer model than commands alone.
 
@@ -72,8 +68,7 @@ Research needed before implementing:
 
 This is likely a significant restructure — consider decomposing into its own stack once the skills format is fully understood.
 
-===========
-Proposal: Consider splitting behaviour maintenance out of `/at:apply`
+## Proposal: Consider splitting behaviour maintenance out of `/at:apply`
 
 Currently `/at:apply` is responsible for both implementing code changes and maintaining the `behaviours/` BDD scenario files. These are distinct concerns — one is about writing code, the other is about documenting observable behaviour — and bundling them means every apply is implicitly a two-phase operation even when the feature is simple.
 
@@ -84,21 +79,7 @@ Design considerations:
 - The case for splitting: apply is already long; behaviour authoring requires a different mode of thinking (observable outcomes vs. implementation); a reviewer can verify code and behaviour separately
 - Consider whether `behaviours/` files should be written by apply (during implementation) or by a dedicated step that runs against the finished, committed code — the latter would allow behaviour scenarios to describe what the system actually does rather than what it was intended to do
 
-===========
-Proposal: Make stack.md a valid markdown file
-
-Currently `atomic/stack.md` uses `===========` as a proposal separator — a custom format that does not render meaningfully in any markdown viewer. The file is committed to the repo and visible on GitHub, where it renders as undifferentiated text.
-
-Design considerations:
-- Replace `===========` separators with `## Proposal: <intent>` markdown headings — each proposal becomes a second-level section, the Stack: header block becomes a top-level `# <name>` heading
-- The `Stack:` prefix on line 1 would become just the `#` heading text, and the user story sits naturally as body text beneath it
-- All tooling that parses stack.md (the `show-stack` command, the pop logic in `/at:propose`, the append logic in `/at:apply`) reads and writes by text pattern — these need updating to match the new separator
-- The expand/contract pattern applies: add support for the new format in all tooling before removing the old format; or, since stack.md is a single file with no downstream consumers outside this repo, a single-commit cutover may be acceptable
-- Consider whether `atomic show-stack` output should remain unchanged (pipe-friendly plain text) even if the file format changes — the stored format and the display format can differ
-- Grep patterns in commands and bin/lib scripts that match `^===========` would need updating to match `^## Proposal:`
-
-===========
-Proposal: Remove the "Summarise back" confirmation step from `/at:propose`
+## Proposal: Remove the "Summarise back" confirmation step from `/at:propose`
 
 Step 4 of `/at:propose` asks Claude to present the spec in plain language and wait for user confirmation before writing anything. This adds a round-trip on every propose — the user must say "yes" or "looks good" before the spec is written, even when the clarify conversation already produced clear alignment.
 

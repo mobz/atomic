@@ -1,9 +1,8 @@
-Stack: Research — measuring how well the pipeline holds the line
+# Stack: Research — measuring how well the pipeline holds the line
 As the maintainer of atomic, I want experiments that measure whether pipeline changes (critics, verify wording, the consistency manifest) actually improve commit quality, so that I only add prompt or agent cost where it pays off — run when credit usage doesn't matter, separately from core work.
 Harness: `../atomic-experiments/preamble`. Spikes here are not ready for implementation; each ends in a decision, and any resulting change is proposed onto the active stack.
 
-===========
-Proposal: Measure whether an adversarial diff critic, steered by a per-repo commit-consistency manifest, closes the "ticked but not done" gap in `/at:apply`
+## Proposal: Measure whether an adversarial diff critic, steered by a per-repo commit-consistency manifest, closes the "ticked but not done" gap in `/at:apply`
 **Not ready for implementation — a spike.** Harness: `../atomic-experiments/preamble` (fixture, scenarios, variants, runners, judge, `analyze.py`; results in `runs/`).
 
 **Findings so far (atomic df6d3bf, Opus, ~5 runs per cell, headless `claude -p`):**
@@ -23,6 +22,5 @@ Proposal: Measure whether an adversarial diff critic, steered by a per-repo comm
 
 **Decision this spike feeds:** whether atomic adds the critic, the verify wording, or both on top of the manifest (`atomic/consistency.md`, now in atomic — refresh the fixture to pick up its format doc and apply wiring), and whether the manifest's wiring needs changing.
 
-===========
-Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
+## Proposal: Have `/at:propose` read `atomic/consistency.md` when writing a spec's Changes list
 Deferred from propose: while specifying the commit-consistency manifest, `/at:propose` reading it was considered and left out. Propose was already at ceiling in the preamble spike (complete specs, unstated docs/tests included), and `/at:apply` completes the concern from the manifest regardless. Revisit after the critic spike: add it only if specs that omit manifest artefacts cause problems apply does not catch (e.g. a Done-when that misses a listed artefact).

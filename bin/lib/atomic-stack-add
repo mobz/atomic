@@ -35,12 +35,12 @@ cmd_stack_add() {
 
   local body=""
   [[ -t 0 ]] || body=$(cat)
-  if printf '%s\n' "$body" | grep -qx "$STACK_SEP"; then
-    echo "error: body must not contain a '$STACK_SEP' line" >&2
+  if printf '%s\n' "$body" | grep -q "^$STACK_HEADING"; then
+    echo "error: body must not contain a line starting '${STACK_HEADING% }'" >&2
     exit 1
   fi
 
-  local block="${STACK_SEP}"$'\n'"Proposal: ${intent}"$'\n'
+  local block="${STACK_HEADING}${intent}"$'\n'
   [[ -n "$body" ]] && block+="${body}"$'\n'
 
   # Build the commit from HEAD's stack plus the block, in a temporary index.
