@@ -29,3 +29,8 @@
 - **Given:** `.claude/docs/consistency-context.md` exists and is referenced via `@` in apply.md alongside the other context docs, before `## Entry`
 - **When:** `/at:apply` is invoked
 - **Then:** the `atomic/consistency.md` manifest format and rules (self-entry first, stale entries are in scope, unaffected entries left alone, manifest maintained in the same commit) are available to Claude without being restated inline
+
+### consistency-context loaded in init
+- **Given:** `.claude/docs/consistency-context.md` is referenced via `@` in init.md, before `## Steps`
+- **When:** `/at:init` is invoked
+- **Then:** the manifest format and rules are available to Claude when drafting entries, without being restated inline

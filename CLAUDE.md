@@ -42,6 +42,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 | Command | Stage | Description |
 |---------|-------|-------------|
+| `/at:init` | setup | Run `atomic init` and draft the commit-consistency manifest from the repo |
 | `/at:propose` | → propose | Define the next atomic commit interactively |
 | `/at:apply` | → apply | Implement, review inline, and merge — full loop |
 | `/at:merge` | → merge | Commit and push (runs automatically on approve) |

@@ -16,6 +16,7 @@ This repo dogfoods itself — `atomic` is built using `atomic`.
 
 | Command | Who | What happens |
 |---------|-----|--------------|
+| `/at:init` | User + Claude | Set up atomic in a repo: run `atomic init`, then draft `atomic/consistency.md` from the repo's real artefacts for approval |
 | `/at:stack` | User + Claude | Design a feature as an ordered stack of proposals in `atomic/stack.md` |
 | `/at:propose` | User + Claude | Define exactly one atomic commit, usually from the top of the stack. Writes `atomic/spec.md` |
 | `/at:apply` | Claude + User | Implement the spec, update behaviours, run tests, then show a summary. The user approves, rolls back, or discusses (which re-enters the loop) |
@@ -41,6 +42,8 @@ npm install -g git+ssh://git@github.com/mobz/atomic.git
 
 Then, in the repo you want to use it in, run `atomic init`. It creates `atomic/` with a starting `atomic/consistency.md` and copies the `/at:*` commands (`.claude/commands/at/`), their shared docs (`.claude/docs/`), and — if the repo has none — a starting `CLAUDE.md` into the repo. If the repo already has a `CLAUDE.md`, init leaves it alone and points you at atomic's to merge the rules in by hand.
 
+Then, in Claude Code, run `/at:init`. It re-runs `atomic init` (harmless), surveys the repo for artefacts that must agree with the code — README, docs, tests, CI, schemas, and so on — and drafts an `atomic/consistency.md` entry for each, writing only the ones you approve. Neither step commits; review and commit the installed files yourself.
+
 Init installs a one-off starting point. From then on the repo owns those files and evolves its pipeline on its own — atomic does not update them, and re-running `atomic init` only fills in files that are missing, never overwriting one that exists.
 
 ## Quick Start
@@ -48,6 +51,7 @@ Init installs a one-off starting point. From then on the repo owns those files a
 ```bash
 # Set up atomic in a repo
 bin/atomic init
+# …then /at:init in Claude Code to draft the manifest
 
 # Check current pipeline state
 bin/atomic status

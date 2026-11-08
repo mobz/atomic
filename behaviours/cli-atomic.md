@@ -18,7 +18,7 @@
 ### init — fresh repo
 - **Given:** a git repo with no `atomic/` directory, no `.claude/commands/at/` or `.claude/docs/`, and no `CLAUDE.md`
 - **When:** atomic's `bin/atomic init` is run from the repo root
-- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); copies every `.claude/commands/at/*.md` and `.claude/docs/*.md`, and `CLAUDE.md`, from atomic's checkout, byte-identical; does not copy `.claude/settings.local.json` or `CLAUDE.local.md`; prints `created` for each path, then a hint to add an entry for each artefact that must agree with the code; does not create `atomic/stack.md`; commits nothing; exits 0
+- **Then:** creates `atomic/` and `atomic/consistency.md` containing the template (header, one-line purpose, and the self-entry, per `.claude/docs/consistency-context.md`); copies every `.claude/commands/at/*.md` and `.claude/docs/*.md`, and `CLAUDE.md`, from atomic's checkout, byte-identical; does not copy `.claude/settings.local.json` or `CLAUDE.local.md`; prints `created` for each path, then the hint `Next: run /at:init in Claude Code to draft atomic/consistency.md from the repo.`; does not create `atomic/stack.md`; commits nothing; exits 0
 
 ### init — re-run
 - **Given:** a repo `atomic init` has already been run in, where a copied command has since been edited

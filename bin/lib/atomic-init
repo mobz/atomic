@@ -62,7 +62,7 @@ cmd_init() {
     for p in ${existing[@]+"${existing[@]}"}; do echo "exists   $p"; done
     if [[ "$new_manifest" == "true" ]]; then
       echo
-      echo "Next: add an entry to $manifest for each artefact that must agree with the code (README, docs, tests, CI, schemas…)."
+      echo "Next: run /at:init in Claude Code to draft $manifest from the repo."
     fi
     if [[ "$claude_exists" == "true" ]]; then
       echo
