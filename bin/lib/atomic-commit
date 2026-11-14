@@ -1,21 +1,18 @@
 cmd_commit() {
   require_git
 
-  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
-    local unchecked
-    unchecked=$(grep -c '^- \[ \]' "$ATOMIC_DIR/spec.md" 2>/dev/null || true)
-    unchecked=${unchecked:-0}
-    if [[ $unchecked -gt 0 ]]; then
-      die "$unchecked change(s) not yet complete — mark all items [X] in spec.md first"
-    fi
+  [[ -f "$ATOMIC_DIR/spec.md" ]] || die "no spec found — run /at:propose first, or atomic stack-add for planning"
+
+  local unchecked
+  unchecked=$(grep -c '^- \[ \]' "$ATOMIC_DIR/spec.md" 2>/dev/null || true)
+  unchecked=${unchecked:-0}
+  if [[ $unchecked -gt 0 ]]; then
+    die "$unchecked change(s) not yet complete — mark all items [X] in spec.md first"
   fi
 
-  local intent="atomic commit"
-  if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
-    local raw
-    raw=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || echo "")
-    [[ -n "$raw" ]] && intent="$raw"
-  fi
+  local intent
+  intent=$(grep -m1 '^\*\*Intent:\*\*' "$ATOMIC_DIR/spec.md" 2>/dev/null | sed 's/\*\*Intent:\*\* //' || true)
+  [[ -n "$intent" ]] || die "spec has no Intent line — add one to atomic/spec.md"
 
   # Stage everything except the spec; remove it only once the commit has
   # succeeded, so a failed commit leaves the pipeline in state ready.

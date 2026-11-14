@@ -132,7 +132,12 @@
 ### commit — no spec
 - **Given:** `atomic/spec.md` does not exist; changes are present
 - **When:** `atomic commit` is run
-- **Then:** all changes are staged and committed with "atomic commit" as the fallback message, exits 0
+- **Then:** prints `error: no spec found — run /at:propose first, or atomic stack-add for planning` to stderr, exits non-zero; nothing is staged or committed, and the index and working tree are left as they were
+
+### commit — spec without Intent
+- **Given:** `atomic/spec.md` exists with all items `[X]` but no `**Intent:**` line; changes are present
+- **When:** `atomic commit` is run
+- **Then:** prints `error: spec has no Intent line — add one to atomic/spec.md` to stderr, exits non-zero; nothing is staged or committed, and spec.md is kept
 
 ### push — origin configured
 - **Given:** a remote named `origin` exists

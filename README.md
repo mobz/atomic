@@ -69,7 +69,7 @@ atomic status        # pipeline state derived from spec.md (none/proposed/applyi
 atomic progress      # M/N changes complete
 atomic show-spec     # print atomic/spec.md
 atomic show-stack    # print atomic/stack.md
-atomic commit        # create git commit (refuses if any [ ] items remain in spec.md)
+atomic commit        # create git commit (refuses with no spec, or if any [ ] items remain)
 atomic push          # push current branch to origin
 atomic clean         # remove spec.md (clear active pipeline)
 atomic rollback      # abandon the active spec and revert all changes

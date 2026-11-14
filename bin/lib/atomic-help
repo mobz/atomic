@@ -8,7 +8,7 @@ Commands:
   progress         M/N changes complete
   show-spec        Print current atomic/spec.md
   show-stack       Print current atomic/stack.md
-  commit           Create git commit (refuses if any [ ] items remain in spec.md)
+  commit           Create git commit (refuses with no spec, or if any [ ] items remain)
   push             Push current branch to origin
   clean            Remove spec.md (clear active pipeline)
   rollback         Abandon the active spec and revert all changes
