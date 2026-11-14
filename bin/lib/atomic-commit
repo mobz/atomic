@@ -1,7 +1,7 @@
 cmd_commit() {
   require_git
 
-  [[ -f "$ATOMIC_DIR/spec.md" ]] || die "no spec found — run /at:propose first, or atomic stack-add for planning"
+  [[ -f "$ATOMIC_DIR/spec.md" ]] || die "no spec found — run /at:spec first, or atomic stack-add for planning"
 
   local unchecked
   unchecked=$(grep -c '^- \[ \]' "$ATOMIC_DIR/spec.md" 2>/dev/null || true)

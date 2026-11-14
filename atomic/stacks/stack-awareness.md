@@ -11,7 +11,7 @@ Design considerations:
 - `atomic show-stack` continues to work against the active stack without changes
 - New commands needed: `atomic stack list`, `atomic stack switch <name>`, `atomic stack new <name>`
 - `/at:stack` needs to know whether to create a new named stack or replace the active one
-- The active stack concept must remain stable — all existing pipeline behaviour (propose popping from top, apply writing to stack, show-stack) works against whichever stack is currently active
+- The active stack concept must remain stable — all existing pipeline behaviour (spec popping from top, apply writing to stack, show-stack) works against whichever stack is currently active
 - Consider whether stack.md in the repo root atomic/ dir should always be the active one (symlink pattern) or whether a separate pointer file tracks which is active
 
 This is a significant change — decompose into its own stack when the time comes.
@@ -47,7 +47,7 @@ Key design challenges:
 - Conflict handling: a fixup rebase can produce conflicts if subsequent commits touched the same code — the command must guide through resolution or surface clearly when manual intervention is needed
 - Spec handling: a simple one-line bug fix may not need a full spec; a complex fix might. The command should judge this and either proceed directly or invoke a lightweight spec flow
 
-Consider whether this is one command (`/at:fix`) or a sub-path within `/at:propose` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
+Consider whether this is one command (`/at:fix`) or a sub-path within `/at:spec` triggered by a "this is a bug" signal. Either way, the output is a clean git history where the bug never existed.
 
 This is a large command — consider decomposing into its own stack when the time comes.
 
@@ -64,7 +64,7 @@ Research needed before implementing:
 - How skills define both the prompt/instructions and the executable steps
 - Whether the `@file` injection convention still works in skills
 - Migration path: can skills live alongside commands, or is it a full replace?
-- Whether namespacing (at:propose vs propose) works the same way
+- Whether namespacing (at:spec vs spec) works the same way
 
 This is likely a significant restructure — consider decomposing into its own stack once the skills format is fully understood.
 
@@ -79,10 +79,10 @@ Design considerations:
 - The case for splitting: apply is already long; behaviour authoring requires a different mode of thinking (observable outcomes vs. implementation); a reviewer can verify code and behaviour separately
 - Consider whether `behaviours/` files should be written by apply (during implementation) or by a dedicated step that runs against the finished, committed code — the latter would allow behaviour scenarios to describe what the system actually does rather than what it was intended to do
 
-## Proposal: Remove the "Summarise back" confirmation step from `/at:propose`
+## Proposal: Remove the "Summarise back" confirmation step from `/at:spec`
 
-Step 4 of `/at:propose` asks Claude to present the spec in plain language and wait for user confirmation before writing anything. This adds a round-trip on every propose — the user must say "yes" or "looks good" before the spec is written, even when the clarify conversation already produced clear alignment.
+Step 4 of `/at:spec` asks Claude to present the spec in plain language and wait for user confirmation before writing anything. This adds a round-trip on every spec — the user must say "yes" or "looks good" before the spec is written, even when the clarify conversation already produced clear alignment.
 
 The step was likely a safety net against wasted writes, but `atomic/spec.md` is ephemeral and trivially editable — if Claude misread the intent, the user corrects it in the same conversation via the discuss loop. The confirmation before writing is therefore redundant with the approval-after-writing flow that already exists in `/at:apply`.
 
-Fix: remove step 4 entirely from propose.md. After clarify (step 3), Claude writes the spec directly (step 5), pops the stack (step 6), and confirms with "Ready to apply." The user sees the written spec and can ask for changes if needed — no extra round-trip required.
+Fix: remove step 4 entirely from spec.md. After clarify (step 3), Claude writes the spec directly (step 5), pops the stack (step 6), and confirms with "Ready to apply." The user sees the written spec and can ask for changes if needed — no extra round-trip required.

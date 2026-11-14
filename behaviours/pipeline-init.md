@@ -48,4 +48,4 @@
 ### init — hand off
 - **Given:** the review step is done
 - **When:** `/at:init` finishes
-- **Then:** Claude lists the files `atomic init` created, and the manifest and `CLAUDE.md` if they were edited, tells the user to review and commit them, says atomic is set up, and ends with `Next: /at:propose — define your first commit`; nothing is committed or pushed
+- **Then:** Claude lists the files `atomic init` created, and the manifest and `CLAUDE.md` if they were edited, tells the user to review and commit them, says atomic is set up, and ends with `Next: /at:spec — define your first commit`; nothing is committed or pushed

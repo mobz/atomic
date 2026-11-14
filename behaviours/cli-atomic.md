@@ -102,7 +102,7 @@
 ### show-spec — no spec
 - **Given:** `atomic/spec.md` does not exist
 - **When:** `atomic show-spec` is run
-- **Then:** prints `error: no spec found — run /at:propose first` to stderr and exits non-zero
+- **Then:** prints `error: no spec found — run /at:spec first` to stderr and exits non-zero
 
 ### show-context — removed
 - **Given:** any pipeline state
@@ -132,7 +132,7 @@
 ### commit — no spec
 - **Given:** `atomic/spec.md` does not exist; changes are present
 - **When:** `atomic commit` is run
-- **Then:** prints `error: no spec found — run /at:propose first, or atomic stack-add for planning` to stderr, exits non-zero; nothing is staged or committed, and the index and working tree are left as they were
+- **Then:** prints `error: no spec found — run /at:spec first, or atomic stack-add for planning` to stderr, exits non-zero; nothing is staged or committed, and the index and working tree are left as they were
 
 ### commit — spec without Intent
 - **Given:** `atomic/spec.md` exists with all items `[X]` but no `**Intent:**` line; changes are present

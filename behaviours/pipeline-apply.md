@@ -8,7 +8,7 @@
 ### entering apply — no spec
 - **Given:** state is `none` (`atomic/spec.md` does not exist)
 - **When:** user runs `/at:apply`
-- **Then:** Claude says there is no spec to apply and ends with `Next: /at:propose — define the commit to apply`; nothing is implemented
+- **Then:** Claude says there is no spec to apply and ends with `Next: /at:spec — define the commit to apply`; nothing is implemented
 
 ### entering apply — re-entry while applying
 - **Given:** state is `applying` (some items `[X]`, some `[ ]`)
@@ -93,12 +93,12 @@
 ### inline review — rollback, no deferrals
 - **Given:** user wants to abandon the work; no proposals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, and ends with `Next: /at:propose — start fresh`
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, and ends with `Next: /at:spec — start fresh`
 
 ### inline review — rollback, with deferrals
 - **Given:** user wants to abandon the work; deferrals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, lists the discarded deferrals by intent, and ends with **Re-add** (all, or the ones the user names, to the end of the stack) / **Drop** / "Or tell me what to change" — without assuming **Re-add**, since a rollback is often a change of direction; then ends with `Next: /at:propose — start fresh`
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, lists the discarded deferrals by intent, and ends with **Re-add** (all, or the ones the user names, to the end of the stack) / **Drop** / "Or tell me what to change" — without assuming **Re-add**, since a rollback is often a change of direction; then ends with `Next: /at:spec — start fresh`
 
 ### inline review — rollback, deferrals re-added
 - **Given:** a rollback discarded deferrals and Claude has offered them back

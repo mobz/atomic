@@ -19,7 +19,7 @@ Run `atomic show-stack`.
   > Or tell me what to change
 
   - **Extend** — add new proposals to the bottom. Jump to Step 3 to brainstorm additions. The new proposals are appended in Step 6 via `atomic stack-add`, never by editing `atomic/stack.md`.
-  - **Fresh** (or replace) — start over; new user story, new proposals. Run `atomic status` first: if a spec is active (state is not `none`), refuse — rewriting the stack would clobber the proposal `/at:propose` popped. Say so, and end with `Next: /at:apply — finish the active spec, or roll it back, before replacing the stack`.
+  - **Fresh** (or replace) — start over; new user story, new proposals. Run `atomic status` first: if a spec is active (state is not `none`), refuse — rewriting the stack would clobber the proposal `/at:spec` popped. Say so, and end with `Next: /at:apply — finish the active spec, or roll it back, before replacing the stack`.
 
 ### 2. Explore everything that needs to change
 
@@ -180,7 +180,7 @@ Rules:
 Tell the user the stack is written, then end with:
 
 ```markdown
-Next: /at:propose — spec the top proposal
+Next: /at:spec — spec the top proposal
 Or tell me what to change
 ```
 

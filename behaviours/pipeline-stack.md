@@ -23,7 +23,7 @@
 ### stack — replace refused while a spec is active
 - **Given:** `atomic status` is `proposed`, `applying`, or `ready`
 - **When:** user picks **Fresh** (or asks to replace the stack)
-- **Then:** Claude refuses — rewriting the stack would clobber the proposal `/at:propose` popped — and ends with `Next: /at:apply — finish the active spec, or roll it back, before replacing the stack`; `atomic/stack.md` is not modified
+- **Then:** Claude refuses — rewriting the stack would clobber the proposal `/at:spec` popped — and ends with `Next: /at:apply — finish the active spec, or roll it back, before replacing the stack`; `atomic/stack.md` is not modified
 
 ### stack — exploration to drafting
 - **Given:** Claude and the user are exploring a feature
@@ -53,7 +53,7 @@
 ### stack — written output
 - **Given:** Claude has ordered and reviewed the proposals for a new (or replaced) stack
 - **When:** Claude writes `atomic/stack.md`
-- **Then:** the file starts with `# Stack: <name>` on the first line, followed by the user story and optional context, then `## Proposal: <intent>` blocks in order; each proposal block contains enough detail for apply to implement without re-deriving the design; Claude says the stack is written and ends with `Next: /at:propose — spec the top proposal` followed by "Or tell me what to change"
+- **Then:** the file starts with `# Stack: <name>` on the first line, followed by the user story and optional context, then `## Proposal: <intent>` blocks in order; each proposal block contains enough detail for apply to implement without re-deriving the design; Claude says the stack is written and ends with `Next: /at:spec — spec the top proposal` followed by "Or tell me what to change"
 
 ### stack — Stack: header required
 - **Given:** any stack.md being written by `/at:stack`

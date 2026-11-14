@@ -5,7 +5,7 @@
 This repo uses `atomic`, a lightweight atomic commit pipeline. Every unit of work — one atomic commit — moves through an explicit pipeline:
 
 ```
-propose → apply (loop: implement → behaviours → test → review) → merge
+spec → apply (loop: implement → behaviours → test → review) → merge
 ```
 
 ## Start of Every Session
@@ -21,12 +21,12 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 | Stage | Who | What happens |
 |-------|-----|--------------|
-| **propose** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
+| **spec** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
 | **apply** | Claude + User | Implement → behaviours → test loop. User reviews inline: approve, rollback, or discuss. Discuss re-enters the loop. Approve auto-merges. |
 
 ## Hard Rules
 
-1. **Never implement changes outside the `apply` stage.** If someone asks you to "just fix this quickly" outside of apply, decline and suggest running `/at:propose` first.
+1. **Never implement changes outside the `apply` stage.** If someone asks you to "just fix this quickly" outside of apply, decline and suggest running `/at:spec` first.
 
 2. **Never commit code directly.** All commits go through `atomic commit` in the merge stage, or `atomic stack-add` for planning additions (rule 6). No `git commit` by hand.
 
@@ -43,7 +43,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 | Command | Stage | Description |
 |---------|-------|-------------|
 | `/at:init` | setup | Run `atomic init`, draft the commit-consistency manifest from the repo, and merge these rules into an existing CLAUDE.md |
-| `/at:propose` | → propose | Define the next atomic commit interactively |
+| `/at:spec` | → spec | Define the next atomic commit interactively |
 | `/at:apply` | → apply | Implement, review inline, and merge — full loop |
 | `/at:merge` | → merge | Commit and push (runs automatically on approve) |
 | `/at:stack` | → stack | Design a feature as an incremental proposal stack |
@@ -52,13 +52,13 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 - `atomic/spec.md` — active commit plan (ephemeral, never committed); pipeline state is derived from its checkbox state: no file=none, all `[ ]`=proposed, mixed=applying, all `[X]`=ready
 - `atomic/consistency.md` — commit-consistency manifest: every artefact that must agree with the code at every commit; `/at:apply` checks each change against it
-- `atomic/stack.md` — ordered proposal queue; out-of-scope items from propose and apply land here as deferrals, committed with the spec they came from (unrelated planning additions are committed on their own via `atomic stack-add`, rule 6); top proposal feeds the next `/at:propose`
+- `atomic/stack.md` — ordered proposal queue; out-of-scope items from spec and apply land here as deferrals, committed with the spec they came from (unrelated planning additions are committed on their own via `atomic stack-add`, rule 6); top proposal feeds the next `/at:spec`
 - `behaviours/` — committed behaviour store (BDD scenarios), always in sync with code
 - `atomic` — the CLI (on PATH; use it, don't work around it)
 
 ## Behaviour File Format
 
-Files in `behaviours/` are feature-scoped BDD scenarios — not commit history. Each file covers one domain (e.g. `cli-atomic.md`, `pipeline-propose.md`) and uses this format:
+Files in `behaviours/` are feature-scoped BDD scenarios — not commit history. Each file covers one domain (e.g. `cli-atomic.md`, `pipeline-spec.md`) and uses this format:
 
 ```markdown
 ## Behaviour: <feature name>

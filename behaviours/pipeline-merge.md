@@ -18,7 +18,7 @@
 ### entering merge — no spec
 - **Given:** state is `none`
 - **When:** user runs `/at:merge`
-- **Then:** Claude says there is nothing to merge and ends with `Next: /at:propose — define the next commit`; no commit is made
+- **Then:** Claude says there is nothing to merge and ends with `Next: /at:spec — define the next commit`; no commit is made
 
 ### commit created
 - **Given:** `atomic/spec.md` exists with all items `[X]`; changes are present
@@ -38,7 +38,7 @@
 ### clean state after merge
 - **Given:** commit and push succeeded
 - **When:** merge completes
-- **Then:** `atomic/spec.md` does not exist, `atomic status` shows `State: none`, user is told the commit SHA, message, and branch, and Claude ends with `Next: /at:propose — define the next commit`
+- **Then:** `atomic/spec.md` does not exist, `atomic status` shows `State: none`, user is told the commit SHA, message, and branch, and Claude ends with `Next: /at:spec — define the next commit`
 
 ### nothing to commit
 - **Given:** `atomic/spec.md` exists with all items `[X]`; no other changes exist in the working tree

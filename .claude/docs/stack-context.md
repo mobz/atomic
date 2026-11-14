@@ -1,4 +1,4 @@
-`atomic/stack.md` is the ordered proposal queue — committed, and fed one proposal at a time into `/at:propose`.
+`atomic/stack.md` is the ordered proposal queue — committed, and fed one proposal at a time into `/at:spec`.
 
 **Format:**
 
@@ -19,7 +19,7 @@
 - Headings inside a proposal's detail use `###` or deeper, so the file's outline stays stack → proposals.
 - **Ordering:** the top proposal is the next commit to work on; top-to-bottom is the order work will be done in.
 
-**Deferral:** a Proposal block for work discovered while preparing or doing the active spec (during `/at:propose` or `/at:apply`) that is outside its scope. Deferrals are part of that spec's story and are committed with the spec's commit (and dropped by `atomic rollback`). A proposal **unrelated** to the active spec's work is not a deferral — it is **planning**, and is committed on its own with `atomic stack-add`, never in the spec's commit, whatever the pipeline state. The boundary is "did this come out of the active spec's work?", not "is a spec active?".
+**Deferral:** a Proposal block for work discovered while preparing or doing the active spec (during `/at:spec` or `/at:apply`) that is outside its scope. Deferrals are part of that spec's story and are committed with the spec's commit (and dropped by `atomic rollback`). A proposal **unrelated** to the active spec's work is not a deferral — it is **planning**, and is committed on its own with `atomic stack-add`, never in the spec's commit, whatever the pipeline state. The boundary is "did this come out of the active spec's work?", not "is a spec active?".
 
 **Adding a deferral:**
 

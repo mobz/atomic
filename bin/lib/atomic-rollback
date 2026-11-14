@@ -1,6 +1,6 @@
 # Abandon the active spec: snapshot the working tree to an unreferenced commit,
 # then revert everything to HEAD — tracked files (including atomic/stack.md,
-# which puts back the proposal /at:propose popped and drops any deferrals),
+# which puts back the proposal /at:spec popped and drops any deferrals),
 # untracked files created during the apply, and spec.md. Discarded deferrals
 # are printed in full so they can be offered back to the user.
 

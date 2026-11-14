@@ -1,4 +1,4 @@
-# /at:propose — Define an Atomic Commit
+# /at:spec — Define an Atomic Commit
 
 Your job is to help the user define exactly one atomic commit: a single, complete, revertable change.
 
@@ -87,5 +87,5 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 
 ## Constraints
 - Keep the spec tight. If the intent sentence needs a semicolon, it's two commits.
-- Never start implementing during propose — that's apply's job.
+- Never start implementing during spec — that's apply's job.
 - Never write to `behaviours/` directly — that happens during apply.

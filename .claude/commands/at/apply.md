@@ -11,7 +11,7 @@ Your job is to implement the spec, run tests, and get user sign-off. Committing 
 ## Entry
 
 Run `atomic status`. Check the state:
-- **none** — no spec to apply. End with `Next: /at:propose — define the commit to apply`.
+- **none** — no spec to apply. End with `Next: /at:spec — define the commit to apply`.
 - **proposed** — Begin the loop.
 - **applying** — re-entry. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
 - **ready** — all items done. Skip straight to **Step 5** (show summary).
@@ -98,7 +98,7 @@ If `atomic rollback` printed discarded deferrals, list them by intent, then:
 
 Don't assume **Re-add** — a rollback is often a change of direction, and deferrals found while on the wrong track may be wrong too. Re-add only the ones the user picks, verbatim from the rollback output.
 
-Then end with `Next: /at:propose — start fresh`.
+Then end with `Next: /at:spec — start fresh`.
 
 ### Discuss
 
