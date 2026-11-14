@@ -34,3 +34,14 @@ Noticed by the user: step 6 updates the stack "in the same step as writing the s
 Fix: step 5 writes `atomic/spec.md` first; step 6 pops and writes deferrals only after the spec is on disk. The worst interrupted state then becomes "spec exists, proposal still on the stack" — visible (`atomic status` says `proposed`) and recoverable by re-doing the pop. Update the `pipeline-propose.md` scenario "spec written from stack proposal, proposal popped" (today it says "written together") and `stack-context.md` if it implies order.
 
 Option to decide during propose: an `atomic stack-pop` CLI that removes the top block and refuses unless `atomic/spec.md` exists, so the order is enforced by the CLI rather than by prompt wording. It would also make the pop exact (today it is done by hand-editing).
+
+## Proposal: Let stage-end hand-offs offer the next command as a gate verb (e.g. **Propose** — start `/at:propose` now), keeping `Next:` lines for wrong-state exits
+Noticed by the user after the interaction pattern shipped: at the end of a stage (merge done, spec written, stack written, init done) the commands end with `Next: /at:<command>`, so the user must type the slash command — unlike `/at:apply`, where **Approve** chains into `/at:merge` itself. Option: make stage-end hand-backs a gate whose verbs run the next command in the same session, with "Or tell me what to change" last; keep `Next:` for wrong-state exits, where nothing should run.
+
+Verbs under current terminology (rename with the `/at:spec` / `/at:propose` renames):
+- `/at:merge` done → **Propose** — spec the top proposal (`/at:propose`) / **Plan** — design new work as a stack (`/at:stack`)
+- `/at:propose` spec written → **Apply** — implement it (`/at:apply`)
+- `/at:stack` stack written → **Propose** — spec the top proposal
+- `/at:init` done → **Propose** / **Plan**, as after merge
+
+Weigh against context growth: chaining stages in one session accumulates context, which cuts against small models and parallel stacks — consider whether the gate should note "or start it in a fresh session". Update `interaction-context.md` (handoff vs gate definitions), the five commands, their behaviours, and the manifest entry.
