@@ -25,7 +25,7 @@
 
 ```markdown
 ## Proposal: <brief description of the deferred item>
-Deferred from propose: <what was noticed and why it's out of scope>
+Deferred from spec: <what was noticed and why it's out of scope>
 ```
 
 Use `Deferred from apply:` for deferrals found during `/at:apply`.

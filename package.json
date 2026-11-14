@@ -1,7 +1,7 @@
 {
   "name": "atomic-commit-pipeline",
   "version": "0.1.0",
-  "description": "Value-for-money agentic development — small atomic commits that laptop-sized models can develop, review, and verify reliably, in parallel (propose, apply, merge)",
+  "description": "Value-for-money agentic development — small atomic commits that laptop-sized models can develop, review, and verify reliably, in parallel (propose, spec, apply, merge)",
   "bin": {
     "atomic": "./bin/atomic"
   },

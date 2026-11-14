@@ -10,7 +10,7 @@ Design considerations:
 - OR a `stacks/` directory with `atomic/stack.md` as a symlink or pointer to the active one
 - `atomic show-stack` continues to work against the active stack without changes
 - New commands needed: `atomic stack list`, `atomic stack switch <name>`, `atomic stack new <name>`
-- `/at:stack` needs to know whether to create a new named stack or replace the active one
+- `/at:propose` needs to know whether to create a new named stack or replace the active one
 - The active stack concept must remain stable — all existing pipeline behaviour (spec popping from top, apply writing to stack, show-stack) works against whichever stack is currently active
 - Consider whether stack.md in the repo root atomic/ dir should always be the active one (symlink pattern) or whether a separate pointer file tracks which is active
 
@@ -22,7 +22,7 @@ Currently all commits land on whatever branch is checked out — there's no conn
 
 Design considerations:
 - The Stack: header should declare a target branch, e.g. `Branch: feature/auth-rewrite`
-- `/at:stack` should create or checkout the declared branch when writing stack.md
+- `/at:propose` should create or checkout the declared branch when writing stack.md
 - `atomic push` should push to the stack's declared branch, not blindly to current branch
 - `atomic status` should surface the active branch alongside pipeline state
 - When all proposals in a stack are done, the workflow should guide opening a PR from the feature branch to the integration branch

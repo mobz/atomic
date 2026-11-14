@@ -5,7 +5,7 @@
 This repo uses `atomic`, a lightweight atomic commit pipeline. Every unit of work — one atomic commit — moves through an explicit pipeline:
 
 ```
-spec → apply (loop: implement → behaviours → test → review) → merge
+propose → spec → apply (loop: implement → behaviours → test → review) → merge
 ```
 
 ## Start of Every Session
@@ -21,6 +21,7 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 | Stage | Who | What happens |
 |-------|-----|--------------|
+| **propose** | User + Claude | Plan work as an ordered stack of proposals in `atomic/stack.md`. |
 | **spec** | User + Claude | Define what the commit will do. Produces `atomic/spec.md`. |
 | **apply** | Claude + User | Implement → behaviours → test loop. User reviews inline: approve, rollback, or discuss. Discuss re-enters the loop. Approve auto-merges. |
 
@@ -36,17 +37,17 @@ This tells you the current pipeline stage and the active spec intent. Orient you
 
 5. **The spec is the contract.** The spec's **Changes** define the concern. Everything the change makes stale or untested — tests, README and other docs, help text, behaviours, and everything listed in `atomic/consistency.md` — is part of that concern even if not listed, so the codebase is releasable after every commit. Anything unrelated to the concern is out of scope, however small.
 
-6. **Planning additions go through `atomic stack-add`.** A proposal unrelated to the active spec's work (planning, not a deferral) is appended with `atomic stack-add "<intent>"` (body on stdin), which commits only that block as `Plan: <intent>` in any pipeline state — never hand-edit it into a working tree that holds a spec's changes. Always show the user the exact block and get explicit approval before running it. Deferrals — out-of-scope work that came out of the active spec — are unchanged: written into `atomic/stack.md` and committed with the spec.
+6. **Planning additions go through `atomic stack-add`.** A proposal unrelated to the active spec's work (planning, not a deferral) is appended with `atomic stack-add "<intent>"` (body on stdin), which commits only that block as `Propose: <intent>` in any pipeline state — never hand-edit it into a working tree that holds a spec's changes. Always show the user the exact block and get explicit approval before running it. Deferrals — out-of-scope work that came out of the active spec — are unchanged: written into `atomic/stack.md` and committed with the spec.
 
 ## Slash Commands
 
 | Command | Stage | Description |
 |---------|-------|-------------|
 | `/at:init` | setup | Run `atomic init`, draft the commit-consistency manifest from the repo, and merge these rules into an existing CLAUDE.md |
+| `/at:propose` | → propose | Propose work as an incremental stack of proposals |
 | `/at:spec` | → spec | Define the next atomic commit interactively |
 | `/at:apply` | → apply | Implement, review inline, and merge — full loop |
 | `/at:merge` | → merge | Commit and push (runs automatically on approve) |
-| `/at:stack` | → stack | Design a feature as an incremental proposal stack |
 
 ## Key Paths
 

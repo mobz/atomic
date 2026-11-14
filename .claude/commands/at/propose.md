@@ -1,6 +1,6 @@
-# /at:stack — Design an Incremental Proposal Stack
+# /at:propose — Propose Work as a Stack of Proposals
 
-Your job is to guide the user exploring a feature and composing it into atomic, safely-shippable proposals. Each proposal becomes an independently deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
+Your job is to help the user propose work: explore a feature with them and compose it into atomic, safely-shippable proposals in the stack. Each proposal becomes an independently deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
 
 @.claude/docs/stack-context.md
 @.claude/docs/interaction-context.md
@@ -156,7 +156,7 @@ Present the ordered proposals in summary to the user explaining any splits you m
 
 **Extending an existing stack:** show each new proposal as the exact block that will be appended, then:
 
-> **Add** — append these proposals, in order, with `atomic stack-add` (one `Plan:` commit each)
+> **Add** — append these proposals, in order, with `atomic stack-add` (one `Propose:` commit each)
 > Or tell me what to change
 
 On **Add**, append each one, in order, with `atomic stack-add` — intent as the argument, the rest of the block on stdin:
@@ -167,7 +167,7 @@ atomic stack-add "<intent>" <<'EOF'
 EOF
 ```
 
-Each call creates its own `Plan: <intent>` commit, works in any pipeline state, and leaves any in-progress spec's changes untouched. Do not edit `atomic/stack.md` by hand when extending.
+Each call creates its own `Propose: <intent>` commit, works in any pipeline state, and leaves any in-progress spec's changes untouched. Do not edit `atomic/stack.md` by hand when extending.
 
 **New stack (or start fresh):** write `atomic/stack.md` using the stack format.
 

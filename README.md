@@ -5,7 +5,7 @@ atomic explores agentic development with a focus on value for money. It breaks e
 A lightweight atomic commit pipeline for AI-assisted development. Every change is planned as one small, revertable commit, implemented by Claude Code against that plan, reviewed inline, and merged:
 
 ```
-spec → apply (implement → behaviours → test → inline review) → merge
+propose → spec → apply (implement → behaviours → test → inline review) → merge
 ```
 
 Larger features are broken down up front into a stack of proposals, each of which becomes one commit.
@@ -17,7 +17,7 @@ This repo dogfoods itself — `atomic` is built using `atomic`.
 | Command | Who | What happens |
 |---------|-----|--------------|
 | `/at:init` | User + Claude | Set up atomic in a repo: run `atomic init`, then draft `atomic/consistency.md` from the repo's real artefacts — and merge atomic's rules into an existing `CLAUDE.md` — for approval |
-| `/at:stack` | User + Claude | Design a feature as an ordered stack of proposals in `atomic/stack.md` |
+| `/at:propose` | User + Claude | Propose work: design a feature as an ordered stack of proposals in `atomic/stack.md` |
 | `/at:spec` | User + Claude | Define exactly one atomic commit, usually from the top of the stack. Writes `atomic/spec.md` |
 | `/at:apply` | Claude + User | Implement the spec, update behaviours, run tests, then show a summary. The user approves, rolls back, or discusses (which re-enters the loop) |
 | `/at:merge` | Claude | Commit with the spec's intent as the message and push. Runs automatically on approve |

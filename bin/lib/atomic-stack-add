@@ -34,7 +34,7 @@ cmd_stack_add() {
   [[ -n "$body" ]] && block+="${body}"$'\n'
 
   # Build the commit from HEAD's stack plus the block, in a temporary index.
-  local head sep blob tree commit message="Plan: $intent"
+  local head sep blob tree commit message="Propose: $intent"
   head=$(git rev-parse HEAD)
   sep=$(_stack_add_sep "$(git show "HEAD:$stack" | tail -c 2 | xxd -p)"); sep=${sep%.}
   blob=$( { git show "HEAD:$stack"; printf '%s%s' "$sep" "$block"; } | git hash-object -w --stdin )

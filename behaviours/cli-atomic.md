@@ -217,12 +217,12 @@
 ### stack-add — state none
 - **Given:** no active spec; `atomic/stack.md` is committed in HEAD and unchanged
 - **When:** `atomic stack-add "<intent>"` is run with the proposal body on stdin
-- **Then:** a `## Proposal: <intent>` heading and body block is appended to the end of the stack, with exactly one blank line before it; a new commit `Plan: <intent>` is created whose diff is only that block; the working tree is clean afterwards; prints `Added to stack: <intent>` and the commit line; does not push; exits 0
+- **Then:** a `## Proposal: <intent>` heading and body block is appended to the end of the stack, with exactly one blank line before it; a new commit `Propose: <intent>` is created whose diff is only that block; the working tree is clean afterwards; prints `Added to stack: <intent>` and the commit line; does not push; exits 0
 
 ### stack-add — mid-apply
 - **Given:** an active `atomic/spec.md`; the working-tree `atomic/stack.md` has its top proposal popped and a deferral appended; code files are modified
 - **When:** `atomic stack-add "<intent>"` is run
-- **Then:** the `Plan: <intent>` commit contains only the appended block (built from HEAD's stack, not the working tree's); the block is also appended to the working-tree stack; the remaining working-tree diff is exactly the pop, the deferral, and the code changes, all uncommitted; `atomic/spec.md` is untouched
+- **Then:** the `Propose: <intent>` commit contains only the appended block (built from HEAD's stack, not the working tree's); the block is also appended to the working-tree stack; the remaining working-tree diff is exactly the pop, the deferral, and the code changes, all uncommitted; `atomic/spec.md` is untouched
 
 ### stack-add — invalid input
 - **Given:** the intent is empty or spans more than one line, or the body contains a line starting `## Proposal:` (other headings, e.g. `#` comment lines in a code block, are allowed)
@@ -236,7 +236,7 @@
 
 ### stack-add — JSON output
 - **When:** `atomic stack-add --json "<intent>"` succeeds
-- **Then:** prints `{"ok":true,"sha":"<sha>","message":"Plan: <intent>"}`
+- **Then:** prints `{"ok":true,"sha":"<sha>","message":"Propose: <intent>"}`
 
 ### clean
 - **Given:** any state

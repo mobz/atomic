@@ -79,7 +79,7 @@ If invoked with arguments (`$ARGUMENTS`), use them as the starting intent — sk
 6. **Update the stack** — in the same step as writing the spec, update `atomic/stack.md` (see the stack format):
    - **Pop** — if this spec was sourced from the top stack proposal, pop that Proposal block. If the spec came from `$ARGUMENTS` or a fresh discovery, there is nothing to pop.
    - **Split-offs** — write the proposals from an accepted split immediately after the `Stack:` header block, so they are the next proposals.
-   - **Other deferrals** — write any other out-of-scope findings from this conversation as `Deferred from propose:` blocks, placed at the end or top of the stack by urgency.
+   - **Other deferrals** — write any other out-of-scope findings from this conversation as `Deferred from spec:` blocks, placed at the end or top of the stack by urgency.
 
    These deferrals are committed with this spec's commit.
 

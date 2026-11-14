@@ -73,7 +73,7 @@
 ### spec — out-of-scope finding
 - **Given:** during the spec conversation, Claude or the user noticed work outside the spec's scope that is not a split-off
 - **When:** Claude writes `atomic/spec.md`
-- **Then:** in the same step, the finding is written to `atomic/stack.md` as a `Deferred from propose:` Proposal block — at the end of the stack, or the top if it is an urgent bug or prerequisite — whether or not the spec came from the stack; it is committed with this spec's commit
+- **Then:** in the same step, the finding is written to `atomic/stack.md` as a `Deferred from spec:` Proposal block — at the end of the stack, or the top if it is an urgent bug or prerequisite — whether or not the spec came from the stack; it is committed with this spec's commit
 
 ### spec — no stack, no arguments
 - **Given:** pipeline state is `none`, no `$ARGUMENTS` provided, and `atomic/stack.md` does not exist or has no Proposal blocks
