@@ -87,7 +87,7 @@ atomic status --json
 
 ```
 .claude/commands/at/  ← pipeline slash commands for Claude Code
-.claude/docs/         ← shared format context injected into the commands
+.claude/docs/         ← shared format and interaction context injected into the commands
 atomic/spec.md        ← active commit plan (ephemeral, never committed)
 atomic/consistency.md ← artefacts that must agree with the code at every commit (committed)
 atomic/stack.md       ← ordered proposal queue (committed)

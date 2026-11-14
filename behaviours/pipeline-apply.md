@@ -8,7 +8,7 @@
 ### entering apply — no spec
 - **Given:** state is `none` (`atomic/spec.md` does not exist)
 - **When:** user runs `/at:apply`
-- **Then:** Claude tells the user there is no spec to apply and to run `/at:propose` first; nothing is implemented
+- **Then:** Claude says there is no spec to apply and ends with `Next: /at:propose — define the commit to apply`; nothing is implemented
 
 ### entering apply — re-entry while applying
 - **Given:** state is `applying` (some items `[X]`, some `[ ]`)
@@ -18,7 +18,7 @@
 ### entering apply — ready
 - **Given:** state is `ready` (all items `[X]`)
 - **When:** user runs `/at:apply`
-- **Then:** Claude skips straight to step 5 — shows the summary and asks approve, rollback, or discuss — without re-implementing or re-running the loop
+- **Then:** Claude skips straight to step 5 — shows the summary ending with **Approve** / **Rollback** / "Or tell me what to change" — without re-implementing or re-running the loop
 
 ### implement loop — first entry
 - **Given:** state is `proposed`
@@ -83,7 +83,7 @@
 ### inline review — summary shown
 - **Given:** implement, behaviours, and tests are complete and state is `ready`
 - **When:** Claude shows the summary
-- **Then:** a structured checklist is presented — what changed (with inline test mentions), manual verification note if needed, deferred stack items if any, anything worth double-checking; no diff output; user is asked to approve, rollback, or discuss
+- **Then:** a structured checklist is presented — what changed (with inline test mentions), manual verification note if needed, deferred stack items if any, anything worth double-checking; no diff output; it ends with the choice block **Approve** / **Rollback** / "Or tell me what to change"
 
 ### inline review — approve
 - **Given:** user approves the implementation
@@ -93,17 +93,17 @@
 ### inline review — rollback, no deferrals
 - **Given:** user wants to abandon the work; no proposals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, and tells the user to run `/at:propose`
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, and ends with `Next: /at:propose — start fresh`
 
 ### inline review — rollback, with deferrals
 - **Given:** user wants to abandon the work; deferrals were added to `atomic/stack.md` during this apply
 - **When:** user says rollback or abandon
-- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, lists the discarded deferrals by intent, and asks whether to add any back to the end of the stack — without assuming yes, since a rollback is often a change of direction
+- **Then:** Claude runs `atomic rollback` — everything is snapshotted to an unreferenced commit, then all tracked changes are reverted to HEAD, including `atomic/stack.md` (the popped proposal is back at the top, the deferrals are dropped), and untracked files created during the apply, including `atomic/spec.md`, are removed; Claude confirms the pipeline is cleared, relays the snapshot SHA and restore command, lists the discarded deferrals by intent, and ends with **Re-add** (all, or the ones the user names, to the end of the stack) / **Drop** / "Or tell me what to change" — without assuming **Re-add**, since a rollback is often a change of direction; then ends with `Next: /at:propose — start fresh`
 
 ### inline review — rollback, deferrals re-added
 - **Given:** a rollback discarded deferrals and Claude has offered them back
-- **When:** the user picks some or all of them
-- **Then:** Claude appends only the picked blocks, verbatim from the `atomic rollback` output, to the end of `atomic/stack.md`
+- **When:** the user picks **Re-add**, optionally naming which deferrals
+- **Then:** Claude appends all of them, or only the named ones, verbatim from the `atomic rollback` output, to the end of `atomic/stack.md`
 
 ### inline review — discuss
 - **Given:** the summary has been shown

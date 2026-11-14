@@ -34,3 +34,8 @@
 - **Given:** `.claude/docs/consistency-context.md` is referenced via `@` in init.md, before `## Steps`
 - **When:** `/at:init` is invoked
 - **Then:** the manifest format and rules are available to Claude when drafting entries, without being restated inline
+
+### interaction-context loaded in every command
+- **Given:** `.claude/docs/interaction-context.md` exists and is referenced via `@` in propose.md, apply.md, stack.md, merge.md, and init.md, after the other context docs
+- **When:** any `/at:*` command hands control back to the user
+- **Then:** it uses one of the doc's shapes — a gate ends with a choice block of bold verbs and "Or tell me what to change" last; a stage-end or wrong-state exit ends with one `Next: /at:<command> — …` line; clarifying questions are free-form and never gates — and each command lists only its own verbs, without restating the pattern

@@ -9,7 +9,7 @@ Every artefact that must agree with the code at every commit. `/at:apply` checks
 - `README.md` — Pipeline table matches `.claude/commands/at/`; CLI reference matches `atomic help`; Structure tree matches the layout; Behaviours and State sections match `.claude/docs/behaviour-context.md` and `.claude/docs/spec-context.md`
 - `CLAUDE.local.md` — notes for developing atomic itself; holds anything specific to this repo that `CLAUDE.md` must not (not copied by `atomic init`)
 - `CLAUDE.md` — generic: no text specific to this repo, since `atomic init` copies it into other repos; pipeline stages and Slash Commands table match `.claude/commands/at/`; Key Paths match `atomic/` and `behaviours/`; hard rules match the commands' constraints
-- `.claude/docs/*-context.md` — each format matches what the commands and CLI read and write (e.g. `spec-context.md` states match `spec_state` in `bin/lib/helpers.sh`)
-- `.claude/commands/at/*.md` — "Step N" references point at the right steps; `@` includes point at existing files; CLI commands they call exist
+- `.claude/docs/*-context.md` — each format matches what the commands and CLI read and write (e.g. `spec-context.md` states match `spec_state` in `bin/lib/helpers.sh`; `interaction-context.md` gate and handoff shapes match those used in the commands)
+- `.claude/commands/at/*.md` — every gate is a choice block and every stage-end or wrong-state exit a `Next:` line, per `.claude/docs/interaction-context.md` (included in every command); "Step N" references point at the right steps; `@` includes point at existing files; CLI commands they call exist
 - `behaviours/*.md` — scenarios describe the current behaviour of every touched command and feature
 - `package.json` — description matches the README's purpose and the pipeline; `test` script (no test suite yet — list tests here when added)

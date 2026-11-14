@@ -5,33 +5,58 @@
 - **When:** the Intent line is authored
 - **Then:** it is a single sentence with no semicolons (if a semicolon is needed, it is two commits)
 
-### propose — pipeline already active
-- **Given:** pipeline state is `proposed`, `applying`, or `ready`
+### propose — spec already proposed
+- **Given:** pipeline state is `proposed`
 - **When:** user runs `/at:propose`
-- **Then:** Claude surfaces the current state and intent, and asks: review it, continue the apply, change the spec, or start fresh?
+- **Then:** Claude shows the spec's intent and ends with the choice block **Review** / **Change** / **Fresh** / "Or tell me what to change"
+
+### propose — apply in progress
+- **Given:** pipeline state is `applying`
+- **When:** user runs `/at:propose`
+- **Then:** Claude shows `atomic progress` and ends with **Continue** / **Change** / **Fresh** / "Or tell me what to change"; on **Continue** it ends with `Next: /at:apply — resume implementing this spec`
+
+### propose — spec ready to merge
+- **Given:** pipeline state is `ready`
+- **When:** user runs `/at:propose`
+- **Then:** Claude shows the intent and ends with **Apply** / **Fresh** / "Or tell me what to change"; on **Apply** it ends with `Next: /at:apply — review the summary and merge`
+
+### propose — fresh over an active spec
+- **Given:** pipeline state is `proposed`, `applying`, or `ready`
+- **When:** user picks **Fresh**
+- **Then:** Claude runs `atomic clean`, then continues as for state `none`
 
 ### propose — stack proposal surfaced
 - **Given:** pipeline state is `none`, no `$ARGUMENTS` provided, and `atomic/stack.md` has at least one Proposal block
 - **When:** user runs `/at:propose`
-- **Then:** Claude runs `atomic show-stack`, surfaces the top proposal's intent and context, and asks: proceed with this, modify it, or start fresh?
+- **Then:** Claude runs `atomic show-stack`, surfaces the top proposal's intent and context, and ends with **Proceed** / **Modify** / **Fresh** / "Or tell me what to change"
 
 ### propose — stack proposal accepted
-- **Given:** user confirms they want to proceed with the top stack proposal
-- **When:** user says proceed or equivalent
+- **Given:** the top stack proposal was surfaced
+- **When:** user picks **Proceed**
 - **Then:** Claude uses the proposal's intent as the starting point, skips discovery questions, and goes straight to clarify; stack.md is not modified yet
 
 ### propose — stack proposal modified
-- **Given:** user wants to adjust the top stack proposal before proceeding
-- **When:** user says modify or equivalent
+- **Given:** the top stack proposal was surfaced
+- **When:** user picks **Modify**
 - **Then:** Claude uses the proposal's intent as a starting point, asks clarifying questions to refine it, then proceeds to summarise and write spec; stack.md is not modified yet
 
 ### propose — stack proposal ignored
-- **Given:** user does not want to use the top stack proposal
-- **When:** user says start fresh or equivalent
+- **Given:** the top stack proposal was surfaced
+- **When:** user picks **Fresh**
 - **Then:** Claude ignores the stack entry, proceeds with normal discovery conversation; stack.md is not modified
 
+### propose — summarise back
+- **Given:** clarify has gathered enough for a precise spec
+- **When:** Claude summarises the spec in plain language
+- **Then:** nothing is written yet; the summary ends with **Write** / "Or tell me what to change"; any other reply loops back to clarify
+
+### propose — hand off after writing
+- **Given:** user picked **Write**
+- **When:** Claude has written `atomic/spec.md` and updated the stack
+- **Then:** Claude says the spec is written and ends with `Next: /at:apply — implement this spec`
+
 ### propose — spec written from stack proposal, proposal popped
-- **Given:** user confirmed a spec sourced from the top stack proposal (accepted or modified)
+- **Given:** user picked **Write** on a spec sourced from the top stack proposal (accepted or modified)
 - **When:** Claude writes `atomic/spec.md`
 - **Then:** the top Proposal block is removed from `atomic/stack.md` in the same step (from its `## Proposal:` line to, but not including, the next `## Proposal:` line); the Stack: header block is preserved; spec.md and stack.md are written together
 

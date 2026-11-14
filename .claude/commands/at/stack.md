@@ -3,6 +3,7 @@
 Your job is to guide the user exploring a feature and composing it into atomic, safely-shippable proposals. Each proposal becomes an independently deployable commit. The output is a well-structured `atomic/stack.md`. You are not a transcription service — you are an engineer who actively challenges poor decomposition and enforces the rules below.
 
 @.claude/docs/stack-context.md
+@.claude/docs/interaction-context.md
 
 ## Steps
 
@@ -11,9 +12,14 @@ Your job is to guide the user exploring a feature and composing it into atomic, 
 Run `atomic show-stack`.
 
 - **No stack** — proceed to Step 2.
-- **Stack exists** — show it. Ask: extend it, or start fresh?
+- **Stack exists** — show it, then:
+
+  > **Extend** — add new proposals to the bottom of this stack
+  > **Fresh** — replace it with a new user story and new proposals
+  > Or tell me what to change
+
   - **Extend** — add new proposals to the bottom. Jump to Step 3 to brainstorm additions. The new proposals are appended in Step 6 via `atomic stack-add`, never by editing `atomic/stack.md`.
-  - **Start fresh** (or replace) — start over; new user story, new proposals. Run `atomic status` first: if a spec is active (state is not `none`), refuse — rewriting the stack would clobber the proposal `/at:propose` popped. Tell the user to finish the spec (`/at:apply`) or roll it back first.
+  - **Fresh** (or replace) — start over; new user story, new proposals. Run `atomic status` first: if a spec is active (state is not `none`), refuse — rewriting the stack would clobber the proposal `/at:propose` popped. Say so, and end with `Next: /at:apply — finish the active spec, or roll it back, before replacing the stack`.
 
 ### 2. Explore everything that needs to change
 
@@ -21,7 +27,12 @@ Ask the user to describe the feature in as much detail as they like, then enter 
 
 **IMPORTANT: Exploration mode is for thinking, not implementing.** You may read the behaviour files in `behaviours/` for context, search code, and investigate the codebase, but you must NEVER write code or implement anything. If the user asks you to implement something tangential or small, offer to add it as a proposal to the existing stack before returning to the main problem.
 
-When things crystallize — the problem space feels understood, the major pieces are visible, the key decisions have surfaced — you might offer a summary of what you've learned and ask: "Ready to turn this into a stack?"
+When things crystallize — the problem space feels understood, the major pieces are visible, the key decisions have surfaced — you might offer a summary of what you've learned, then:
+
+> **Draft** — turn this into a stack (Steps 3–6)
+> Or tell me what to change
+
+Until the user picks **Draft**, keep exploring.
 
 ---
 
@@ -143,7 +154,12 @@ If the proposal contains multiple different ideas consider if they can be split 
 
 Present the ordered proposals in summary to the user explaining any splits you made and why but also write the complete stack and proposals so the user can view them in detail in a code editor.
 
-**Extending an existing stack:** show each new proposal as the exact block that will be appended and ask for approval. Once the user approves, append each one, in order, with `atomic stack-add` — intent as the argument, the rest of the block on stdin:
+**Extending an existing stack:** show each new proposal as the exact block that will be appended, then:
+
+> **Add** — append these proposals, in order, with `atomic stack-add` (one `Plan:` commit each)
+> Or tell me what to change
+
+On **Add**, append each one, in order, with `atomic stack-add` — intent as the argument, the rest of the block on stdin:
 
 ```bash
 atomic stack-add "<intent>" <<'EOF'
@@ -161,7 +177,12 @@ Rules:
 - Proposals are ordered top-to-bottom: the top proposal is the next commit to work on
 - Include enough detail in each proposal block that apply can implement it without re-deriving the design
 
-Confirm with the user: "Stack written. Run `/at:propose` to start working through it or ask me to make an adjustment"
+Tell the user the stack is written, then end with:
+
+```markdown
+Next: /at:propose — spec the top proposal
+Or tell me what to change
+```
 
 ---
 

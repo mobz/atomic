@@ -6,11 +6,12 @@ Your job is to implement the spec, run tests, and get user sign-off. Committing 
 @.claude/docs/behaviour-context.md
 @.claude/docs/stack-context.md
 @.claude/docs/consistency-context.md
+@.claude/docs/interaction-context.md
 
 ## Entry
 
 Run `atomic status`. Check the state:
-- **none** — no spec to apply. Tell the user to run `/at:propose` first.
+- **none** — no spec to apply. End with `Next: /at:propose — define the commit to apply`.
 - **proposed** — Begin the loop.
 - **applying** — re-entry. Show `atomic progress`, list remaining `[ ]` items, continue from where left off.
 - **ready** — all items done. Skip straight to **Step 5** (show summary).
@@ -89,9 +90,15 @@ atomic rollback
 
 Confirm: "Changes reverted. Pipeline cleared." and relay the snapshot line from the output — the SHA the discarded changes are available at and the restore command — so the user can get them back if needed.
 
-If `atomic rollback` printed discarded deferrals, list them by intent and ask whether to add any back to the end of the stack. Don't assume yes — a rollback is often a change of direction, and deferrals found while on the wrong track may be wrong too. Re-add only the ones the user picks, verbatim from the rollback output.
+If `atomic rollback` printed discarded deferrals, list them by intent, then:
 
-Then: "Run `/at:propose` to start fresh."
+> **Re-add** — append them to the end of the stack (all of them, or the ones you name)
+> **Drop** — leave them out
+> Or tell me what to change
+
+Don't assume **Re-add** — a rollback is often a change of direction, and deferrals found while on the wrong track may be wrong too. Re-add only the ones the user picks, verbatim from the rollback output.
+
+Then end with `Next: /at:propose — start fresh`.
 
 ### Discuss
 

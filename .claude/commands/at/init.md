@@ -3,6 +3,7 @@
 Your job is to finish installing atomic in this repo: run `atomic init`, then draft the repo's commit-consistency manifest from what is actually in it and, if the repo already had a CLAUDE.md, merge atomic's rules into it — writing only what the user approves.
 
 @.claude/docs/consistency-context.md
+@.claude/docs/interaction-context.md
 
 ## Steps
 
@@ -31,7 +32,7 @@ Your job is to finish installing atomic in this repo: run `atomic init`, then dr
 
    Write only the merge the user approves.
 
-6. **Hand off** — list the files `atomic init` created, and the manifest and `CLAUDE.md` if they were edited, and tell the user to review and commit them. `/at:init` commits nothing. Then: "atomic is set up. Run `/at:propose` to define your first commit."
+6. **Hand off** — list the files `atomic init` created, and the manifest and `CLAUDE.md` if they were edited, and tell the user to review and commit them. `/at:init` commits nothing. Then say atomic is set up, and end with `Next: /at:propose — define your first commit`.
 
 ## Constraints
 - Never edit anything except `atomic/consistency.md` and `CLAUDE.md` — `atomic init` writes the rest.

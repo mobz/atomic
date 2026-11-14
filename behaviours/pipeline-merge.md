@@ -8,17 +8,17 @@
 ### entering merge — applying
 - **Given:** state is `applying` (some items still `[ ]`)
 - **When:** user runs `/at:merge`
-- **Then:** Claude shows `atomic progress`, tells the user how many items remain, and suggests running `/at:apply` to complete them; no commit is made
+- **Then:** Claude shows `atomic progress` and how many items remain, and ends with `Next: /at:apply — complete the remaining items`; no commit is made
 
 ### entering merge — proposed
 - **Given:** state is `proposed` (no items `[X]` yet)
 - **When:** user runs `/at:merge`
-- **Then:** Claude tells the user to run `/at:apply` first; no commit is made
+- **Then:** Claude ends with `Next: /at:apply — implement this spec`; no commit is made
 
 ### entering merge — no spec
 - **Given:** state is `none`
 - **When:** user runs `/at:merge`
-- **Then:** Claude tells the user there is nothing to merge; no commit is made
+- **Then:** Claude says there is nothing to merge and ends with `Next: /at:propose — define the next commit`; no commit is made
 
 ### commit created
 - **Given:** `atomic/spec.md` exists with all items `[X]`; changes are present
@@ -38,7 +38,7 @@
 ### clean state after merge
 - **Given:** commit and push succeeded
 - **When:** merge completes
-- **Then:** `atomic/spec.md` does not exist, `atomic status` shows `State: none`, user is told the commit SHA, message, and branch, that the pipeline is complete, and to run `/at:propose` for the next commit
+- **Then:** `atomic/spec.md` does not exist, `atomic status` shows `State: none`, user is told the commit SHA, message, and branch, and Claude ends with `Next: /at:propose — define the next commit`
 
 ### nothing to commit
 - **Given:** `atomic/spec.md` exists with all items `[X]`; no other changes exist in the working tree
@@ -48,4 +48,4 @@
 ### commit fails
 - **Given:** state is `ready` and `atomic commit` fails (nothing to commit, or a hook rejects the commit)
 - **When:** `/at:merge` runs step 2
-- **Then:** Claude shows the error and stops without running `atomic push`; spec.md is kept and the state stays `ready`; Claude tells the user to fix the cause and run `/at:merge` again
+- **Then:** Claude shows the error and stops without running `atomic push`; spec.md is kept and the state stays `ready`; Claude ends with `Next: /at:merge — retry once the cause is fixed`
