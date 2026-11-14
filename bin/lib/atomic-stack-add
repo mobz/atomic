@@ -20,24 +20,14 @@ cmd_stack_add() {
   require_git
   local intent="${1:-}" stack="$ATOMIC_DIR/stack.md"
 
-  if [[ -z "$intent" ]]; then
-    echo "error: usage: atomic stack-add \"<intent>\" (body on stdin)" >&2
-    exit 1
-  fi
-  if [[ "$intent" == *$'\n'* ]]; then
-    echo "error: intent must be a single line" >&2
-    exit 1
-  fi
-  if ! git cat-file -e "HEAD:$stack" 2>/dev/null; then
-    echo "error: $stack is not committed in HEAD — create the stack first" >&2
-    exit 1
-  fi
+  [[ -n "$intent" ]] || die "usage: atomic stack-add \"<intent>\" (body on stdin)"
+  [[ "$intent" != *$'\n'* ]] || die "intent must be a single line"
+  git cat-file -e "HEAD:$stack" 2>/dev/null || die "$stack is not committed in HEAD — create the stack first"
 
   local body=""
   [[ -t 0 ]] || body=$(cat)
   if printf '%s\n' "$body" | grep -q "^$STACK_HEADING"; then
-    echo "error: body must not contain a line starting '${STACK_HEADING% }'" >&2
-    exit 1
+    die "body must not contain a line starting '${STACK_HEADING% }'"
   fi
 
   local block="${STACK_HEADING}${intent}"$'\n'

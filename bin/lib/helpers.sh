@@ -10,11 +10,22 @@ in_git_repo() {
   git rev-parse --git-dir &>/dev/null
 }
 
-require_git() {
-  if ! in_git_repo; then
-    echo '{"error":"not in a git repository"}' >&2
-    exit 1
+# Print an error to stderr and exit 1: {"ok":false,"error":"<message>"} with
+# --json, otherwise "error: <message>".
+die() {
+  local message="$1"
+  if [[ "${JSON_OUTPUT:-false}" == "true" ]]; then
+    message=${message//\\/\\\\}
+    message=${message//\"/\\\"}
+    printf '{"ok":false,"error":"%s"}\n' "$message" >&2
+  else
+    echo "error: $message" >&2
   fi
+  exit 1
+}
+
+require_git() {
+  in_git_repo || die "not in a git repository"
 }
 
 require_atomic_dir() {

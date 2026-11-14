@@ -76,7 +76,8 @@ atomic rollback      # abandon the active spec and revert all changes
 atomic start-over    # revert all changes but keep the spec and stack, unticking every item
 atomic stack-add "<intent>"  # append a planning proposal (body on stdin) to the stack and commit only that
 
-# Add --json to any command for machine-readable output
+# Add --json to any command for machine-readable output; errors then print
+# {"ok":false,"error":"…"} to stderr instead of "error: …"
 atomic status --json
 ```
 

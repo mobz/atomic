@@ -56,5 +56,5 @@ case "$CMD" in
   start-over)      cmd_start_over ;;
   stack-add)       cmd_stack_add "${ARGS[0]:-}" ;;
   ""|help|--help)  cmd_help ;;
-  *)               echo "{\"error\":\"unknown command: $CMD\"}" >&2; exit 1 ;;
+  *)               die "unknown command: $CMD" ;;
 esac

@@ -2,7 +2,6 @@ cmd_show_spec() {
   if [[ -f "$ATOMIC_DIR/spec.md" ]]; then
     cat "$ATOMIC_DIR/spec.md"
   else
-    echo '{"error":"no spec found — run /at:propose first"}' >&2
-    exit 1
+    die "no spec found — run /at:propose first"
   fi
 }

@@ -6,8 +6,7 @@ cmd_commit() {
     unchecked=$(grep -c '^- \[ \]' "$ATOMIC_DIR/spec.md" 2>/dev/null || true)
     unchecked=${unchecked:-0}
     if [[ $unchecked -gt 0 ]]; then
-      echo "error: $unchecked change(s) not yet complete — mark all items [X] in spec.md first" >&2
-      exit 1
+      die "$unchecked change(s) not yet complete — mark all items [X] in spec.md first"
     fi
   fi
 
@@ -22,10 +21,7 @@ cmd_commit() {
   # succeeded, so a failed commit leaves the pipeline in state ready.
   git add -A
   git rm --cached -q --ignore-unmatch -- "$ATOMIC_DIR/spec.md"
-  if ! git commit -m "$intent"; then
-    echo "error: commit failed — atomic/spec.md kept; fix the cause and run atomic commit again" >&2
-    exit 1
-  fi
+  git commit -m "$intent" || die "commit failed — atomic/spec.md kept; fix the cause and run atomic commit again"
 
   rm -f "$ATOMIC_DIR/spec.md"
 

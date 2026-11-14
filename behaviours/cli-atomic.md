@@ -43,7 +43,7 @@
 ### init — not a git repo
 - **Given:** the current directory is not inside a git repository
 - **When:** `atomic init` is run
-- **Then:** prints `{"error":"not in a git repository"}` to stderr, creates nothing, exits non-zero
+- **Then:** prints `error: not in a git repository` to stderr (`{"ok":false,"error":"not in a git repository"}` with `--json`), creates nothing, exits non-zero
 
 ### init — JSON output
 - **When:** `atomic init --json` is run
@@ -84,10 +84,15 @@
 - **When:** `atomic progress` is run
 - **Then:** prints `No active spec`
 
+### errors — plain and JSON
+- **Given:** any `atomic` command fails (unknown command, not a git repo, no spec, incomplete or failed commit, invalid `stack-add` input, …)
+- **When:** it is run without `--json`, and again with `--json`
+- **Then:** without `--json` it prints `error: <message>` to stderr; with `--json` it prints `{"ok":false,"error":"<message>"}` to stderr instead, valid JSON even when the message contains `"` or `\` (e.g. an unknown command name); either way atomic itself prints nothing to stdout (git's own output from a failed `git commit` aside) and it exits 1
+
 ### reset — removed
 - **Given:** any pipeline state
 - **When:** `atomic reset` is run
-- **Then:** prints `{"error":"unknown command: reset"}` to stderr, exits non-zero; no files in `atomic/` are touched (use `atomic clean` to discard the spec)
+- **Then:** prints `error: unknown command: reset` to stderr, exits non-zero; no files in `atomic/` are touched (use `atomic clean` to discard the spec)
 
 ### show-spec — file exists
 - **Given:** `atomic/spec.md` exists
@@ -97,12 +102,12 @@
 ### show-spec — no spec
 - **Given:** `atomic/spec.md` does not exist
 - **When:** `atomic show-spec` is run
-- **Then:** prints error to stderr and exits non-zero
+- **Then:** prints `error: no spec found — run /at:propose first` to stderr and exits non-zero
 
 ### show-context — removed
 - **Given:** any pipeline state
 - **When:** `atomic show-context` is run
-- **Then:** prints `{"error":"unknown command: show-context"}` to stderr, exits non-zero
+- **Then:** prints `error: unknown command: show-context` to stderr, exits non-zero
 
 ### commit — all complete
 - **Given:** `atomic/spec.md` exists with all `[X]` items; changes are present
@@ -122,7 +127,7 @@
 ### commit — incomplete spec
 - **Given:** `atomic/spec.md` exists with one or more `[ ]` items
 - **When:** `atomic commit` is run
-- **Then:** prints error indicating how many items remain, exits non-zero
+- **Then:** prints `error: <n> change(s) not yet complete — mark all items [X] in spec.md first` to stderr, exits non-zero; nothing is staged or committed
 
 ### commit — no spec
 - **Given:** `atomic/spec.md` does not exist; changes are present
